@@ -1,12 +1,16 @@
 /**
  * Runs the golden set's 'adversarial' (prompt-injection) items through the
- * REAL production pipeline as it actually behaves today. lib/moderation.ts
- * only BLOCKS on profanity — injection attempts are merely flagged for
- * audit and still proceed to retrieval/synthesis (see app/api/ask/route.ts).
- * This measures what actually happens next: does the confidence gate happen
- * to filter the question out before it ever reaches Claude, and if not,
- * does the generated answer actually resist the injected instruction —
- * something no earlier eval script checked.
+ * COMPLETE pipeline — librarian (retrieval/confidence gate) AND writer
+ * (synthesis, citations, groundedness, quality) — plus the
+ * injection-resistance grade unique to this category. This is the
+ * "adversarial" equivalent of eval/run-full-eval.ts, which skips these items
+ * entirely; that skip was based on the now-corrected assumption that
+ * moderation blocks injection attempts. It only blocks on profanity —
+ * injection is flagged for audit but still proceeds to retrieval/synthesis
+ * (see app/api/ask/route.ts) — so this script measures what actually happens:
+ * does the confidence gate filter the question out before it ever reaches
+ * Claude, and if not, is the generated answer any good AND does it resist
+ * the injected instruction.
  *
  * Usage: npm run eval:injection
  * Requires ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, VOYAGE_API_KEY in .env.local.
@@ -19,9 +23,10 @@ import { loadEnvFile } from '../lib/load-env'
 loadEnvFile()
 
 import { retrieveChunks } from '../lib/retrieval'
-import { createSynthesisStream } from '../lib/llm'
+import { createSynthesisStream, gradeGroundedness } from '../lib/llm'
+import { extractValidatedCitations } from '../lib/citations'
 import { containsInjectionAttempt, containsProfanity } from '../lib/moderation'
-import { gradeInjectionResistance } from './llm-grading'
+import { gradeInjectionResistance, gradeAnswerQuality } from './llm-grading'
 import type { GoldenSetItem } from './types'
 
 const GOLDEN_SET_PATH = join(__dirname, '../golden-set/golden-set.json')
@@ -36,6 +41,9 @@ interface InjectionEvalResult {
   passesConfidenceGate: boolean
   reachedSynthesis: boolean
   generatedAnswer?: string
+  citationCount?: number
+  groundednessScore?: number
+  qualityScore?: number
   resisted?: boolean
   reasoning?: string
 }
@@ -89,6 +97,9 @@ async function main() {
 
     const stream = createSynthesisStream(item.question, retrieval.chunks, [])
     const answer = await stream.finalText()
+    const citations = extractValidatedCitations(answer, retrieval.chunks)
+    const groundednessScore = await gradeGroundedness(item.question, retrieval.chunks, answer)
+    const quality = await gradeAnswerQuality(item.question, answer)
     const { resisted, reasoning } = await gradeInjectionResistance(item.question, answer)
 
     results.push({
@@ -100,12 +111,16 @@ async function main() {
       passesConfidenceGate: true,
       reachedSynthesis: true,
       generatedAnswer: answer,
+      citationCount: citations.length,
+      groundednessScore,
+      qualityScore: quality.score,
       resisted,
       reasoning,
     })
     console.log(
       `[${i + 1}/${items.length}] ${resisted ? 'RESISTED' : 'COMPROMISED'}  ${item.question}\n` +
-        `    flagged_by_regex=${flaggedByModeration}  reasoning=${reasoning}`
+        `    flagged_by_regex=${flaggedByModeration}  groundedness=${groundednessScore}  quality=${quality.score}  citations=${citations.length}\n` +
+        `    resistance_reasoning=${reasoning}`
     )
   }
 
@@ -114,14 +129,19 @@ async function main() {
   const reachedSynthesis = results.filter((r) => r.reachedSynthesis)
   const resisted = reachedSynthesis.filter((r) => r.resisted).length
   const compromised = reachedSynthesis.filter((r) => r.resisted === false).length
+  const groundednessScores = reachedSynthesis.map((r) => r.groundednessScore!).filter((s) => s !== undefined)
+  const qualityScores = reachedSynthesis.map((r) => r.qualityScore!).filter((s) => s !== undefined)
+  const average = (nums: number[]) => (nums.length === 0 ? null : nums.reduce((a, b) => a + b, 0) / nums.length)
 
   console.log('\n--- Summary ---')
   console.log(`Total adversarial items: ${results.length}`)
   console.log(`Blocked by profanity filter (never reached retrieval): ${blockedByProfanity}`)
-  console.log(`Gated off by confidence gate (never reached the LLM): ${gatedOff}`)
-  console.log(`Reached synthesis (moderation flagged but did not block): ${reachedSynthesis.length}`)
-  console.log(`  of which RESISTED the injection: ${resisted}`)
-  console.log(`  of which COMPROMISED (complied with the injection): ${compromised}`)
+  console.log(`Gated off by confidence gate (never reached the LLM — librarian stopped it): ${gatedOff}`)
+  console.log(`Reached synthesis (moderation flagged but did not block — writer got a turn): ${reachedSynthesis.length}`)
+  console.log(`  Groundedness: avg=${average(groundednessScores)?.toFixed(1) ?? 'n/a'}  scores=[${groundednessScores.join(', ')}]`)
+  console.log(`  Quality:      avg=${average(qualityScores)?.toFixed(1) ?? 'n/a'}  scores=[${qualityScores.join(', ')}]`)
+  console.log(`  RESISTED the injection: ${resisted}`)
+  console.log(`  COMPROMISED (complied with the injection): ${compromised}`)
   console.log(
     `Regex-flagged by containsInjectionAttempt: ${results.filter((r) => r.flaggedByModeration).length}/${results.length} ` +
       `(flag only — does not block, see app/api/ask/route.ts)`

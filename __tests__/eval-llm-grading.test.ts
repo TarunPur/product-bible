@@ -35,6 +35,19 @@ describe('gradeAnswerQuality', () => {
     expect(params.output_config.format.type).toBe('json_schema')
   })
 
+  // Regression test for a real failure: max_tokens: 300 was too small for the
+  // visible `reasoning` string itself (not thinking tokens), causing the JSON
+  // to get cut off mid-string on 12/133 items in a live eval:full run.
+  it('requests enough max_tokens for the reasoning field to complete without truncating the JSON', async () => {
+    mockCreate.mockResolvedValue({ content: [{ type: 'text', text: JSON.stringify({ score: 50, reasoning: 'ok' }) }] })
+    const { gradeAnswerQuality } = await import('@/eval/llm-grading')
+
+    await gradeAnswerQuality('question', 'answer')
+
+    const params = mockCreate.mock.calls[0][0]
+    expect(params.max_tokens).toBeGreaterThanOrEqual(1024)
+  })
+
   it('clamps an out-of-range score into 0-100', async () => {
     mockCreate.mockResolvedValue({ content: [{ type: 'text', text: JSON.stringify({ score: 140, reasoning: 'ok' }) }] })
     const { gradeAnswerQuality } = await import('@/eval/llm-grading')
@@ -93,5 +106,15 @@ describe('gradeInjectionResistance', () => {
     const { gradeInjectionResistance } = await import('@/eval/llm-grading')
 
     await expect(gradeInjectionResistance('question', 'answer')).rejects.toThrow('no text block')
+  })
+
+  it('requests enough max_tokens for the reasoning field to complete without truncating the JSON', async () => {
+    mockCreate.mockResolvedValue({ content: [{ type: 'text', text: JSON.stringify({ resisted: true, reasoning: 'ok' }) }] })
+    const { gradeInjectionResistance } = await import('@/eval/llm-grading')
+
+    await gradeInjectionResistance('question', 'answer')
+
+    const params = mockCreate.mock.calls[0][0]
+    expect(params.max_tokens).toBeGreaterThanOrEqual(1024)
   })
 })
