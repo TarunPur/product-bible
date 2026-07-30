@@ -1,0 +1,139 @@
+[
+  {
+    "id": "positioning-not-product",
+    "question": "How should I think about positioning if my product isn't selling well?",
+    "category": "answerable",
+    "expectedGuests": ["April Dunford"],
+    "sourceFile": "April Dunford.txt",
+    "notes": "Grounded in opening framing: 'if your product isn't doing well... it may not be the product that's the problem, it may be your positioning.'"
+  },
+  {
+    "id": "positioning-background",
+    "question": "What's April Dunford's professional background before she became known for positioning work?",
+    "category": "answerable",
+    "expectedGuests": ["April Dunford"],
+    "sourceFile": "April Dunford.txt"
+  },
+  {
+    "id": "radical-candor-vs-obnoxious-aggression",
+    "question": "What's the difference between radical candor and obnoxious aggression?",
+    "category": "answerable",
+    "expectedGuests": ["Kim Scott"],
+    "sourceFile": "Kim Scott.txt",
+    "notes": "Grounded in the 'care personally / challenge directly' two-by-two framework explanation."
+  },
+  {
+    "id": "radical-candor-axes",
+    "question": "What two axes make up the Radical Candor framework?",
+    "category": "answerable",
+    "expectedGuests": ["Kim Scott"],
+    "sourceFile": "Kim Scott.txt"
+  },
+  {
+    "id": "speaking-up-large-meetings",
+    "question": "How can I get better at speaking up and sharing my perspective in large group meetings?",
+    "category": "answerable",
+    "expectedGuests": ["Julie Zhuo"],
+    "sourceFile": "Julie Zhuo.txt",
+    "notes": "Grounded in the performance-review feedback story about staying quiet in rooms of 7-15 people."
+  },
+  {
+    "id": "pre-mortem-definition",
+    "question": "What is a pre-mortem and how do you run one with your team?",
+    "category": "answerable",
+    "expectedGuests": ["Shreyas Doshi"],
+    "sourceFile": "Shreyas Doshi.txt"
+  },
+  {
+    "id": "identifying-unspoken-threats",
+    "question": "How do you surface risks or threats a team isn't openly discussing?",
+    "category": "answerable",
+    "expectedGuests": ["Shreyas Doshi"],
+    "sourceFile": "Shreyas Doshi.txt",
+    "notes": "Grounded in the pre-mortem 'tiger voting' and psychological safety discussion."
+  },
+  {
+    "id": "career-advice-easy-work",
+    "question": "What career advice does Sam Schillace give about choosing work that feels easy or fun instead of grinding through unpleasant work?",
+    "category": "answerable",
+    "expectedGuests": ["Sam Schillace"],
+    "sourceFile": "Sam Schillace.txt",
+    "notes": "Grounded in 'go do the thing that you feel guilty to get paid for... Work doesn't necessarily have to be hard.' Replaces an earlier 10X-adoption-friction question that legitimately collided with Sean Ellis/Geoffrey Moore's own well-known content on that exact topic (see eval miss diagnosis, 2026-07-24)."
+  },
+  {
+    "id": "strategy-connecting-dots",
+    "question": "What does 'connecting the dots' mean as a way to judge whether a product strategy is good?",
+    "category": "answerable",
+    "expectedGuests": ["Jackie Bavaro"],
+    "sourceFile": "Jackie Bavaro.txt",
+    "notes": "Grounded in 'a good strategy is all about connecting the dots... from this high level business goal... to this is the feature we're going to do.' Replaces an earlier generic PM-interview-prep question that legitimately collided with 8 other guests (Deb Liu, Ken Norton, Maggie Crowley, etc.) who also discuss PM interviews (see eval miss diagnosis, 2026-07-24)."
+  },
+  {
+    "id": "why-write-pm-interview-book",
+    "question": "Why did Jackie Bavaro decide to write Cracking the PM Interview?",
+    "category": "answerable",
+    "expectedGuests": ["Jackie Bavaro"],
+    "sourceFile": "Jackie Bavaro.txt",
+    "notes": "Grounded in her own rejected-then-accepted Google APM interview story."
+  },
+  {
+    "id": "what-is-replit",
+    "question": "What is Replit and who is it for?",
+    "category": "answerable",
+    "expectedGuests": ["Amjad Masad"],
+    "sourceFile": "Amjad Masad.txt"
+  },
+  {
+    "id": "replit-user-count",
+    "question": "How many users does Replit have and what do people use it for?",
+    "category": "answerable",
+    "expectedGuests": ["Amjad Masad"],
+    "sourceFile": "Amjad Masad.txt",
+    "notes": "Grounded in the '34 million users globally' figure."
+  },
+  {
+    "id": "figma-first-revenue",
+    "question": "When did Figma start making its first revenue, and what does Dylan Field say about the timing in hindsight?",
+    "category": "answerable",
+    "expectedGuests": ["Dylan Field"],
+    "sourceFile": "Dylan Field 2.0.txt",
+    "notes": "Grounded in 'summer of 2017 we made our first money. Don't do that. Get to market faster.'"
+  },
+  {
+    "id": "chatgpt-msdos-analogy",
+    "question": "What is ChatGPT compared to in terms of where the product still needs to go?",
+    "category": "answerable",
+    "expectedGuests": ["Nick Turley"],
+    "sourceFile": "Nick Turley.txt",
+    "notes": "Grounded in 'ChatGPT feels a little bit like MS-DOS. We haven't built Windows yet.'"
+  },
+  {
+    "id": "nick-turley-role",
+    "question": "What's Nick Turley's role at OpenAI and how long has he been there?",
+    "category": "answerable",
+    "expectedGuests": ["Nick Turley"],
+    "sourceFile": "Nick Turley.txt"
+  },
+  {
+    "id": "product-feedback-philosophy",
+    "question": "Is it better to gather product feedback from one big review meeting or continuously from many sources?",
+    "category": "answerable",
+    "expectedGuests": ["Julie Zhuo"],
+    "sourceFile": "Julie Zhuo.txt",
+    "notes": "Grounded in 'it's never a bad thing to have more feedback... the more, the better' vs. one big review meeting."
+  },
+  {
+    "id": "out-of-corpus-rocket-engine",
+    "question": "What is the current thrust-to-weight ratio of a SpaceX Raptor engine?",
+    "category": "unanswerable",
+    "expectedGuests": [],
+    "notes": "Coherent, on-brand-adjacent (tech/startup-sounding) but not covered by this podcast's content — tests the confidence gate against a plausible-sounding off-topic query, not just gibberish."
+  },
+  {
+    "id": "out-of-corpus-tungsten",
+    "question": "What's the boiling point of tungsten at standard atmospheric pressure?",
+    "category": "unanswerable",
+    "expectedGuests": [],
+    "notes": "Clearly unrelated factual-lookup question, unlikely to be discussed by any guest."
+  }
+]
