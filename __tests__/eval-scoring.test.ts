@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { scoreItem, summarize } from '@/eval/scoring'
+import { scoreItem, summarize, summarizeFull, isFullEvalResult, type FullEvalResult } from '@/eval/scoring'
 import type { GoldenSetItem } from '@/eval/types'
 import type { RetrievedChunk, RetrievalResult } from '@/lib/retrieval'
 
@@ -138,5 +138,51 @@ describe('summarize', () => {
     const summary = summarize([])
     expect(summary.total).toBe(0)
     expect(summary.recallAtK).toBe(0)
+  })
+})
+
+describe('isFullEvalResult', () => {
+  it('distinguishes a retrieval-only result from a full-pipeline result', () => {
+    const retrievalOnly = scoreItem(makeItem({}), makeResult([makeChunk({ primarySpeaker: 'April Dunford' })]))
+    const full: FullEvalResult = { ...retrievalOnly, generatedAnswer: 'an answer', citationCount: 1, groundednessScore: 90, qualityScore: 85 }
+
+    expect(isFullEvalResult(retrievalOnly)).toBe(false)
+    expect(isFullEvalResult(full)).toBe(true)
+  })
+})
+
+describe('summarizeFull', () => {
+  it('averages groundedness and quality only over items that actually reached the LLM', () => {
+    const gatedOff = scoreItem(makeItem({ id: 'gated' }), makeResult([makeChunk({ primarySpeaker: 'April Dunford', similarity: 0.3 })]))
+    const generatedA: FullEvalResult = {
+      ...scoreItem(makeItem({ id: 'a' }), makeResult([makeChunk({ primarySpeaker: 'April Dunford', similarity: 0.8 })])),
+      generatedAnswer: 'answer a',
+      citationCount: 2,
+      groundednessScore: 90,
+      qualityScore: 70,
+    }
+    const generatedB: FullEvalResult = {
+      ...scoreItem(makeItem({ id: 'b' }), makeResult([makeChunk({ primarySpeaker: 'April Dunford', similarity: 0.75 })])),
+      generatedAnswer: 'answer b',
+      citationCount: 1,
+      groundednessScore: 60,
+      qualityScore: 90,
+    }
+
+    const summary = summarizeFull([gatedOff, generatedA, generatedB])
+    expect(summary.total).toBe(3)
+    expect(summary.generatedCount).toBe(2)
+    expect(summary.avgGroundedness).toBeCloseTo(75)
+    expect(summary.avgQuality).toBeCloseTo(80)
+    expect(summary.groundednessScores).toEqual([90, 60])
+    expect(summary.qualityScores).toEqual([70, 90])
+  })
+
+  it('returns null averages when nothing reached the LLM', () => {
+    const gatedOff = scoreItem(makeItem({ id: 'gated' }), makeResult([makeChunk({ primarySpeaker: 'April Dunford', similarity: 0.3 })]))
+    const summary = summarizeFull([gatedOff])
+    expect(summary.generatedCount).toBe(0)
+    expect(summary.avgGroundedness).toBeNull()
+    expect(summary.avgQuality).toBeNull()
   })
 })

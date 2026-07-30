@@ -12,7 +12,8 @@
     "ingest": "tsx scripts/ingest.ts",
     "fix-guest-names": "tsx scripts/fix-guest-names.ts",
     "golden-set:generate": "tsx scripts/generate-golden-set.ts",
-    "eval": "tsx eval/run-eval.ts"
+    "eval": "tsx eval/run-eval.ts",
+    "eval:full": "tsx eval/run-full-eval.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.112.5",

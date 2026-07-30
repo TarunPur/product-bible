@@ -3,7 +3,9 @@
     "id": "positioning-not-product",
     "question": "How should I think about positioning if my product isn't selling well?",
     "category": "answerable",
-    "expectedGuests": ["April Dunford"],
+    "expectedGuests": [
+      "April Dunford"
+    ],
     "sourceFile": "April Dunford.txt",
     "notes": "Grounded in opening framing: 'if your product isn't doing well... it may not be the product that's the problem, it may be your positioning.'"
   },
@@ -11,14 +13,18 @@
     "id": "positioning-background",
     "question": "What's April Dunford's professional background before she became known for positioning work?",
     "category": "answerable",
-    "expectedGuests": ["April Dunford"],
+    "expectedGuests": [
+      "April Dunford"
+    ],
     "sourceFile": "April Dunford.txt"
   },
   {
     "id": "radical-candor-vs-obnoxious-aggression",
     "question": "What's the difference between radical candor and obnoxious aggression?",
     "category": "answerable",
-    "expectedGuests": ["Kim Scott"],
+    "expectedGuests": [
+      "Kim Scott"
+    ],
     "sourceFile": "Kim Scott.txt",
     "notes": "Grounded in the 'care personally / challenge directly' two-by-two framework explanation."
   },
@@ -26,14 +32,18 @@
     "id": "radical-candor-axes",
     "question": "What two axes make up the Radical Candor framework?",
     "category": "answerable",
-    "expectedGuests": ["Kim Scott"],
+    "expectedGuests": [
+      "Kim Scott"
+    ],
     "sourceFile": "Kim Scott.txt"
   },
   {
     "id": "speaking-up-large-meetings",
     "question": "How can I get better at speaking up and sharing my perspective in large group meetings?",
     "category": "answerable",
-    "expectedGuests": ["Julie Zhuo"],
+    "expectedGuests": [
+      "Julie Zhuo"
+    ],
     "sourceFile": "Julie Zhuo.txt",
     "notes": "Grounded in the performance-review feedback story about staying quiet in rooms of 7-15 people."
   },
@@ -41,14 +51,18 @@
     "id": "pre-mortem-definition",
     "question": "What is a pre-mortem and how do you run one with your team?",
     "category": "answerable",
-    "expectedGuests": ["Shreyas Doshi"],
+    "expectedGuests": [
+      "Shreyas Doshi"
+    ],
     "sourceFile": "Shreyas Doshi.txt"
   },
   {
     "id": "identifying-unspoken-threats",
     "question": "How do you surface risks or threats a team isn't openly discussing?",
     "category": "answerable",
-    "expectedGuests": ["Shreyas Doshi"],
+    "expectedGuests": [
+      "Shreyas Doshi"
+    ],
     "sourceFile": "Shreyas Doshi.txt",
     "notes": "Grounded in the pre-mortem 'tiger voting' and psychological safety discussion."
   },
@@ -56,7 +70,9 @@
     "id": "career-advice-easy-work",
     "question": "What career advice does Sam Schillace give about choosing work that feels easy or fun instead of grinding through unpleasant work?",
     "category": "answerable",
-    "expectedGuests": ["Sam Schillace"],
+    "expectedGuests": [
+      "Sam Schillace"
+    ],
     "sourceFile": "Sam Schillace.txt",
     "notes": "Grounded in 'go do the thing that you feel guilty to get paid for... Work doesn't necessarily have to be hard.' Replaces an earlier 10X-adoption-friction question that legitimately collided with Sean Ellis/Geoffrey Moore's own well-known content on that exact topic (see eval miss diagnosis, 2026-07-24)."
   },
@@ -64,7 +80,9 @@
     "id": "strategy-connecting-dots",
     "question": "What does 'connecting the dots' mean as a way to judge whether a product strategy is good?",
     "category": "answerable",
-    "expectedGuests": ["Jackie Bavaro"],
+    "expectedGuests": [
+      "Jackie Bavaro"
+    ],
     "sourceFile": "Jackie Bavaro.txt",
     "notes": "Grounded in 'a good strategy is all about connecting the dots... from this high level business goal... to this is the feature we're going to do.' Replaces an earlier generic PM-interview-prep question that legitimately collided with 8 other guests (Deb Liu, Ken Norton, Maggie Crowley, etc.) who also discuss PM interviews (see eval miss diagnosis, 2026-07-24)."
   },
@@ -72,7 +90,9 @@
     "id": "why-write-pm-interview-book",
     "question": "Why did Jackie Bavaro decide to write Cracking the PM Interview?",
     "category": "answerable",
-    "expectedGuests": ["Jackie Bavaro"],
+    "expectedGuests": [
+      "Jackie Bavaro"
+    ],
     "sourceFile": "Jackie Bavaro.txt",
     "notes": "Grounded in her own rejected-then-accepted Google APM interview story."
   },
@@ -80,14 +100,18 @@
     "id": "what-is-replit",
     "question": "What is Replit and who is it for?",
     "category": "answerable",
-    "expectedGuests": ["Amjad Masad"],
+    "expectedGuests": [
+      "Amjad Masad"
+    ],
     "sourceFile": "Amjad Masad.txt"
   },
   {
     "id": "replit-user-count",
     "question": "How many users does Replit have and what do people use it for?",
     "category": "answerable",
-    "expectedGuests": ["Amjad Masad"],
+    "expectedGuests": [
+      "Amjad Masad"
+    ],
     "sourceFile": "Amjad Masad.txt",
     "notes": "Grounded in the '34 million users globally' figure."
   },
@@ -95,7 +119,9 @@
     "id": "figma-first-revenue",
     "question": "When did Figma start making its first revenue, and what does Dylan Field say about the timing in hindsight?",
     "category": "answerable",
-    "expectedGuests": ["Dylan Field"],
+    "expectedGuests": [
+      "Dylan Field"
+    ],
     "sourceFile": "Dylan Field 2.0.txt",
     "notes": "Grounded in 'summer of 2017 we made our first money. Don't do that. Get to market faster.'"
   },
@@ -103,7 +129,9 @@
     "id": "chatgpt-msdos-analogy",
     "question": "What is ChatGPT compared to in terms of where the product still needs to go?",
     "category": "answerable",
-    "expectedGuests": ["Nick Turley"],
+    "expectedGuests": [
+      "Nick Turley"
+    ],
     "sourceFile": "Nick Turley.txt",
     "notes": "Grounded in 'ChatGPT feels a little bit like MS-DOS. We haven't built Windows yet.'"
   },
@@ -111,14 +139,18 @@
     "id": "nick-turley-role",
     "question": "What's Nick Turley's role at OpenAI and how long has he been there?",
     "category": "answerable",
-    "expectedGuests": ["Nick Turley"],
+    "expectedGuests": [
+      "Nick Turley"
+    ],
     "sourceFile": "Nick Turley.txt"
   },
   {
     "id": "product-feedback-philosophy",
     "question": "Is it better to gather product feedback from one big review meeting or continuously from many sources?",
     "category": "answerable",
-    "expectedGuests": ["Julie Zhuo"],
+    "expectedGuests": [
+      "Julie Zhuo"
+    ],
     "sourceFile": "Julie Zhuo.txt",
     "notes": "Grounded in 'it's never a bad thing to have more feedback... the more, the better' vs. one big review meeting."
   },
@@ -135,5 +167,1005 @@
     "category": "unanswerable",
     "expectedGuests": [],
     "notes": "Clearly unrelated factual-lookup question, unlikely to be discussed by any guest."
+  },
+  {
+    "id": "auto-1-what-is-a-curiosity-loop-as",
+    "question": "What is a 'curiosity loop' as Ada Chen Rekhi describes it, and how does she use it to gather feedback?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Ada Chen Rekhi"
+    ],
+    "sourceFile": "Ada Chen Rekhi.txt",
+    "notes": "Auto-generated from chunk 3 (00:03:45). Self-check: The term 'curiosity loop' is a specific, distinctive concept coined and explained by Ada Chen Rekhi in this excerpt, so answering requires her actual words rather than general knowledge. The question asks what the concept is without revealing the specific details (emailing 10-11 people about podcast topics) that answer it."
+  },
+  {
+    "id": "auto-2-what-was-the-startup-ada-chen",
+    "question": "What was the startup Ada Chen Rekhi founded after her time at Mochi Media, and what kind of product was it?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Ada Chen Rekhi"
+    ],
+    "sourceFile": "Ada Chen Rekhi.txt",
+    "notes": "Auto-generated from chunk 32 (00:27:19). Self-check: This question asks for a specific, named detail (the startup Connected and its description as a personal CRM) that only appears in Ada Chen Rekhi's account of her career path, and it doesn't give away the answer itself."
+  },
+  {
+    "id": "auto-3-ada-chen-rekhi-tells-a-story",
+    "question": "Ada Chen Rekhi tells a story about meeting a coaching client in person for the first time after working together remotely on Zoom—what happened at that lunch and how did she end up giving that person feedback?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Ada Chen Rekhi"
+    ],
+    "sourceFile": "Ada Chen Rekhi.txt",
+    "notes": "Auto-generated from chunk 65 (00:52:58). Self-check: This question is grounded in the specific, concrete story from the excerpt (a Zoom coaching relationship, an in-person lunch, and subsequent feedback about appearance/presentation) that only this excerpt contains, and it doesn't reveal the punchline (the casual dress disparity) or the actual feedback given, just asks what happened."
+  },
+  {
+    "id": "auto-4-how-does-alex-hardiman-describe-the",
+    "question": "How does Alex Hardiman describe the relationship between mission and business goals at the company she works for, like the New York Times?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Alex Hardiman"
+    ],
+    "sourceFile": "Alex Hardimen.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question asks about a specific framing (mission vs. business goals as means/ends) that Alex Hardiman articulates distinctively in this excerpt, without revealing the actual content of her answer (that mission comes first, or the specifics of subscriber growth and journalism impact). It requires her actual words rather than generic PM knowledge, since this framing is tied to her specific role and company context."
+  },
+  {
+    "id": "auto-5-how-does-alex-hardiman-structure-her",
+    "question": "How does Alex Hardiman structure her product and design org at the New York Times around functions versus missions?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Alex Hardiman"
+    ],
+    "sourceFile": "Alex Hardimen.txt",
+    "notes": "Auto-generated from chunk 27 (00:22:34). Self-check: This question is grounded in the specific two-axis framework (functions vs. missions) that Hardiman describes, which is a distinctive detail tied to her role and organization (NYT), not something generic or shared by other guests. It asks about the structure without revealing the specific content of the answer (e.g., the editor inclusion detail), so it doesn't give away the punchline."
+  },
+  {
+    "id": "auto-6-alex-hardiman-mentioned-a-stat-about",
+    "question": "Alex Hardiman mentioned a stat about how much of the country was reading the New York Times during the pandemic — what was that number and why did it feel so validating to her?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Alex Hardiman"
+    ],
+    "sourceFile": "Alex Hardimen.txt",
+    "notes": "Auto-generated from chunk 53 (00:45:55). Self-check: This question references a concrete, distinctive detail (the 'half the country' stat during the pandemic) tied specifically to Alex Hardiman's account at the NYT, which no other guest would be able to answer. It asks what the number was without stating it, and asks why it felt validating without revealing the reasoning given in the excerpt."
+  },
+  {
+    "id": "auto-7-what-percentage-of-openai-employees-actually",
+    "question": "What percentage of OpenAI employees actually use Codex, according to Andrew Ambrosino?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Andrew Ambrosino"
+    ],
+    "sourceFile": "Andrew Ambrosino.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question asks for a specific, distinctive statistic (90% of the entire company, not just engineers) that Andrew Ambrosino cites in this excerpt, which requires his exact words to answer correctly and isn't something other guests would generically state. It doesn't reveal the number itself, just asks for it."
+  },
+  {
+    "id": "auto-8-what-s-andrew-ambrosino-s-take",
+    "question": "What's Andrew Ambrosino's take on companies eliminating the product manager role and having everyone just be a 'builder'?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Andrew Ambrosino"
+    ],
+    "sourceFile": "Andrew Ambrosino.txt",
+    "notes": "Auto-generated from chunk 23 (00:24:38). Self-check: The question names a concrete, distinctive stance from the excerpt (eliminating the product role/builder trend) that Andrew Ambrosino specifically critiques, without revealing his actual reasoning or conclusion, so answering it requires his exact words."
+  },
+  {
+    "id": "auto-9-what-did-andrew-ambrosino-say-about",
+    "question": "What did Andrew Ambrosino say about the different browser-based approaches ChatGPT has tried, like Operator and Atlas, versus the in-app browser and Chrome extension?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Andrew Ambrosino"
+    ],
+    "sourceFile": "Andrew Ambrosino.txt",
+    "notes": "Auto-generated from chunk 44 (00:48:45). Self-check: This references specific named products (Operator, ChatGPT agent mode, Atlas, in-app browser, Chrome extension) mentioned only by Andrew Ambrosino in this excerpt, requiring his actual words to answer, without revealing his conclusion or opinion about them."
+  },
+  {
+    "id": "auto-10-what-s-annie-pearl-s-tip",
+    "question": "What's Annie Pearl's tip for sending someone a Calendly link without it feeling rude or pushy?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Annie Pearl"
+    ],
+    "sourceFile": "Annie Pearl.txt",
+    "notes": "Auto-generated from chunk 2 (00:04:09). Self-check: The question is grounded in a specific, concrete framework from this excerpt (Calendly's founder-level etiquette advice about wording the email to let the recipient share availability first), which is distinctive to Annie Pearl as Calendly's leader and not generic scheduling advice any guest would give. It asks about the tip without revealing what the tip actually is, so it doesn't give away the answer."
+  },
+  {
+    "id": "auto-11-annie-pearl-mentions-three-target-personas",
+    "question": "Annie Pearl mentions three target personas at Calendly (or her company) — sales, customer success, and recruiting teams. Why did narrowing focus to those specific personas actually help the team ship faster?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Annie Pearl"
+    ],
+    "sourceFile": "Annie Pearl.txt",
+    "notes": "Auto-generated from chunk 27 (00:22:09). Self-check: The question references the concrete detail from the excerpt (the three named personas) and asks about the causal link to team speed, which requires Annie Pearl's specific framing here rather than generic prioritization advice. It doesn't reveal the punchline about the fear of saying no or the trade-off insight, so it remains a genuine search query rather than a summary."
+  },
+  {
+    "id": "auto-12-how-did-calendly-s-founder-tope",
+    "question": "How did Calendly's founder Tope fund the company in its early days, according to Annie Pearl?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Annie Pearl"
+    ],
+    "sourceFile": "Annie Pearl.txt",
+    "notes": "Auto-generated from chunk 50 (00:40:21). Self-check: This question is grounded in a specific, distinctive detail from the excerpt (Tope's background in sales and self-funding via his 401k) that only this excerpt reveals, and it doesn't give away the actual story or details in the phrasing itself."
+  },
+  {
+    "id": "auto-13-does-arielle-jackson-think-a-bad",
+    "question": "Does Arielle Jackson think a bad company name can actually sink an otherwise strong company?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Arielle Jackson"
+    ],
+    "sourceFile": "Arielle Jackson.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question targets Arielle Jackson's specific stated opinion (that a bad name won't kill a good company, using Disney and Volvo as examples of names that gained meaning over time) rather than generic branding advice, and it doesn't reveal her actual answer or the examples she uses."
+  },
+  {
+    "id": "auto-14-why-does-arielle-jackson-say-product",
+    "question": "Why does Arielle Jackson say product names like Google Maps or Square Register can be so boring and descriptive compared to the company name itself?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Arielle Jackson"
+    ],
+    "sourceFile": "Arielle Jackson.txt",
+    "notes": "Auto-generated from chunk 30 (00:27:23). Self-check: The question is grounded in the specific examples (Google Maps, Square Register) and framework Arielle Jackson gives about brand equity residing in the master brand name, which is distinctive to this excerpt and not generic naming advice any guest might give."
+  },
+  {
+    "id": "auto-15-what-exercise-does-arielle-jackson-have",
+    "question": "What exercise does Arielle Jackson have new clients fill out to help nail down their company description before she starts positioning work?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Arielle Jackson"
+    ],
+    "sourceFile": "Arielle Jackson.txt",
+    "notes": "Auto-generated from chunk 58 (00:52:25). Self-check: This references Arielle Jackson's specific consulting method (a worksheet with a 'what do you do' question) and her broader positioning framework starting with audience definition, which are distinctive concrete details from this excerpt rather than generic advice any guest might give."
+  },
+  {
+    "id": "auto-16-why-does-ben-horowitz-say-taking",
+    "question": "Why does Ben Horowitz say taking his company public with only $2 million in trailing revenue at 18 months old made sense at the time?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Ben Horowitz"
+    ],
+    "sourceFile": "Ben Horowitz.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This question is grounded in a specific, distinctive detail from the excerpt (the $2M trailing revenue, 18-month-old IPO decision) that only Ben Horowitz's actual words can answer, and it doesn't reveal the reasoning (going bankrupt was worse) that he gives in response."
+  },
+  {
+    "id": "auto-17-what-does-ben-horowitz-say-is",
+    "question": "What does Ben Horowitz say is one of a16z's approaches to helping founders rebuild confidence when they're struggling as CEO?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Ben Horowitz"
+    ],
+    "sourceFile": "Ben Horowitz.txt",
+    "notes": "Auto-generated from chunk 35 (00:34:13). Self-check: This question is grounded in the specific detail from the excerpt (a16z's 'design of the firm is about confidence' and the example of giving founders a network like Bob Iger's) and requires Ben Horowitz's actual words rather than generic advice, since it references a distinctive framework specific to his firm. It does not reveal the actual content of the answer (the Bob Iger network example) within the question itself."
+  },
+  {
+    "id": "auto-18-according-to-ben-horowitz-how-much",
+    "question": "According to Ben Horowitz, how much capital does a startup need to be able to raise to be considered competitive in the foundation model space?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Ben Horowitz"
+    ],
+    "sourceFile": "Ben Horowitz.txt",
+    "notes": "Auto-generated from chunk 64 (01:02:57). Self-check: The question asks for a specific number and framework (the $2 billion fundraising bar as a rule of thumb) stated explicitly by Ben Horowitz in this excerpt, which is a distinctive claim tied directly to his words rather than generic industry knowledge."
+  },
+  {
+    "id": "auto-19-in-bob-moesta-s-book-job",
+    "question": "In Bob Moesta's book Job Moves, what does he mean by a 'jobcation' and why does he recommend it after leaving a job?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Bob Moesta"
+    ],
+    "sourceFile": "Bob Moesta 2.0.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question references a specific coined term ('jobcation') and framework unique to Bob Moesta's book Job Moves, requiring his exact explanation rather than generic career advice, and it doesn't reveal the actual answer (resting to rediscover oneself) within the question."
+  },
+  {
+    "id": "auto-20-bob-moesta-talks-about-prototyping-your",
+    "question": "Bob Moesta talks about prototyping your job search — what does that actually look like in practice when you're trying to figure out what career to go after?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Bob Moesta"
+    ],
+    "sourceFile": "Bob Moesta 2.0.txt",
+    "notes": "Auto-generated from chunk 47 (00:32:42). Self-check: This question is grounded in Moesta's specific 'prototyping' framework for job searching mentioned in the excerpt, which is distinctive to his jobs-to-be-done approach rather than generic career advice. It doesn't reveal the geo coordinator/travel agent story or the specific steps he outlines, so it tests whether the tool can surface his actual words."
+  },
+  {
+    "id": "auto-21-what-does-bob-moesta-suggest-doing",
+    "question": "What does Bob Moesta suggest doing instead of relying on traditional resumes and job filters to land a job you actually want?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Bob Moesta"
+    ],
+    "sourceFile": "Bob Moesta 2.0.txt",
+    "notes": "Auto-generated from chunk 82 (00:55:30). Self-check: The question references Moesta's specific advice (network effects, interviewing people who have the job you want, reverse-engineering resumes) without giving away the details, and requires his actual words rather than generic career advice."
+  },
+  {
+    "id": "auto-22-why-does-brian-balfour-think-chatgpt",
+    "question": "Why does Brian Balfour think ChatGPT could become the next major distribution platform for products?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Brian Balfour"
+    ],
+    "sourceFile": "Brian Balfour.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question targets Balfour's specific, distinctive prediction from this excerpt (ChatGPT as the next distribution platform) rather than a generic growth topic, and it doesn't reveal his prisoner's dilemma framing or the startup-vs-late-stage betting strategy he goes on to describe."
+  },
+  {
+    "id": "auto-23-what-does-brian-balfour-say-about",
+    "question": "What does Brian Balfour say about the platform cycle of openness eventually closing off, and what examples does he give of companies getting burned by it?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Brian Balfour"
+    ],
+    "sourceFile": "Brian Balfour.txt",
+    "notes": "Auto-generated from chunk 31 (00:25:52). Self-check: The question asks about a specific framework (platform openness-to-closure cycle) and asks for the concrete examples Balfour cites (Facebook platform crash, Apple's 30% tax, SEO loops), which are unique details from this excerpt rather than generic platform-strategy commentary any guest might give."
+  },
+  {
+    "id": "auto-24-what-does-brian-balfour-think-startups",
+    "question": "What does Brian Balfour think startups should actually be doing right now to prepare for AI platform shifts like OpenAI's potential developer ecosystem?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Brian Balfour"
+    ],
+    "sourceFile": "Brian Balfour.txt",
+    "notes": "Auto-generated from chunk 66 (01:01:02). Self-check: The question is grounded in the specific context of AI platforms (OpenAI) and preferred developer relationships discussed in this excerpt, requiring Balfour's actual words rather than generic startup advice, and it doesn't reveal the specific answer (cozying up to platform teams, preferred developer relationships) within the question itself."
+  },
+  {
+    "id": "auto-25-according-to-camille-fournier-what-are",
+    "question": "According to Camille Fournier, what are the top things PMs do that annoy engineers?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Camille Fournier"
+    ],
+    "sourceFile": "Camille Fournier.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This targets a specific list Camille Fournier gives (hoarding credit, not understanding details) rather than a generic topic, and it doesn't reveal the actual answers in the question itself."
+  },
+  {
+    "id": "auto-26-what-does-camille-fournier-think-graphql",
+    "question": "What does Camille Fournier think GraphQL is really promising front-end engineers, and why is she skeptical of it?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Camille Fournier"
+    ],
+    "sourceFile": "Camille Fournier.txt",
+    "notes": "Auto-generated from chunk 35 (00:28:52). Self-check: The question names a concrete technology (GraphQL) and asks for Camille Fournier's specific critique from this excerpt, which is a distinctive opinion tied to her exact words rather than generic industry knowledge. It doesn't reveal the actual content of her answer (the collaboration-avoidance framing), just points at the topic and asks for her reasoning."
+  },
+  {
+    "id": "auto-27-camille-fournier-how-do-you-handle",
+    "question": "Camille Fournier, how do you handle it when an internal platform team without any PM support keeps building the wrong things?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Camille Fournier"
+    ],
+    "sourceFile": "Camille Fournier.txt",
+    "notes": "Auto-generated from chunk 68 (00:56:44). Self-check: The question is grounded in the excerpt's specific scenario of platform teams lacking product managers and asks for Fournier's distinctive advice on 'leading from the side,' without revealing the actual tactics she suggests (finding working relationships, being clear about needs). This is a specific situational framework tied to her engineering leadership background, not generic advice any guest could give."
+  },
+  {
+    "id": "auto-28-according-to-cat-wu-how-much",
+    "question": "According to Cat Wu, how much have Anthropic's product feature shipping timelines compressed?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Cat Wu"
+    ],
+    "sourceFile": "Cat Wu.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This targets a concrete, specific detail from the excerpt (the six-month to one-month/one-day timeline compression) that only Cat Wu's actual words provide, without revealing the answer in the question itself."
+  },
+  {
+    "id": "auto-29-how-does-cat-wu-distinguish-mission",
+    "question": "How does Cat Wu distinguish 'mission' from 'focus' at Anthropic when it comes to prioritization trade-offs?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Cat Wu"
+    ],
+    "sourceFile": "Cat Wu.txt",
+    "notes": "Auto-generated from chunk 39 (00:30:24). Self-check: The question names a specific conceptual distinction (mission vs. focus) that Cat Wu explicitly draws in this excerpt, which is distinctive to her framing and not something other guests would answer the same way. It doesn't reveal the actual content of the distinction or the Claude Code example she uses to illustrate it."
+  },
+  {
+    "id": "auto-30-how-does-cat-wu-s-team",
+    "question": "How does Cat Wu's team use informal 'vibe checks' at lunch to guide which AI model behaviors they investigate further?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Cat Wu"
+    ],
+    "sourceFile": "Cat Wu.txt",
+    "notes": "Auto-generated from chunk 72 (00:57:46). Self-check: The question names a concrete, distinctive practice (team lunch vibe checks informing data hypotheses) unique to this excerpt, and it doesn't reveal the specific examples or punchline given—just asks how the process works."
+  },
+  {
+    "id": "auto-31-why-does-christina-wodtke-describe-okrs",
+    "question": "Why does Christina Wodtke describe OKRs as a vitamin rather than a medicine?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Christina Wodtke"
+    ],
+    "sourceFile": "Christina Wodtke.txt",
+    "notes": "Auto-generated from chunk 4 (00:05:27). Self-check: This uses Wodtke's distinctive vitamin/medicine metaphor, a specific framing tied to her actual words, and doesn't reveal the answer itself; it requires her transcript to answer well rather than general OKR knowledge."
+  },
+  {
+    "id": "auto-32-according-to-christina-wodtke-what-s",
+    "question": "According to Christina Wodtke, what's the most common mistake people make when writing objectives in OKRs?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Christina Wodtke"
+    ],
+    "sourceFile": "Christina Wodtke.txt",
+    "notes": "Auto-generated from chunk 27 (00:24:23). Self-check: This question is grounded in a specific, distinctive detail from the excerpt (Wodtke's OKR expertise and her specific point about objectives being too fluffy or too boring) and requires her actual words to answer well, since OKR-writing mistakes are a niche topic she's specifically known for. It doesn't reveal the actual answer (fluffy vs. boring) within the question itself."
+  },
+  {
+    "id": "auto-33-christina-wodtke-mentioned-using-okr-style",
+    "question": "Christina Wodtke mentioned using OKR-style status updates at Zynga—what specific questions did that format ask each week, and why did she find it more valuable than traditional status emails?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Christina Wodtke"
+    ],
+    "sourceFile": "Christina Wodtke.txt",
+    "notes": "Auto-generated from chunk 56 (00:47:25). Self-check: The question references a concrete detail (Zynga, OKR-style weekly check-in format) unique to this excerpt and requires her actual words about the specific questions and rationale, without giving away the status email failure story or the exact answer."
+  },
+  {
+    "id": "auto-34-what-does-claire-vo-mean-when",
+    "question": "What does Claire Vo mean when she says she's hired to remind late-stage companies they can operate like a startup?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Claire Vo"
+    ],
+    "sourceFile": "Claire Vo.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This question is grounded in Claire Vo's specific, distinctive framing from the excerpt and requires her actual words to answer well, since the phrase and idea are unique to her perspective as a CPO. It doesn't reveal the follow-up detail about clock speed or CPTO, leaving the answer to be discovered."
+  },
+  {
+    "id": "auto-35-claire-vo-how-did-you-handle",
+    "question": "Claire Vo, how did you handle two conflicting leaders on your team who couldn't get along, and what did you say to turn things around?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Claire Vo"
+    ],
+    "sourceFile": "Claire Vo.txt",
+    "notes": "Auto-generated from chunk 34 (00:30:16). Self-check: This question is grounded in the specific scenario Claire Vo describes—two clashing product/engineering leaders and her direct intervention—which requires her actual words to answer well, not generic conflict-management advice. It asks what she did without revealing the outcome or her exact phrasing, so it doesn't give away the answer."
+  },
+  {
+    "id": "auto-36-how-did-claire-vo-s-chatprd",
+    "question": "How did Claire Vo's ChatPRD tool evolve from an internal GPT for her team into a standalone paid app, and what's the URL?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Claire Vo"
+    ],
+    "sourceFile": "Claire Vo.txt",
+    "notes": "Auto-generated from chunk 62 (00:55:20). Self-check: This question is grounded in specific concrete details from the excerpt (the GPT Store origin, monetization wall, wrapper app, thousands of users, and the .ai domain) that only Claire Vo's account provides, and it doesn't give away the punchline (the .ai vs .com mix-up, or the specific numbers) while still pointing to a distinctive story."
+  },
+  {
+    "id": "auto-37-how-did-monday-com-s-leader",
+    "question": "How did Monday.com's leader respond when competitors started shipping features much faster than his team?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Daniel Lereya"
+    ],
+    "sourceFile": "Daniel Lereya.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This question is grounded in a specific detail from the excerpt (Daniel Lereya of Monday.com discussing competitors outshipping them and his 'gift from competitors' framing) and requires his actual words to answer well, since it references a specific company context and story rather than a generic product question. It also doesn't reveal the punchline (that he reframed it as a gift and used it as motivation)."
+  },
+  {
+    "id": "auto-38-what-does-daniel-lereya-do-at",
+    "question": "What does Daniel Lereya do at his company's yearly kickoff to communicate the product vision to his org?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Daniel Lereya"
+    ],
+    "sourceFile": "Daniel Lereya.txt",
+    "notes": "Auto-generated from chunk 31 (00:29:17). Self-check: The question asks about a specific practice (a yearly kickoff slide framing future customer value) that Daniel Lereya describes concretely, without revealing the actual content of the slide or the CRM example he gives, so it requires his specific answer rather than generic product leadership knowledge."
+  },
+  {
+    "id": "auto-39-why-did-daniel-lereya-s-company",
+    "question": "Why did Daniel Lereya's company decide against offering a free trial early on?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Daniel Lereya"
+    ],
+    "sourceFile": "Daniel Lereya.txt",
+    "notes": "Auto-generated from chunk 60 (00:57:38). Self-check: This asks about a concrete, specific decision (no free trial) and reasoning tied directly to Daniel Lereya's own company story in the excerpt, which isn't a generic question other guests would be equally known for answering, and it doesn't reveal the actual answer (paying customers as a feedback filter) in the phrasing."
+  },
+  {
+    "id": "auto-40-according-to-donna-lichaw-how-should",
+    "question": "According to Donna Lichaw, how should you go about identifying your own superpowers or strengths?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Donna Lichaw"
+    ],
+    "sourceFile": "Donna Lichaw.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question references Donna Lichaw's specific framework (using personal stories from past, present, and future to identify 'superpowers') which is distinctive to her book The Leader's Journey and this excerpt, without revealing the actual answer (the storytelling method) in the question itself."
+  },
+  {
+    "id": "auto-41-donna-lichaw-uses-a-superhero-metaphor",
+    "question": "Donna Lichaw uses a superhero metaphor for how negative traits can actually help leaders — what's that concept and how does it work?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Donna Lichaw"
+    ],
+    "sourceFile": "Donna Lichaw.txt",
+    "notes": "Auto-generated from chunk 32 (00:31:28). Self-check: The question points to a distinctive, concrete framework (the 'kryptonite' metaphor) from this excerpt without revealing what the answer actually is, and it requires Lichaw's specific words rather than generic advice any guest could give."
+  },
+  {
+    "id": "auto-42-donna-lichaw-mentioned-coaching-an-executive",
+    "question": "Donna Lichaw mentioned coaching an executive who was seen as too quiet in meetings—what small experiment did she suggest the exec try?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Donna Lichaw"
+    ],
+    "sourceFile": "Donna Lichaw.txt",
+    "notes": "Auto-generated from chunk 65 (01:05:08). Self-check: The question points to a specific coaching anecdote and asks for the concrete experiment detail, which only this excerpt contains; it doesn't reveal the punchline (deep listening insight) itself, just prompts for it."
+  },
+  {
+    "id": "auto-43-how-did-edwin-chen-scale-surge",
+    "question": "How did Edwin Chen scale Surge to a billion dollars in revenue with such a tiny team while staying bootstrapped?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Edwin Chen"
+    ],
+    "sourceFile": "Edwin Chen.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question is grounded in the specific numbers and details of this excerpt (Surge, billion in revenue, sub-70 person team, bootstrapped, less than four years) and requires Edwin Chen's actual account rather than generic startup advice, while not revealing his 'small elite team' philosophy or data quality answer."
+  },
+  {
+    "id": "auto-44-why-does-edwin-chen-think-llm",
+    "question": "Why does Edwin Chen think LLM Arena rankings can be gamed, and what does that mean for how trustworthy those leaderboards really are?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Edwin Chen"
+    ],
+    "sourceFile": "Edwin Chen.txt",
+    "notes": "Auto-generated from chunk 29 (00:23:53). Self-check: The question is grounded in the specific claim from this excerpt (gaming LLM Arena via emojis, formatting, and response length) and requires Edwin Chen's specific reasoning about incentives and leaderboard gaming, which is distinctive to this excerpt rather than generic AI commentary. It doesn't reveal the specific tactics (emojis, bolding, length tripling) or the promotion/incentive story, so it doesn't give away the answer."
+  },
+  {
+    "id": "auto-45-why-does-edwin-chen-now-think",
+    "question": "Why does Edwin Chen now think AI models won't just become commoditized over time?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Edwin Chen"
+    ],
+    "sourceFile": "Edwin Chen.txt",
+    "notes": "Auto-generated from chunk 56 (00:48:07). Self-check: The question references Edwin Chen's specific viewpoint shift about model commoditization and differentiation driven by company values, which is a distinctive claim from this excerpt rather than generic AI commentary, and it doesn't reveal the actual reasoning (personalities/objective functions) he gives."
+  },
+  {
+    "id": "auto-46-how-does-elizabeth-stone-describe-netflix",
+    "question": "How does Elizabeth Stone describe Netflix's culture and what does she say are the non-negotiable ingredients for making it work?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Elizabeth Stone"
+    ],
+    "sourceFile": "Elizabeth Stone 2.0.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This question is grounded in specific phrases from the excerpt (Netflix's culture as 'excellence as an operating system,' talent density as 'non-negotiable') that are distinctive to Elizabeth Stone's answer, and it doesn't reveal the actual content of her answer, just asks what she said."
+  },
+  {
+    "id": "auto-47-what-s-elizabeth-stone-s-advice",
+    "question": "What's Elizabeth Stone's advice for thinking beyond your own role to help your manager and colleagues succeed?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Elizabeth Stone"
+    ],
+    "sourceFile": "Elizabeth Stone 2.0.txt",
+    "notes": "Auto-generated from chunk 32 (00:27:07). Self-check: The question is grounded in Elizabeth Stone's specific framework (thinking from your manager's perspective, systems thinking, engineering principles about broader organizational good) without revealing the actual content of her answer, and it requires her particular framing rather than generic career advice."
+  },
+  {
+    "id": "auto-48-how-does-elizabeth-stone-use-the",
+    "question": "How does Elizabeth Stone use the keeper test as a conversation tool with employees, both for tough feedback and for recognizing top performers?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Elizabeth Stone"
+    ],
+    "sourceFile": "Elizabeth Stone 2.0.txt",
+    "notes": "Auto-generated from chunk 57 (00:47:56). Self-check: This question is grounded in the specific 'keeper test' framework Elizabeth Stone discusses and asks about both facets she covers (hard conversations and positive recognition), which requires her actual words rather than generic management advice. It doesn't reveal the specific phrasing or examples she uses, just points to the topic and structure of her answer."
+  },
+  {
+    "id": "auto-49-what-does-eric-ries-say-is",
+    "question": "What does Eric Ries say is actually worse for founders than having their startup fail?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Eric Ries"
+    ],
+    "sourceFile": "Eric Ries.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question points to a specific, distinctive claim Ries makes (that a 'zombie' company you hate but can't leave is worse than failure) without stating that answer, and it requires his exact framing rather than generic startup advice."
+  },
+  {
+    "id": "auto-50-how-does-eric-ries-distinguish-good",
+    "question": "How does Eric Ries distinguish good craft from craft that's just an excuse to avoid feedback?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Eric Ries"
+    ],
+    "sourceFile": "Eric Ries.txt",
+    "notes": "Auto-generated from chunk 68 (00:51:23). Self-check: This question is grounded in a specific distinction Ries draws in the excerpt and requires his actual words to answer well—it references his Lean Startup framing of craft, speed, and feedback avoidance, which is distinctive to him rather than generic startup advice. It doesn't reveal the punchline (e.g., the 'artistic ethos' example or core values point) so a listener searching this wouldn't already know the answer."
+  },
+  {
+    "id": "auto-51-eric-ries-used-a-weather-control",
+    "question": "Eric Ries used a weather-control startup as an example when talking about corporate responsibility — what was his point with that hypothetical?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Eric Ries"
+    ],
+    "sourceFile": "Eric Ries.txt",
+    "notes": "Auto-generated from chunk 135 (01:38:43). Self-check: The question names a distinctive, concrete hypothetical (weather-control startup) from the excerpt without revealing the actual punchline about private equity and zero-sum extortion, so answering it requires Ries's specific words here rather than generic knowledge."
+  },
+  {
+    "id": "auto-52-what-happened-when-katie-dill-got",
+    "question": "What happened when Katie Dill got a surprise meeting invite about a month into her new leadership role at Airbnb?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Katie Dill"
+    ],
+    "sourceFile": "Failure.txt",
+    "notes": "Auto-generated from chunk 2 (00:03:42). Self-check: The question references a concrete, distinctive detail (a surprise calendar invite one month into her Airbnb tenure) unique to this story, without revealing who the meeting was with or what happened, so it requires Katie Dill's specific account to answer."
+  },
+  {
+    "id": "auto-53-what-did-tom-conrad-say-happened",
+    "question": "What did Tom Conrad say happened when Pets.com shut down—did it go bankrupt like other dot-com busts?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Tom Conrad"
+    ],
+    "sourceFile": "Failure.txt",
+    "notes": "Auto-generated from chunk 24 (00:22:25). Self-check: The question references a specific, distinctive detail (Pets.com's unusual wind-down and returning money to investors) tied to Tom Conrad's own account, without stating the actual answer (that it wasn't bankruptcy and money was returned) in the question itself."
+  },
+  {
+    "id": "auto-54-what-does-gina-gotthilf-mean-by",
+    "question": "What does Gina Gotthilf mean by the 'A side' versus 'B side' of someone's career story?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Gina Gotthilf"
+    ],
+    "sourceFile": "Failure.txt",
+    "notes": "Auto-generated from chunk 52 (00:44:53). Self-check: This question is grounded in Gina Gotthilf's specific framework/terminology ('A side' and 'B side') introduced in this excerpt, which is a distinctive concept she coined rather than something generic. It requires her actual words to answer well, and it doesn't reveal the specific examples or stories she shares, just asks about the concept itself."
+  },
+  {
+    "id": "auto-55-what-example-does-geoffrey-moore-give",
+    "question": "What example does Geoffrey Moore give of people misapplying the 'crossing the chasm' framework to their own beachhead strategy?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Geoffrey Moore"
+    ],
+    "sourceFile": "Geoffrey Moore.txt",
+    "notes": "Auto-generated from chunk 4 (00:04:07). Self-check: This question is grounded in a specific anecdote unique to Geoffrey Moore in this excerpt—his story about someone claiming 'the Fortune 500' as a beachhead segment—and requires his actual words to answer. It doesn't reveal the punchline or content of his response, only pointing to the existence of an illustrative example."
+  },
+  {
+    "id": "auto-56-geoffrey-moore-uses-a-heart-surgery",
+    "question": "Geoffrey Moore uses a heart surgery analogy to explain something about pricing strategy for startups—what's the point he's making?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Geoffrey Moore"
+    ],
+    "sourceFile": "Geoffrey Moore.txt",
+    "notes": "Auto-generated from chunk 38 (00:27:35). Self-check: The question references a distinctive detail (the heart surgery/discount coupon analogy) unique to this excerpt, which requires Moore's actual words to answer, while not giving away the specific conclusion he draws about value pricing and crossing the chasm."
+  },
+  {
+    "id": "auto-57-geoffrey-moore-talks-about-the-bowling",
+    "question": "Geoffrey Moore talks about the bowling alley and tornado phases of tech adoption—why do companies that succeeded in one phase often struggle when the market shifts to the next?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Geoffrey Moore"
+    ],
+    "sourceFile": "Geoffrey Moore.txt",
+    "notes": "Auto-generated from chunk 78 (00:58:17). Self-check: This question is grounded in Moore's distinctive Crossing the Chasm framework (bowling alley, tornado, project vs. solution models) and specifically targets his point about companies clinging to a playbook that worked in a prior market phase. This is a concept uniquely associated with Moore, not generic startup advice other guests would give, and the question doesn't reveal the specific answer (that people get stuck because they were successful with an old playbook)."
+  },
+  {
+    "id": "auto-58-how-did-grant-lee-approach-influencer",
+    "question": "How did Grant Lee approach influencer marketing in Gamma's early growth, and why did he avoid big-name creators?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Grant Lee"
+    ],
+    "sourceFile": "Grant Lee.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question is grounded in Grant Lee's specific micro-influencer strategy and reasoning about avoiding scripted ads, which is a distinctive detail from this excerpt tied to Gamma specifically, not a generic growth topic. It doesn't reveal the actual answer (manual onboarding, micro-influencers, authenticity over scale) within the question itself."
+  },
+  {
+    "id": "auto-59-at-what-arr-did-grant-lee",
+    "question": "At what ARR did Grant Lee decide Gamma needed a rebrand, and why did he think the original brand was holding the company back?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Grant Lee"
+    ],
+    "sourceFile": "Grant Lee.txt",
+    "notes": "Auto-generated from chunk 56 (00:37:39). Self-check: The question references a concrete detail from the excerpt (the ~$10M ARR milestone tied to Grant Lee's rebrand decision for Gamma) that only this transcript segment addresses, and it doesn't reveal the reasoning or outcome, just asks for it."
+  },
+  {
+    "id": "auto-60-what-did-grant-lee-mean-by",
+    "question": "What did Grant Lee mean by \"strong opinions weakly held\" when it comes to validating founder assumptions?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Grant Lee"
+    ],
+    "sourceFile": "Grant Lee.txt",
+    "notes": "Auto-generated from chunk 101 (01:12:01). Self-check: The question references a specific phrase Grant Lee used and asks him to elaborate on it, which requires his exact framing from this excerpt rather than generic startup advice, while not revealing his actual explanation about building conviction through testing with users."
+  },
+  {
+    "id": "auto-61-how-did-hari-srinivasan-s-team",
+    "question": "How did Hari Srinivasan's team respond to the pandemic-era job market imbalance, like hospitality layoffs versus customer service shortages?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Hari Srinivasan"
+    ],
+    "sourceFile": "Hari Srinivasan.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question references a concrete detail (skills-first hiring as a response to the specific hospitality vs. customer service imbalance during COVID) that is distinctive to this excerpt and requires Hari's actual words, without revealing the specific answer (skills-first hiring) in the question itself."
+  },
+  {
+    "id": "auto-62-hari-what-does-linkedin-let-you",
+    "question": "Hari, what does LinkedIn let you attach to individual skills on your profile to make them stand out to recruiters doing skills-first hiring?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Hari Srinivasan"
+    ],
+    "sourceFile": "Hari Srinivasan.txt",
+    "notes": "Auto-generated from chunk 29 (00:23:24). Self-check: The question is grounded in the specific, distinctive detail from this excerpt (attaching credentials like work products and recommendations to specific skills on LinkedIn) and requires Hari's actual words about LinkedIn's product features rather than generic career advice. It doesn't reveal the answer, just asks what feature is being referenced."
+  },
+  {
+    "id": "auto-63-what-motivated-hari-srinivasan-to-create",
+    "question": "What motivated Hari Srinivasan to create his own product management course at LinkedIn?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Hari Srinivasan"
+    ],
+    "sourceFile": "Hari Srinivasan.txt",
+    "notes": "Auto-generated from chunk 56 (00:44:47). Self-check: The question requires details from this excerpt specifically—Hari's personal motivation to test the product as an instructor, his self-doubt, and the internal 'product university' survey feedback about lacking skills—without revealing that story in the question itself."
+  },
+  {
+    "id": "auto-64-what-s-the-favorite-interview-question",
+    "question": "What's the favorite interview question Shishir Mehrotra likes to ask candidates?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Shishir Mehrotra"
+    ],
+    "sourceFile": "Interview Q Compilation.txt",
+    "notes": "Auto-generated from chunk 3 (00:04:31). Self-check: This question is grounded in a specific, distinctive detail from the excerpt (Shishir's named 'teleportation device' interview question) that is uniquely attributable to him, and it doesn't reveal the actual content or punchline of the question itself, so it requires retrieving his actual words to answer."
+  },
+  {
+    "id": "auto-65-what-interview-question-does-figma-s",
+    "question": "What interview question does Figma's CPO Yuhki Yamashita like to ask candidates to reveal how they handle conflicting perspectives?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Yuhki Yamashita"
+    ],
+    "sourceFile": "Interview Q Compilation.txt",
+    "notes": "Auto-generated from chunk 7 (00:08:45). Self-check: This question is grounded in a specific, distinctive detail from the excerpt (Yamashita's named favorite interview question about controversial product decisions) and directly attributes it to him by name and role, so it requires his actual words rather than generic PM interview advice. It doesn't reveal the content of his answer or the storytelling framework he describes, only prompts for it."
+  },
+  {
+    "id": "auto-66-what-s-a-great-interview-question",
+    "question": "What's a great interview question Ben Williams heard a candidate ask him that revealed how well their values aligned with the team?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Ben Williams"
+    ],
+    "sourceFile": "Interview Q Compilation.txt",
+    "notes": "Auto-generated from chunk 12 (00:13:49). Self-check: This targets the specific anecdote Ben Williams shares about being asked a DEI-related question by a candidate, which is distinctive to this excerpt and not something other guests would generically answer. The question doesn't reveal the actual content of the question that was asked, just that it happened."
+  },
+  {
+    "id": "auto-67-what-metric-does-jag-duggal-say",
+    "question": "What metric does Jag Duggal say NewBank uses to decide whether to scale a new product line?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jag Duggal"
+    ],
+    "sourceFile": "Jag Duggal.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question asks for a specific detail (the threshold metric used before scaling new products) that is only answered in this excerpt via Jag Duggal's mention of the Sean Ellis score, without revealing what that answer is."
+  },
+  {
+    "id": "auto-68-jag-duggal-talks-about-pushing-back",
+    "question": "Jag Duggal talks about pushing back on scaling something too early — why does he say it's better to bite the bullet and pivot sooner rather than later?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jag Duggal"
+    ],
+    "sourceFile": "Jag Duggal.txt",
+    "notes": "Auto-generated from chunk 37 (00:33:27). Self-check: The question references Jag Duggal's specific point about pivoting early rather than scaling a product prematurely, and the reasoning behind it (owing the mess later, getting blamed regardless) is unique to this excerpt rather than generic advice any guest could give. It doesn't reveal the actual content of his reasoning, just asks him to explain it."
+  },
+  {
+    "id": "auto-69-what-did-jag-duggal-learn-from",
+    "question": "What did Jag Duggal learn from his Google product management days about launching globally, and how is he applying that to building a bank on a single code base?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jag Duggal"
+    ],
+    "sourceFile": "Jag Duggal.txt",
+    "notes": "Auto-generated from chunk 71 (01:04:52). Self-check: The question names a concrete detail (Google PM requirement, single code base bank ambition) unique to this excerpt and Jag Duggal's specific career background, without stating the actual tension or conclusion he draws, so it requires his exact words to answer well."
+  },
+  {
+    "id": "auto-70-why-does-jason-fried-think-bootstrapping",
+    "question": "Why does Jason Fried think bootstrapping makes entrepreneurs better at running a business compared to raising venture funding?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jason Fried"
+    ],
+    "sourceFile": "Jason Fried.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question is grounded in Fried's specific claim that bootstrapping builds the fundamental skill of making money, and it points to his contrast with the 'go big or go home' funding narrative, which is a distinctive stance rather than generic startup advice. It doesn't reveal the specific phrasing or punchline about 'almost nobody makes it that way,' leaving the actual answer to be surfaced by the search tool."
+  },
+  {
+    "id": "auto-71-why-does-jason-fried-say-making",
+    "question": "Why does Jason Fried say making promises, especially end-of-year deadlines, tends to backfire on his team?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jason Fried"
+    ],
+    "sourceFile": "Jason Fried.txt",
+    "notes": "Auto-generated from chunk 51 (00:38:09). Self-check: The question is grounded in Jason Fried's specific, distinctive claim about promises being 'the downfall of every business' and the particular example of end-of-year deadlines, which is a concrete detail unique to this excerpt rather than generic project management advice. It asks what he said without revealing his actual explanation or reasoning."
+  },
+  {
+    "id": "auto-72-what-s-jason-fried-s-advice",
+    "question": "What's Jason Fried's advice for early-stage founders on keeping costs down and deciding when to hire that first employee?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jason Fried"
+    ],
+    "sourceFile": "Jason Fried.txt",
+    "notes": "Auto-generated from chunk 95 (01:11:53). Self-check: The question targets Fried's specific framework of staying small, controlling only costs, and delaying hiring a second person, which is a distinctive point made in this excerpt rather than generic startup advice."
+  },
+  {
+    "id": "auto-73-what-research-does-jeffrey-pfeffer-cite",
+    "question": "What research does Jeffrey Pfeffer cite to explain why political skill is worth developing, even though people feel uneasy about it?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jeffrey Pfeffer"
+    ],
+    "sourceFile": "Jeffrey Pfeffer.txt",
+    "notes": "Auto-generated from chunk 4 (00:02:40). Self-check: The question points to a concrete detail (Gerald Ferris's political skill scale and associated empirical research) that is distinctive to this excerpt and requires Pfeffer's actual words to answer, while not revealing the specific content of the research findings."
+  },
+  {
+    "id": "auto-74-jeffrey-pfeffer-tells-a-story-about",
+    "question": "Jeffrey Pfeffer tells a story about a guy who spoke at Stanford's View From The Top series and credited his class with launching his career — who was that, and how did his story start out?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jeffrey Pfeffer"
+    ],
+    "sourceFile": "Jeffrey Pfeffer.txt",
+    "notes": "Auto-generated from chunk 35 (00:31:53). Self-check: The question points to a specific named event (View From The Top), a specific guest speaker Pfeffer reached out to, and asks for the beginning of his career story, without stating the punchline (Netscape, Andreessen, later Google success) — this requires the actual transcript excerpt to answer."
+  },
+  {
+    "id": "auto-75-in-jeffrey-pfeffer-s-power-course",
+    "question": "In Jeffrey Pfeffer's power course, what kind of exercise does he give students to make ideas like personal branding actually stick?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jeffrey Pfeffer"
+    ],
+    "sourceFile": "Jeffrey Pfeffer.txt",
+    "notes": "Auto-generated from chunk 65 (00:57:47). Self-check: The question references a concrete detail (Pfeffer's course structure with front-loaded exercises and a coach giving feedback) that is distinctive to this excerpt, not generic advice any guest could give, and it doesn't reveal the punchline about the student's comparative feedback quote."
+  },
+  {
+    "id": "auto-76-according-to-jessica-fain-what-kinds",
+    "question": "According to Jessica Fain, what kinds of questions should PMs be asking executives to better understand what's driving their decisions?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jessica Fain"
+    ],
+    "sourceFile": "Jessica Fain.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question points to a specific, distinctive framework Jessica Fain shares (asking execs about board pressure, their goals/success metrics) that isn't generic advice any guest would give, and it doesn't reveal the actual answer or the specific example questions she gives."
+  },
+  {
+    "id": "auto-77-what-did-jessica-fain-say-about",
+    "question": "What did Jessica Fain say about the state of product craft when she took over Slack's core product team?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jessica Fain"
+    ],
+    "sourceFile": "Jessica Fain.txt",
+    "notes": "Auto-generated from chunk 37 (00:32:33). Self-check: This question is grounded in specific concrete details from the excerpt (Jessica Fain, Slack, chief of staff transition to core product team, channels/emoji/search/messaging, executive feeling about lost product craft mojo) and requires her actual words to answer well, not general knowledge. It asks about the situation without revealing what she actually said or the resolution/story that follows."
+  },
+  {
+    "id": "auto-78-what-s-jessica-fain-s-trick",
+    "question": "What's Jessica Fain's trick for dealing with engineers who have a high need for certainty when you can't promise a project will succeed?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jessica Fain"
+    ],
+    "sourceFile": "Jessica Fain.txt",
+    "notes": "Auto-generated from chunk 73 (01:01:26). Self-check: The question is grounded in a specific detail from the excerpt (the tactic aimed at engineers with high certainty needs) without revealing the actual answer (setting a check-in date to create certainty about the process rather than the outcome), and it names a distinctive scenario unlikely to be generically answered by other guests."
+  },
+  {
+    "id": "auto-79-how-has-jonathan-becker-seen-ai",
+    "question": "How has Jonathan Becker seen AI change the nature of work on his team, like in creative or analytics roles?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jonathan Becker"
+    ],
+    "sourceFile": "Jonathan Becker.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question asks about a concrete claim (AI causing displacement while shifting work to more strategic tasks, and creative mockups being generated faster) that is specific to Jonathan Becker's own experience described in this excerpt, rather than a generic AI question any guest could answer."
+  },
+  {
+    "id": "auto-80-what-does-jonathan-becker-mean-by",
+    "question": "What does Jonathan Becker mean by 'creative' in the context of paid social and programmatic ad campaigns?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jonathan Becker"
+    ],
+    "sourceFile": "Jonathan Becker.txt",
+    "notes": "Auto-generated from chunk 42 (00:32:46). Self-check: The question asks for a definition/framing that is specific to Jonathan Becker's explanation in this excerpt (visual assets powering PPC/programmatic campaigns, examples like TikTok UGC or Facebook motion graphics), which requires his actual words rather than generic ad knowledge, and it doesn't reveal the automation narrative or Google/Facebook punchline that follows."
+  },
+  {
+    "id": "auto-81-how-does-jonathan-becker-say-ai",
+    "question": "How does Jonathan Becker say AI has changed the actual day-to-day work of performance marketers on his team?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Jonathan Becker"
+    ],
+    "sourceFile": "Jonathan Becker.txt",
+    "notes": "Auto-generated from chunk 81 (01:04:06). Self-check: The question targets Becker's specific claim about AI causing role displacement toward more strategic work rather than manual bid/keyword tasks, which requires his exact framing rather than generic AI-marketing commentary."
+  },
+  {
+    "id": "auto-82-julia-schottenstein-s-advice-on-getting",
+    "question": "Julia Schottenstein's advice on getting acquired — how many potential buyers actually matter, and what should founders do to get noticed by them?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Julia Schottenstein"
+    ],
+    "sourceFile": "Julia Schottenstein.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question references specific, distinctive elements from the excerpt (the two to three buyer framework and the strategy of getting noticed) without revealing the actual answer (inflicting strategic pain while staying friendly), requiring the guest's specific words to answer well."
+  },
+  {
+    "id": "auto-83-according-to-julia-schottenstein-which-two",
+    "question": "According to Julia Schottenstein, which two areas does dbt take a firm stance on versus leaving room for ecosystem partners to build solutions?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Julia Schottenstein"
+    ],
+    "sourceFile": "Julia Schottenstein.txt",
+    "notes": "Auto-generated from chunk 23 (00:19:37). Self-check: The question asks for specific named standards mentioned in the excerpt (transformation and semantic standards) that Julia identifies as areas dbt holds its ground, which requires her exact words and framing rather than general knowledge about dbt or the modern data stack."
+  },
+  {
+    "id": "auto-84-julia-schottenstein-mentions-using-a-corp",
+    "question": "Julia Schottenstein mentions using a corp dev team to your advantage when you're not ready to sell yet — what's her advice for how to leverage that relationship?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Julia Schottenstein"
+    ],
+    "sourceFile": "Julia Schottenstein.txt",
+    "notes": "Auto-generated from chunk 48 (00:40:12). Self-check: The question names the specific tactic (leveraging corp dev teams) and guest without revealing the actual advice (pushing for an intro to a product/GM sponsor as a starting point), so it requires this exact excerpt to answer well rather than generic M&A knowledge."
+  },
+  {
+    "id": "auto-85-how-did-kayvon-beykpour-first-meet",
+    "question": "How did Kayvon Beykpour first meet Elon Musk?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Kayvon Beykpour"
+    ],
+    "sourceFile": "Kayvon Beykpour.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This asks for a specific anecdote (the FaceTime meeting with Elon) that only appears in Kayvon Beykpour's own words in this excerpt, and it doesn't reveal the punchline of the story itself."
+  },
+  {
+    "id": "auto-86-kayvon-beykpour-what-did-you-mean",
+    "question": "Kayvon Beykpour, what did you mean by calling Twitter's untouchable norms 'sacred cows,' and how did that idea shape your product roadmap?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Kayvon Beykpour"
+    ],
+    "sourceFile": "Kayvon Beykpour.txt",
+    "notes": "Auto-generated from chunk 37 (00:28:50). Self-check: The question is grounded in Kayvon's specific 'sacred cows' framing and its use as a roadmap-generating device, which is a distinctive concept from this excerpt tied specifically to his experience at Twitter, not something generic or shared by other guests."
+  },
+  {
+    "id": "auto-87-how-did-kayvon-beykpour-personally-onboard",
+    "question": "How did Kayvon Beykpour personally onboard early beta users during Periscope's private beta period, and how did Kobe Bryant end up trying the app?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Kayvon Beykpour"
+    ],
+    "sourceFile": "Kayvon Beykpour.txt",
+    "notes": "Auto-generated from chunk 76 (00:58:18). Self-check: This question is grounded in specific details from the excerpt (personal onboarding via Private Broadcasting feature, the beta size, and the Kobe Bryant/Chris Sacca connection) that only Kayvon could answer this way. It doesn't reveal the actual content of what he said or did during the demo, just asks about the process and the setup, leaving the specifics of his onboarding routine unrevealed."
+  },
+  {
+    "id": "auto-88-how-did-gojek-handle-physical-threats",
+    "question": "How did Gojek handle physical threats and violence against its drivers from local mafias in its early days?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Kevin Aluwi"
+    ],
+    "sourceFile": "Kevin Aluwi.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question asks about a specific, distinctive situation (motorcycle taxi mafia violence against Gojek drivers) that only Kevin Aluwi discusses in this excerpt, requiring his actual account of hiring private security. It doesn't reveal the specific detail that they hired private security firms, leaving that as the actual answer to be discovered."
+  },
+  {
+    "id": "auto-89-what-kind-of-scrappy-offline-workaround",
+    "question": "What kind of scrappy, offline workaround did Gojek use to actually pay its drivers before digital payments were common in Indonesia?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Kevin Aluwi"
+    ],
+    "sourceFile": "Kevin Aluwi.txt",
+    "notes": "Auto-generated from chunk 25 (00:26:51). Self-check: This question is grounded in the specific detail of cash booths/vaults used to pay drivers in early Gojek operations, a distinctive story only Kevin Aluwi tells in this excerpt, and it doesn't reveal the actual answer (cash booths with vaults) within the question itself."
+  },
+  {
+    "id": "auto-90-how-did-kevin-aluwi-s-original",
+    "question": "How did Kevin Aluwi's original career plans in finance play out before he ended up in tech?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Kevin Aluwi"
+    ],
+    "sourceFile": "Kevin Aluwi.txt",
+    "notes": "Auto-generated from chunk 43 (00:44:07). Self-check: The question is grounded in specific concrete details from the excerpt (studying finance starting 2005, graduating into the 2008 crash in 2009, working at a boutique investment bank, underperforming) that are unique to Kevin Aluwi's personal story and not generic industry commentary. It doesn't reveal the outcome (that he left the field feeling he wasn't good at it) or narrate the story itself, just asks about his career trajectory."
+  },
+  {
+    "id": "auto-91-why-did-lane-shackleton-stop-working",
+    "question": "Why did Lane Shackleton stop working as a mountain guide in Alaska?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Lane Shackleton"
+    ],
+    "sourceFile": "Lane Shackleton.txt",
+    "notes": "Auto-generated from chunk 3 (00:05:23). Self-check: This asks about a concrete biographical anecdote unique to Lane Shackleton (his time as a mountain guide, Mount Fairweather trip) that requires his specific transcript words to answer, and it doesn't reveal the crevasse/roped-climbing story details that make up the actual answer."
+  },
+  {
+    "id": "auto-92-how-does-lane-shackleton-approach-noticing",
+    "question": "How does Lane Shackleton approach 'noticing' as a foundation for good product design at Coda, and what's the deal with these rituals dinners he mentioned?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Lane Shackleton"
+    ],
+    "sourceFile": "Lane Shackleton.txt",
+    "notes": "Auto-generated from chunk 37 (00:34:31). Self-check: The question references Shackleton's specific framing of 'noticing' (tied to Tony Fadell) and the distinctive detail of 'rituals dinners' and Shishir's book, which are concrete, unique details from this excerpt that no other guest would be expected to discuss, without revealing the actual content of what he says about them."
+  },
+  {
+    "id": "auto-93-how-did-lane-shackleton-end-up",
+    "question": "How did Lane Shackleton end up being assigned the skippable ads project when he first became a PM at YouTube?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Lane Shackleton"
+    ],
+    "sourceFile": "Lane Shackleton.txt",
+    "notes": "Auto-generated from chunk 61 (00:57:46). Self-check: This question is grounded in a specific, distinctive detail from the excerpt—Lane's origin story of getting assigned skippable ads on his first day as a PM at YouTube—that only he could answer, and it doesn't reveal the actual content of the story (the skip button, incentive alignment, or per-view charging idea)."
+  },
+  {
+    "id": "auto-94-what-two-traits-does-logan-kilpatrick",
+    "question": "What two traits does Logan Kilpatrick say he'd prioritize if he were hiring right now?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Logan Kilpatrick"
+    ],
+    "sourceFile": "Logan Kilpatrick.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question asks for a specific, concrete detail (the two named traits) from this excerpt, which requires Logan Kilpatrick's actual words rather than generic hiring advice, and it doesn't reveal what those traits are."
+  },
+  {
+    "id": "auto-95-before-gpts-existed-what-was-the",
+    "question": "Before GPTs existed, what was the clunky workaround for sharing a custom ChatGPT use case with someone else?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Logan Kilpatrick"
+    ],
+    "sourceFile": "Logan Kilpatrick.txt",
+    "notes": "Auto-generated from chunk 36 (00:26:31). Self-check: This targets the specific 'old workflow' detail Logan describes (sharing a conversation link mid-task) that only this excerpt contains, and it doesn't reveal the GPTs solution itself."
+  },
+  {
+    "id": "auto-96-why-does-adding-more-researchers-to",
+    "question": "Why does adding more researchers to an AI team not scale the same way as adding more engineers, according to Logan Kilpatrick?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Logan Kilpatrick"
+    ],
+    "sourceFile": "Logan Kilpatrick.txt",
+    "notes": "Auto-generated from chunk 62 (00:44:12). Self-check: The question is grounded in a specific, distinctive contrast Logan draws (GPU-constrained researchers vs. engineers writing more code) that only this excerpt addresses, and it doesn't reveal the actual explanation (GPU sharing trade-off), just asks about the comparison."
+  },
+  {
+    "id": "auto-97-why-does-marc-andreessen-think-demographic",
+    "question": "Why does Marc Andreessen think demographic trends make this a lucky moment for AI to arrive, and how does he frame job loss versus task loss?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Marc Andreessen"
+    ],
+    "sourceFile": "Marc Andreessen.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: The question points to two distinctive, concrete claims from this excerpt \timely Ain timing with population decline, and the specific 'task loss vs job loss' framing that are unique to Andreessen's argument here, not generic AI commentary any guest could give. It asks what he said without stating his actual conclusions or phrasing them as answers."
+  },
+  {
+    "id": "auto-98-marc-andreessen-uses-the-executive-secretary",
+    "question": "Marc Andreessen uses the executive-secretary relationship as an analogy for AI's impact on jobs — what point is he making with that example?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Marc Andreessen"
+    ],
+    "sourceFile": "Marc Andreessen.txt",
+    "notes": "Auto-generated from chunk 55 (00:40:38). Self-check: This question is grounded in the specific analogy Andreessen uses (executives and secretaries/admins) and asks for his distinctive framework about jobs vs. tasks changing, which requires his actual words to answer. It doesn't reveal the punchline (that jobs persist while tasks change) within the question itself, so it remains a genuine search query."
+  },
+  {
+    "id": "auto-99-does-marc-andreessen-think-ai-models",
+    "question": "Does Marc Andreessen think AI models themselves are defensible businesses, or is the moat elsewhere?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Marc Andreessen"
+    ],
+    "sourceFile": "Marc Andreessen.txt",
+    "notes": "Auto-generated from chunk 101 (01:10:26). Self-check: The question names a concrete framing (AI model defensibility/moat thought experiment) that Marc Andreessen raises specifically in this excerpt, requiring his actual words rather than generic AI commentary, and it doesn't reveal his answer or reasoning, just the topic he's addressing."
+  },
+  {
+    "id": "auto-100-what-does-the-jolt-acronym-stand",
+    "question": "What does the JOLT acronym stand for in Matt Dixon's sales framework?",
+    "category": "answerable",
+    "expectedGuests": [
+      "Matt Dixon"
+    ],
+    "sourceFile": "Matt Dixon.txt",
+    "notes": "Auto-generated from chunk 0 (00:00:00). Self-check: This directly names a specific proprietary framework (JOLT) and acronym introduced by Matt Dixon in this excerpt, which requires his exact words to answer and isn't something other guests would discuss. The question doesn't reveal what J, O, L, or T stand for, preserving the answer."
   }
 ]

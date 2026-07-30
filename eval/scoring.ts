@@ -88,3 +88,47 @@ export function summarize(results: ItemEvalResult[]): EvalSummary {
     missSimilarities: answerable.filter((r) => !r.hit).map((r) => r.topSimilarity),
   }
 }
+
+// Only produced for items where retrieval actually passed the confidence
+// gate — matching production exactly, which never calls the LLM for a gated
+// query. Items that failed the gate (or are 'unanswerable') keep the base
+// ItemEvalResult shape with no generation/grading fields attached.
+export interface FullEvalResult extends ItemEvalResult {
+  generatedAnswer: string
+  citationCount: number
+  groundednessScore: number
+  qualityScore: number
+}
+
+export function isFullEvalResult(result: ItemEvalResult): result is FullEvalResult {
+  return 'generatedAnswer' in result
+}
+
+export interface FullEvalSummary extends EvalSummary {
+  // Averaged only over items that actually reached the LLM (answerable +
+  // passed the confidence gate) — gated-off items have no score to average.
+  generatedCount: number
+  avgGroundedness: number | null
+  avgQuality: number | null
+  groundednessScores: number[]
+  qualityScores: number[]
+}
+
+function average(nums: number[]): number | null {
+  if (nums.length === 0) return null
+  return nums.reduce((a, b) => a + b, 0) / nums.length
+}
+
+export function summarizeFull(results: (ItemEvalResult | FullEvalResult)[]): FullEvalSummary {
+  const base = summarize(results)
+  const generated = results.filter(isFullEvalResult)
+
+  return {
+    ...base,
+    generatedCount: generated.length,
+    avgGroundedness: average(generated.map((r) => r.groundednessScore)),
+    avgQuality: average(generated.map((r) => r.qualityScore)),
+    groundednessScores: generated.map((r) => r.groundednessScore),
+    qualityScores: generated.map((r) => r.qualityScore),
+  }
+}
