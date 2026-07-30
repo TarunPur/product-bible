@@ -101,6 +101,14 @@ export async function gradeGroundedness(question: string, chunks: RetrievedChunk
   const message = await client.messages.create({
     model: SYNTHESIS_MODEL,
     max_tokens: 10,
+    // Sonnet 5 runs adaptive thinking by default when `thinking` is omitted.
+    // With max_tokens this small, thinking tokens were consuming the entire
+    // budget before any visible text could be emitted (stop_reason:
+    // "max_tokens", content containing only an empty thinking block) —
+    // silently falling back to the default score of 50 below on every such
+    // call. Confirmed happening in production-shaped eval runs, not just a
+    // theoretical risk. This task needs no reasoning, so thinking is off.
+    thinking: { type: 'disabled' },
     system: buildSystemPrompt(hasMultipleGuestPerspectives(chunks)),
     messages: [
       {

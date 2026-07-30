@@ -71,3 +71,33 @@ describe('excerpt caching between synthesis and groundedness calls', () => {
     expect(groundednessSuffix.text).toContain('Answer to grade:\nsome answer')
   })
 })
+
+describe('gradeGroundedness thinking config', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockCreate.mockResolvedValue({ content: [{ type: 'text', text: '85' }] })
+  })
+
+  // Regression test: Sonnet 5 runs adaptive thinking by default when
+  // `thinking` is omitted. With max_tokens: 10, thinking tokens silently
+  // consumed the entire budget before any visible text was emitted,
+  // producing a response with no text block and stop_reason "max_tokens" —
+  // which fell through to the hardcoded default score of 50 below,
+  // regardless of the answer's actual groundedness. Confirmed happening
+  // against the live API, not just a theoretical risk.
+  it('explicitly disables thinking so the small max_tokens budget goes entirely to the score', async () => {
+    const { gradeGroundedness } = await import('@/lib/llm')
+    await gradeGroundedness('what are curiosity loops', sampleChunks, 'some answer')
+
+    const params = mockCreate.mock.calls[0][0]
+    expect(params.thinking).toEqual({ type: 'disabled' })
+  })
+
+  it('falls back to 50 only as a last resort, and the fallback is the known constant, not a live default', async () => {
+    mockCreate.mockResolvedValue({ content: [{ type: 'thinking', thinking: '', signature: 'x' }] })
+    const { gradeGroundedness } = await import('@/lib/llm')
+
+    const score = await gradeGroundedness('what are curiosity loops', sampleChunks, 'some answer')
+    expect(score).toBe(50)
+  })
+})
