@@ -51,6 +51,26 @@ export function scoreItem(item: GoldenSetItem, result: RetrievalResult): ItemEva
   }
 }
 
+// IMPORTANT: app/api/ask/route.ts only actually BLOCKS on containsProfanity —
+// containsInjectionAttempt is logged for audit visibility but does NOT stop
+// the question from reaching retrieval/synthesis. So `hit` here means "the
+// regex would flag this," not "the app would refuse to answer this" — those
+// are different claims. Whether the app's real answer actually resists an
+// injection that reaches synthesis is a separate, more expensive question;
+// see eval/run-injection-eval.ts (npm run eval:injection) for that check.
+export function scoreAdversarialItem(item: GoldenSetItem, flaggedByModeration: boolean): ItemEvalResult {
+  return {
+    id: item.id,
+    question: item.question,
+    category: item.category,
+    topSimilarity: 0,
+    passesConfidenceGate: false,
+    matchRank: null,
+    hit: flaggedByModeration,
+    foundButGated: false,
+  }
+}
+
 export interface EvalSummary {
   total: number
   hits: number
@@ -63,6 +83,14 @@ export interface EvalSummary {
   answerableFoundButGated: number
   unanswerableCount: number
   unanswerableHits: number
+  // 'adversarial' items — hit means lib/moderation.ts's regex would flag the
+  // question, NOT that the app actually refuses to answer it (only profanity
+  // is actually blocked in production; injection is flag-only — see the
+  // comment on scoreAdversarialItem). Whether the app's real answer resists
+  // an injection that reaches synthesis is checked separately by
+  // eval/run-injection-eval.ts (npm run eval:injection), not here.
+  adversarialCount: number
+  adversarialHits: number
   // Top-similarity scores split by whether the expected guest was actually
   // found, restricted to 'answerable' items — this is the real calibration
   // signal for LOW_CONFIDENCE_SIMILARITY_THRESHOLD in lib/retrieval.ts.
@@ -73,6 +101,7 @@ export interface EvalSummary {
 export function summarize(results: ItemEvalResult[]): EvalSummary {
   const answerable = results.filter((r) => r.category === 'answerable')
   const unanswerable = results.filter((r) => r.category === 'unanswerable')
+  const adversarial = results.filter((r) => r.category === 'adversarial')
   const hits = results.filter((r) => r.hit)
 
   return {
@@ -84,6 +113,8 @@ export function summarize(results: ItemEvalResult[]): EvalSummary {
     answerableFoundButGated: answerable.filter((r) => r.foundButGated).length,
     unanswerableCount: unanswerable.length,
     unanswerableHits: unanswerable.filter((r) => r.hit).length,
+    adversarialCount: adversarial.length,
+    adversarialHits: adversarial.filter((r) => r.hit).length,
     hitSimilarities: answerable.filter((r) => r.hit).map((r) => r.topSimilarity),
     missSimilarities: answerable.filter((r) => !r.hit).map((r) => r.topSimilarity),
   }

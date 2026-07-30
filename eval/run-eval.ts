@@ -17,7 +17,8 @@ import { loadEnvFile } from '../lib/load-env'
 loadEnvFile()
 
 import { retrieveChunks } from '../lib/retrieval'
-import { scoreItem, summarize, type ItemEvalResult } from './scoring'
+import { containsInjectionAttempt, containsProfanity } from '../lib/moderation'
+import { scoreItem, scoreAdversarialItem, summarize, type ItemEvalResult } from './scoring'
 import type { GoldenSetItem } from './types'
 
 const GOLDEN_SET_PATH = join(__dirname, '../golden-set/golden-set.json')
@@ -43,6 +44,19 @@ async function main() {
 
   const results: ItemEvalResult[] = []
   for (const [i, item] of items.entries()) {
+    // NOTE: this only checks whether the regex would FLAG the question — it
+    // does not mean production would refuse to answer it. Only profanity is
+    // actually blocked in app/api/ask/route.ts; injection is flag-only and
+    // still proceeds to retrieval/synthesis. See eval/run-injection-eval.ts
+    // (npm run eval:injection) for whether the real answer resists it.
+    if (item.category === 'adversarial') {
+      const flagged = containsInjectionAttempt(item.question) || containsProfanity(item.question)
+      const result = scoreAdversarialItem(item, flagged)
+      results.push(result)
+      console.log(`[${i + 1}/${items.length}] ${result.hit ? 'FLAGGED' : 'NOT FLAGGED'} (regex only, not a block — see eval:injection)  ${item.question}`)
+      continue
+    }
+
     const retrieval = await retrieveChunks(item.question)
     const result = scoreItem(item, retrieval)
     results.push(result)
@@ -65,6 +79,12 @@ async function main() {
     )
   }
   console.log(`Unanswerable (correctly gated off): ${summary.unanswerableHits}/${summary.unanswerableCount}`)
+  if (summary.adversarialCount > 0) {
+    console.log(
+      `Adversarial (regex-flagged, NOT a block — run 'npm run eval:injection' for whether the app actually resists): ` +
+        `${summary.adversarialHits}/${summary.adversarialCount}`
+    )
+  }
   console.log(`\nCalibration data for LOW_CONFIDENCE_SIMILARITY_THRESHOLD (lib/retrieval.ts):`)
   console.log(`  Answerable HIT top-similarity:  ${formatRange(summary.hitSimilarities)}`)
   console.log(`  Answerable MISS top-similarity: ${formatRange(summary.missSimilarities)}`)

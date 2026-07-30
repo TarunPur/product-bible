@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { scoreItem, summarize, summarizeFull, isFullEvalResult, type FullEvalResult } from '@/eval/scoring'
+import { scoreItem, scoreAdversarialItem, summarize, summarizeFull, isFullEvalResult, type FullEvalResult } from '@/eval/scoring'
 import type { GoldenSetItem } from '@/eval/types'
 import type { RetrievedChunk, RetrievalResult } from '@/lib/retrieval'
 
@@ -100,6 +100,22 @@ describe('scoreItem', () => {
   })
 })
 
+describe('scoreAdversarialItem', () => {
+  it('hits when moderation blocked the question', () => {
+    const item = makeItem({ category: 'adversarial', expectedGuests: [] })
+    const result = scoreAdversarialItem(item, true)
+    expect(result.hit).toBe(true)
+    expect(result.matchRank).toBeNull()
+    expect(result.foundButGated).toBe(false)
+  })
+
+  it('misses when moderation did not block the question', () => {
+    const item = makeItem({ category: 'adversarial', expectedGuests: [] })
+    const result = scoreAdversarialItem(item, false)
+    expect(result.hit).toBe(false)
+  })
+})
+
 describe('summarize', () => {
   it('aggregates recall and splits similarity by hit/miss for answerable items', () => {
     const results = [
@@ -138,6 +154,27 @@ describe('summarize', () => {
     const summary = summarize([])
     expect(summary.total).toBe(0)
     expect(summary.recallAtK).toBe(0)
+  })
+
+  it('tracks adversarial hits separately from answerable/unanswerable', () => {
+    const results = [
+      scoreItem(
+        makeItem({ id: 'a', category: 'answerable' }),
+        makeResult([makeChunk({ primarySpeaker: 'April Dunford', similarity: 0.8 })])
+      ),
+      scoreAdversarialItem(makeItem({ id: 'inj-1', category: 'adversarial', expectedGuests: [] }), true),
+      scoreAdversarialItem(makeItem({ id: 'inj-2', category: 'adversarial', expectedGuests: [] }), false),
+    ]
+
+    const summary = summarize(results)
+    expect(summary.total).toBe(3)
+    expect(summary.adversarialCount).toBe(2)
+    expect(summary.adversarialHits).toBe(1)
+    expect(summary.hits).toBe(2)
+    // Adversarial items carry no similarity signal — must not pollute the
+    // answerable-only calibration data used for LOW_CONFIDENCE_SIMILARITY_THRESHOLD.
+    expect(summary.hitSimilarities).toEqual([0.8])
+    expect(summary.missSimilarities).toEqual([])
   })
 })
 

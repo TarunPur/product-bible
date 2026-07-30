@@ -30,8 +30,9 @@ loadEnvFile()
 import { retrieveChunks } from '../lib/retrieval'
 import { createSynthesisStream, gradeGroundedness } from '../lib/llm'
 import { extractValidatedCitations } from '../lib/citations'
+import { containsInjectionAttempt, containsProfanity } from '../lib/moderation'
 import { gradeAnswerQuality } from './llm-grading'
-import { scoreItem, summarizeFull, type ItemEvalResult, type FullEvalResult } from './scoring'
+import { scoreItem, scoreAdversarialItem, summarizeFull, type ItemEvalResult, type FullEvalResult } from './scoring'
 import { pickEvenlySpaced } from '../scripts/generate-golden-set'
 import type { GoldenSetItem } from './types'
 
@@ -90,6 +91,19 @@ async function main() {
     // still scores every item, since that's the real eval.
     if (LIMIT !== Infinity && generatedCount >= LIMIT) break
 
+    // NOTE: this only checks whether the regex would FLAG the question — it
+    // does not mean production would refuse to answer it. Only profanity is
+    // actually blocked in app/api/ask/route.ts; injection is flag-only and
+    // still proceeds to retrieval/synthesis. See eval/run-injection-eval.ts
+    // (npm run eval:injection) for whether the real answer resists it.
+    if (item.category === 'adversarial') {
+      const flagged = containsInjectionAttempt(item.question) || containsProfanity(item.question)
+      const result = scoreAdversarialItem(item, flagged)
+      results.push(result)
+      console.log(`[${i + 1}/${items.length}] ${result.hit ? 'FLAGGED' : 'NOT FLAGGED'} (regex only, not a block — see eval:injection)  ${item.question}`)
+      continue
+    }
+
     const retrieval = await retrieveChunks(item.question)
     const base = scoreItem(item, retrieval)
 
@@ -129,6 +143,12 @@ async function main() {
   console.log(`Retrieval — overall: ${summary.hits}/${summary.total} (${(summary.recallAtK * 100).toFixed(1)}%)`)
   console.log(`Answerable: ${summary.answerableHits}/${summary.answerableCount}`)
   console.log(`Unanswerable (correctly gated off): ${summary.unanswerableHits}/${summary.unanswerableCount}`)
+  if (summary.adversarialCount > 0) {
+    console.log(
+      `Adversarial (regex-flagged, NOT a block — run 'npm run eval:injection' for whether the app actually resists): ` +
+        `${summary.adversarialHits}/${summary.adversarialCount}`
+    )
+  }
   console.log(`\nFull pipeline ran for ${summary.generatedCount} items:`)
   console.log(`  Groundedness: avg=${summary.avgGroundedness?.toFixed(1) ?? 'n/a'}  ${formatRange(summary.groundednessScores)}`)
   console.log(`  Quality:      avg=${summary.avgQuality?.toFixed(1) ?? 'n/a'}  ${formatRange(summary.qualityScores)}`)
