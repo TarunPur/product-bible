@@ -34,14 +34,28 @@ function formatExcerpt(chunk: RetrievedChunk, index: number): string {
   return `Excerpt ${index + 1} [${chunk.primarySpeaker}, ${chunk.startTimestamp}]:\n${chunk.content}`
 }
 
-function buildUserMessage(question: string, chunks: RetrievedChunk[], recentTurns: ConversationTurn[]): string {
-  const excerptBlock = chunks.map(formatExcerpt).join('\n\n')
+// Synthesis and groundedness grading send this same ~5,000-token block
+// back-to-back for a given question. Marking it as a cache breakpoint here
+// lets the groundedness call re-read it at ~10% of input price instead of
+// paying full price twice. This only works because both calls share the
+// same system prompt (see buildSystemPrompt below) — the cache prefix is
+// tools+system+this-block, and changing the system prompt between the two
+// calls would invalidate it.
+function excerptContentBlock(chunks: RetrievedChunk[]) {
+  return {
+    type: 'text' as const,
+    text: chunks.map(formatExcerpt).join('\n\n'),
+    cache_control: { type: 'ephemeral' as const },
+  }
+}
+
+function buildSynthesisSuffix(question: string, recentTurns: ConversationTurn[]): string {
   const historyBlock =
     recentTurns.length > 0
       ? `\n\nRecent conversation for context:\n${recentTurns.map((t) => `Q: ${t.question}\nA: ${t.answer}`).join('\n\n')}`
       : ''
 
-  return `${excerptBlock}${historyBlock}\n\nQuestion: ${question}`
+  return `${historyBlock}\n\nQuestion: ${question}`
 }
 
 // Streams the synthesized answer. Caller consumes text via
@@ -54,15 +68,27 @@ export function createSynthesisStream(question: string, chunks: RetrievedChunk[]
     model: SYNTHESIS_MODEL,
     max_tokens: 1024,
     system: buildSystemPrompt(hasMultipleGuestPerspectives(chunks)),
-    messages: [{ role: 'user', content: buildUserMessage(question, chunks, recentTurns) }],
+    messages: [
+      {
+        role: 'user',
+        content: [excerptContentBlock(chunks), { type: 'text', text: buildSynthesisSuffix(question, recentTurns) }],
+      },
+    ],
   })
 }
 
-const GROUNDEDNESS_SYSTEM_PROMPT = `You grade how well an answer is actually supported by the transcript excerpts it was generated from. Respond with ONLY a single integer from 0 to 100 — no words, no punctuation. 100 means every claim is directly and clearly supported by the excerpts. 0 means the answer is unsupported or contradicted by the excerpts.`
+// Grading instructions live in the user turn (not a separate system prompt)
+// so that both calls share byte-identical system text — required for the
+// excerpt cache above to be read on this call rather than rewritten.
+function buildGroundednessSuffix(question: string, answer: string): string {
+  return `\n\nYou are now grading, not answering. Judge how well the answer below is supported by the excerpts above.
 
-function buildGroundednessPrompt(question: string, chunks: RetrievedChunk[], answer: string): string {
-  const excerptBlock = chunks.map(formatExcerpt).join('\n\n')
-  return `${excerptBlock}\n\nQuestion: ${question}\n\nAnswer to grade:\n${answer}\n\nHow well is this answer grounded in the excerpts above? Respond with only a number 0-100.`
+Question: ${question}
+
+Answer to grade:
+${answer}
+
+Respond with ONLY a single integer from 0 to 100 — no words, no punctuation. 100 means every claim in the answer is directly and clearly supported by the excerpts above. 0 means the answer is unsupported or contradicted by the excerpts.`
 }
 
 // Second, cheap, non-streamed call — the LLM self-graded half of the
@@ -75,8 +101,13 @@ export async function gradeGroundedness(question: string, chunks: RetrievedChunk
   const message = await client.messages.create({
     model: SYNTHESIS_MODEL,
     max_tokens: 10,
-    system: GROUNDEDNESS_SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: buildGroundednessPrompt(question, chunks, answer) }],
+    system: buildSystemPrompt(hasMultipleGuestPerspectives(chunks)),
+    messages: [
+      {
+        role: 'user',
+        content: [excerptContentBlock(chunks), { type: 'text', text: buildGroundednessSuffix(question, answer) }],
+      },
+    ],
   })
 
   const textBlock = message.content.find((block) => block.type === 'text')
