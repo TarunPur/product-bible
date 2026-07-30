@@ -14,7 +14,8 @@
     "golden-set:generate": "tsx scripts/generate-golden-set.ts",
     "eval": "tsx eval/run-eval.ts",
     "eval:full": "tsx eval/run-full-eval.ts",
-    "eval:injection": "tsx eval/run-injection-eval.ts"
+    "eval:injection": "tsx eval/run-injection-eval.ts",
+    "eval:multiturn": "tsx eval/run-multiturn-injection-eval.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.112.5",
