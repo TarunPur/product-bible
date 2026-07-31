@@ -36,6 +36,13 @@ function singleEventStream(event: AskStreamEvent): Response {
 
 type SupabaseAdminClient = ReturnType<typeof createAdminClient>
 
+// null when unflagged; otherwise which check tripped, so query_logs rows are
+// distinguishable for audit without inspecting the answer text. Requires
+// supabase/003_add_flag_reason.sql to be applied — until then this is
+// silently dropped by the insert (logQuery already doesn't check for
+// insert errors), same as any other unknown column.
+type FlagReason = 'profanity' | 'injection_attempt' | null
+
 async function logQuery(
   supabase: SupabaseAdminClient,
   sessionId: string,
@@ -43,7 +50,7 @@ async function logQuery(
   answer: string,
   confidenceBand: ConfidenceBand,
   citations: Citation[],
-  flagged: boolean
+  flagReason: FlagReason
 ) {
   await supabase.from('query_logs').insert({
     session_id: sessionId,
@@ -51,7 +58,8 @@ async function logQuery(
     answer,
     confidence_band: confidenceBand,
     citations,
-    flagged,
+    flagged: flagReason !== null,
+    flag_reason: flagReason,
   })
 }
 
@@ -67,7 +75,7 @@ export async function POST(req: Request) {
 
   // Fast moderation short-circuit — no retrieval, no LLM call.
   if (containsProfanity(question)) {
-    await logQuery(supabase, sessionId, question, PROFANITY_REFUSAL_MESSAGE, 'none', [], true)
+    await logQuery(supabase, sessionId, question, PROFANITY_REFUSAL_MESSAGE, 'none', [], 'profanity')
     return singleEventStream({ type: 'blocked', message: PROFANITY_REFUSAL_MESSAGE })
   }
 
@@ -76,13 +84,14 @@ export async function POST(req: Request) {
   // log row for audit and raises the groundedness bar below before an
   // answer is shown without a disclaimer.
   const injectionAttempted = containsInjectionAttempt(question)
+  const flagReason: FlagReason = injectionAttempted ? 'injection_attempt' : null
 
   // Pre-generation confidence gate (fast, retrieval-similarity based, no
   // LLM call) — see lib/retrieval.ts for why this is a separate signal from
   // the post-generation groundedness grade below.
   const retrieval = await retrieveChunks(question)
   if (!retrieval.passesConfidenceGate) {
-    await logQuery(supabase, sessionId, question, NO_RESULTS_MESSAGE, 'none', [], injectionAttempted)
+    await logQuery(supabase, sessionId, question, NO_RESULTS_MESSAGE, 'none', [], flagReason)
     return singleEventStream({ type: 'none', message: NO_RESULTS_MESSAGE })
   }
 
@@ -102,7 +111,7 @@ export async function POST(req: Request) {
         const disclaimer = confidenceBand === 'low' ? LOW_CONFIDENCE_DISCLAIMER : undefined
         const loggedAnswer = disclaimer ? `${finalText}\n\n${disclaimer}` : finalText
 
-        await logQuery(supabase, sessionId, question, loggedAnswer, confidenceBand, citations, injectionAttempted)
+        await logQuery(supabase, sessionId, question, loggedAnswer, confidenceBand, citations, flagReason)
 
         controller.enqueue(encodeEvent({ type: 'done', citations, confidenceBand, disclaimer }))
         controller.close()

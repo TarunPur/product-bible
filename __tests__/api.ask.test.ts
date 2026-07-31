@@ -78,7 +78,9 @@ describe('POST /api/ask', () => {
     expect(events[0].type).toBe('blocked')
     expect(mockRetrieveChunks).not.toHaveBeenCalled()
     expect(mockCreateSynthesisStream).not.toHaveBeenCalled()
-    expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({ flagged: true, confidence_band: 'none' }))
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ flagged: true, flag_reason: 'profanity', confidence_band: 'none' })
+    )
   })
 
   it('returns "none" when the retrieval confidence gate fails, without calling the LLM', async () => {
@@ -132,7 +134,7 @@ describe('POST /api/ask', () => {
     const doneEvent = events.find((e) => e.type === 'done')
     expect(doneEvent.confidenceBand).toBe('low')
     expect(doneEvent.disclaimer).toBeDefined()
-    expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({ flagged: true }))
+    expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({ flagged: true, flag_reason: 'injection_attempt' }))
   })
 
   it('still reaches "high" confidence for a flagged question when groundedness clears the stricter bar', async () => {
@@ -163,6 +165,8 @@ describe('POST /api/ask', () => {
       expect.objectContaining({
         session_id: 'session-abc',
         confidence_band: 'high',
+        flagged: false,
+        flag_reason: null,
       })
     )
   })
