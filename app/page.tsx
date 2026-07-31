@@ -14,12 +14,52 @@ interface Turn {
 const RECENT_TURNS_LIMIT = 3
 const SESSION_STORAGE_KEY = 'lenny-qa-session-id'
 
+const EXAMPLE_QUESTIONS = [
+  'How do you know if you have product-market fit?',
+  "What's the best way to prep for a PM interview?",
+  'How should an early-stage startup think about pricing?',
+]
+
 function getSessionId(): string {
   const existing = window.localStorage.getItem(SESSION_STORAGE_KEY)
   if (existing) return existing
   const fresh = crypto.randomUUID()
   window.localStorage.setItem(SESSION_STORAGE_KEY, fresh)
   return fresh
+}
+
+// Small, dependency-free renderer for the bit of markdown Claude's answers
+// tend to use (bold, bullet lists) — a full markdown library is more than
+// this narrow case needs.
+function renderInlineMarkdown(text: string): React.ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith('**') && part.endsWith('**') ? (
+      <strong key={i}>{part.slice(2, -2)}</strong>
+    ) : (
+      <span key={i}>{part}</span>
+    )
+  )
+}
+
+function renderAnswer(text: string): React.ReactNode {
+  return text.split(/\n\n+/).map((block, i) => {
+    const lines = block.split('\n').filter((l) => l.trim().length > 0)
+    const isList = lines.length > 0 && lines.every((l) => l.trim().startsWith('- '))
+    if (isList) {
+      return (
+        <ul key={i} className="list-disc pl-5 space-y-1">
+          {lines.map((l, j) => (
+            <li key={j}>{renderInlineMarkdown(l.trim().slice(2))}</li>
+          ))}
+        </ul>
+      )
+    }
+    return (
+      <p key={i} className="whitespace-pre-wrap">
+        {renderInlineMarkdown(block)}
+      </p>
+    )
+  })
 }
 
 export default function Home() {
@@ -103,11 +143,20 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 px-6 py-4">
+      <nav className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
         <span className="text-lg font-bold text-blue-700">Lenny&apos;s Podcast Q&amp;A</span>
+        {turns.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setTurns([])}
+            className="text-xs text-gray-500 hover:text-gray-700 underline shrink-0"
+          >
+            Clear conversation
+          </button>
+        )}
       </nav>
 
-      <section className="max-w-2xl mx-auto px-6 py-10">
+      <section className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
         <p className="text-sm text-gray-500 mb-6">
           This tool tells you what guests have said on the podcast, with attribution. It doesn&apos;t verify claims or tell you who&apos;s
           right.
@@ -119,26 +168,49 @@ export default function Home() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Ask a question about product, design, hiring..."
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 min-w-0 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isAsking}
           />
           <button
             type="submit"
             disabled={isAsking || !question.trim()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 shrink-0"
           >
             Ask
           </button>
         </form>
 
+        {turns.length === 0 && (
+          <div className="border border-dashed border-gray-200 rounded-lg px-4 py-6">
+            <p className="text-sm text-gray-400 mb-3">Try one of these:</p>
+            <div className="flex flex-col gap-2">
+              {EXAMPLE_QUESTIONS.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => setQuestion(q)}
+                  className="text-left text-sm text-blue-700 hover:underline"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col gap-8">
           {turns.map((turn, i) => (
             <div key={i} className="flex flex-col gap-2">
               <p className="font-medium text-gray-900">{turn.question}</p>
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {turn.answer}
+              {turn.confidenceBand === 'low' && (
+                <span className="inline-block w-fit text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">
+                  Low confidence
+                </span>
+              )}
+              <div className="text-gray-700">
+                {renderAnswer(turn.answer)}
                 {turn.status === 'streaming' && <span className="animate-pulse">▍</span>}
-              </p>
+              </div>
               {turn.citations.length > 0 && (
                 <div className="flex flex-col gap-2 mt-2">
                   {turn.citations.map((c, j) => (
