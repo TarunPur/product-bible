@@ -12,6 +12,16 @@ const LOW_CONFIDENCE_DISCLAIMER =
 // Still a placeholder pending golden-set calibration — see the note in lib/retrieval.ts.
 const HIGH_CONFIDENCE_THRESHOLD = 80
 
+// Regex-flagged questions get a stricter bar before an answer is shown
+// without a disclaimer. Not a hard block — containsInjectionAttempt() has
+// known false positives in this podcast's own domain (e.g. "pretend you're
+// a PM" interview-prep questions), so refusing outright would reject
+// legitimate users. Eval data showed correctly-resisted answers to real
+// adversarial questions still average ~98 groundedness, so this bar stays
+// reachable for genuine answers while making it harder for a
+// weakly-grounded, injection-influenced answer to slip through unhedged.
+const HIGH_CONFIDENCE_THRESHOLD_FLAGGED = 92
+
 function eventToLine(event: AskStreamEvent): string {
   return JSON.stringify(event) + '\n'
 }
@@ -61,9 +71,10 @@ export async function POST(req: Request) {
     return singleEventStream({ type: 'blocked', message: PROFANITY_REFUSAL_MESSAGE })
   }
 
-  // Not blocked — structural framing in lib/llm.ts and the citation
-  // validation in lib/citations.ts are the real defense. This just marks
-  // the log row for audit visibility.
+  // Not blocked outright — structural framing in lib/llm.ts and the citation
+  // validation in lib/citations.ts are the primary defense. This flags the
+  // log row for audit and raises the groundedness bar below before an
+  // answer is shown without a disclaimer.
   const injectionAttempted = containsInjectionAttempt(question)
 
   // Pre-generation confidence gate (fast, retrieval-similarity based, no
@@ -86,7 +97,8 @@ export async function POST(req: Request) {
 
         const citations = extractValidatedCitations(finalText, retrieval.chunks)
         const groundedness = await gradeGroundedness(question, retrieval.chunks, finalText)
-        const confidenceBand: ConfidenceBand = groundedness >= HIGH_CONFIDENCE_THRESHOLD ? 'high' : 'low'
+        const requiredThreshold = injectionAttempted ? HIGH_CONFIDENCE_THRESHOLD_FLAGGED : HIGH_CONFIDENCE_THRESHOLD
+        const confidenceBand: ConfidenceBand = groundedness >= requiredThreshold ? 'high' : 'low'
         const disclaimer = confidenceBand === 'low' ? LOW_CONFIDENCE_DISCLAIMER : undefined
         const loggedAnswer = disclaimer ? `${finalText}\n\n${disclaimer}` : finalText
 
