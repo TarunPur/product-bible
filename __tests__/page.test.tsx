@@ -75,4 +75,26 @@ describe('Home page', () => {
     expect(screen.getByText('point one')).toBeInTheDocument()
     expect(screen.getByText('point two')).toBeInTheDocument()
   })
+
+  it('renders a validated citation tag as a numbered marker, and drops an unvalidated one', async () => {
+    mockFetchStream([
+      {
+        type: 'token',
+        text: 'Curiosity loops help you learn fast [Ada Chen Rekhi, 00:04:08]. Some say otherwise [Fabricated Guest, 00:01:00].',
+      },
+      {
+        type: 'done',
+        citations: [{ guestName: 'Ada Chen Rekhi', timestamp: '00:04:08', excerpt: 'curiosity loops are a great framework' }],
+        confidenceBand: 'high',
+      },
+    ])
+    render(<Home />)
+
+    fireEvent.change(screen.getByPlaceholderText(/Ask a question/i), { target: { value: 'what are curiosity loops' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
+
+    const marker = await screen.findByTitle('Ada Chen Rekhi — 00:04:08')
+    expect(marker).toHaveTextContent('1')
+    expect(screen.queryByText(/Fabricated Guest/)).not.toBeInTheDocument()
+  })
 })
