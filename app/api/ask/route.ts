@@ -1,11 +1,14 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import type { SupabaseAdminClient } from '@/lib/supabase-admin'
 import { containsProfanity, containsInjectionAttempt, PROFANITY_REFUSAL_MESSAGE } from '@/lib/moderation'
+import { getClientIp, checkRateLimit } from '@/lib/rate-limit'
 import { retrieveChunks } from '@/lib/retrieval'
 import { createSynthesisStream, gradeGroundedness } from '@/lib/llm'
 import { extractValidatedCitations } from '@/lib/citations'
 import type { AskRequest, AskStreamEvent, Citation, ConfidenceBand } from '@/lib/types'
 
 const NO_RESULTS_MESSAGE = 'Responses do not exist for this question in the podcast archive.'
+const RATE_LIMIT_MESSAGE = "You've asked a lot of questions in a short time. Please wait a bit before asking more."
 const LOW_CONFIDENCE_DISCLAIMER =
   'Response is driven at the best from the conversation, but there may be a slighter variation in the actual response from the speaker.'
 
@@ -33,8 +36,6 @@ function encodeEvent(event: AskStreamEvent): Uint8Array {
 function singleEventStream(event: AskStreamEvent): Response {
   return new Response(eventToLine(event), { headers: { 'Content-Type': 'application/x-ndjson' } })
 }
-
-type SupabaseAdminClient = ReturnType<typeof createAdminClient>
 
 // null when unflagged; otherwise which check tripped, so query_logs rows are
 // distinguishable for audit without inspecting the answer text. Requires
@@ -72,6 +73,14 @@ export async function POST(req: Request) {
   }
 
   const supabase = createAdminClient()
+
+  // Cheapest possible check, first — blocks a flood before it can reach
+  // moderation, retrieval, or any paid API call.
+  const clientIp = getClientIp(req)
+  const allowed = await checkRateLimit(supabase, clientIp)
+  if (!allowed) {
+    return singleEventStream({ type: 'blocked', message: RATE_LIMIT_MESSAGE })
+  }
 
   // Fast moderation short-circuit — no retrieval, no LLM call.
   if (containsProfanity(question)) {

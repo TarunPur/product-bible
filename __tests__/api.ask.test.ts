@@ -8,6 +8,12 @@ vi.mock('@/lib/supabase-admin', () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom })),
 }))
 
+const mockCheckRateLimit = vi.fn()
+vi.mock('@/lib/rate-limit', () => ({
+  getClientIp: vi.fn(() => '127.0.0.1'),
+  checkRateLimit: mockCheckRateLimit,
+}))
+
 const mockRetrieveChunks = vi.fn()
 vi.mock('@/lib/retrieval', async () => {
   const actual = await vi.importActual<typeof import('@/lib/retrieval')>('@/lib/retrieval')
@@ -65,11 +71,23 @@ describe('POST /api/ask', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockInsert.mockResolvedValue({ data: null, error: null })
+    mockCheckRateLimit.mockResolvedValue(true)
   })
 
   it('returns 400 when question or sessionId is missing', async () => {
     const { res } = await askRoute({ question: '' })
     expect(res.status).toBe(400)
+  })
+
+  it('returns "blocked" and skips everything else when the rate limit is exceeded', async () => {
+    mockCheckRateLimit.mockResolvedValue(false)
+    const { events } = await askRoute({ question: 'what are curiosity loops', sessionId: 's1' })
+    expect(events).toHaveLength(1)
+    expect(events[0].type).toBe('blocked')
+    expect(events[0].message).toMatch(/asked a lot of questions/)
+    expect(mockRetrieveChunks).not.toHaveBeenCalled()
+    expect(mockCreateSynthesisStream).not.toHaveBeenCalled()
+    expect(mockInsert).not.toHaveBeenCalled()
   })
 
   it('short-circuits on profanity without calling retrieval or the LLM', async () => {

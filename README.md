@@ -24,6 +24,7 @@ Next.js (App Router) + TypeScript, Supabase (Postgres + pgvector) for storage an
    supabase/schema.sql
    supabase/002_match_chunks_function.sql
    supabase/003_add_flag_reason.sql
+   supabase/004_add_rate_limits.sql
    ```
 4. Run the dev server:
    ```bash
@@ -54,7 +55,8 @@ Next.js (App Router) + TypeScript, Supabase (Postgres + pgvector) for storage an
 - `lib/llm.ts` — Claude synthesis (streamed) and groundedness grading, with prompt caching on the shared excerpt block
 - `lib/citations.ts` — extracts `[Guest, timestamp]` citations from the model's answer and validates each one against the actually-retrieved chunks, dropping anything unverifiable
 - `lib/moderation.ts` — pre-LLM profanity and prompt-injection screening
-- `app/api/ask/route.ts` — the full pipeline: moderation → retrieval/confidence-gate → streamed synthesis → citation validation → groundedness grade → query log
+- `lib/rate-limit.ts` — per-IP request throttling (3/minute, 20/day) so a flood can't run up API costs
+- `app/api/ask/route.ts` — the full pipeline: rate limit → moderation → retrieval/confidence-gate → streamed synthesis → citation validation → groundedness grade → query log
 - `app/page.tsx` — the search UI
 - `eval/`, `golden-set/` — the eval harness and hand-curated + LLM-generated golden question set (137 items as of the last update — answerable, out-of-corpus negatives, multi-guest, near-miss traps, and adversarial/injection cases)
 
