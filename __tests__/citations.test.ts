@@ -52,4 +52,72 @@ describe('extractValidatedCitations', () => {
     const chunks = [makeChunk({})]
     expect(extractValidatedCitations('No citations here.', chunks)).toHaveLength(0)
   })
+
+  it('verifies a timestamp that matches the chunk header, and carries its position', () => {
+    const chunks = [makeChunk({ startTimestamp: '00:04:08', startSeconds: 248, episodeId: 'ep-42' })]
+    const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
+    expect(citation.timestampVerified).toBe(true)
+    expect(citation.startSeconds).toBe(248)
+    expect(citation.episodeId).toBe('ep-42')
+  })
+
+  it('verifies a timestamp appearing inline in the chunk text, using the cited position', () => {
+    const chunks = [
+      makeChunk({
+        startTimestamp: '00:03:00',
+        startSeconds: 180,
+        content: 'Ada Chen Rekhi (00:03:00): setup\nAda Chen Rekhi (00:04:08): curiosity loops',
+      }),
+    ]
+    const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
+    expect(citation.timestampVerified).toBe(true)
+    // 00:04:08, not the chunk's own 00:03:00 start — the panel must open on
+    // the cited moment rather than the top of the chunk.
+    expect(citation.startSeconds).toBe(248)
+  })
+
+  it('flags a citation matched only by guest name, so the UI will not open a transcript on it', () => {
+    const chunks = [makeChunk({ startTimestamp: '00:00:00', startSeconds: 0, content: 'Ada Chen Rekhi (00:00:00): hi' })]
+    const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 01:22:33].', chunks)
+    expect(citation).toBeDefined()
+    expect(citation.timestampVerified).toBe(false)
+    expect(citation.startSeconds).toBe(0)
+  })
+
+  it('prefers the chunk whose timestamp matches over an earlier chunk by the same guest', () => {
+    const chunks = [
+      makeChunk({ id: 'a', episodeId: 'ep-a', startTimestamp: '00:00:00', startSeconds: 0, content: 'Ada Chen Rekhi (00:00:00): intro' }),
+      makeChunk({ id: 'b', episodeId: 'ep-b', startTimestamp: '00:04:08', startSeconds: 248, content: 'Ada Chen Rekhi (00:04:08): the real point' }),
+    ]
+    const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
+    expect(citation.episodeId).toBe('ep-b')
+    expect(citation.timestampVerified).toBe(true)
+  })
+
+  it('starts the excerpt at the cited guest\'s own turn, not at the host question opening the chunk', () => {
+    const chunks = [
+      makeChunk({
+        startTimestamp: '00:03:00',
+        startSeconds: 180,
+        speakerNames: ['Lenny Rachitsky', 'Ada Chen Rekhi'],
+        content:
+          'Lenny Rachitsky (00:03:00): so what is a curiosity loop?\nAda Chen Rekhi (00:04:08): a curiosity loop is how you gather advice fast',
+      }),
+    ]
+    const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
+    expect(citation.excerpt.startsWith('Ada Chen Rekhi (00:04:08)')).toBe(true)
+    expect(citation.excerpt).not.toContain('Lenny Rachitsky')
+  })
+
+  it('falls back to the chunk start when the guest has no labelled turn in the text', () => {
+    const chunks = [makeChunk({ content: 'unlabelled transcript text', speakerNames: ['Ada Chen Rekhi'] })]
+    const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
+    expect(citation.excerpt).toBe('unlabelled transcript text')
+  })
+
+  it('reads a two-part timestamp as MM:SS', () => {
+    const chunks = [makeChunk({ startTimestamp: '00:04:08', startSeconds: 248 })]
+    const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 4:08].', chunks)
+    expect(citation.timestampVerified).toBe(true)
+  })
 })

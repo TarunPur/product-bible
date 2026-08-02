@@ -18,9 +18,29 @@ export interface Citation {
   guestName: string
   timestamp: string
   excerpt: string
+  episodeId: string
+  startSeconds: number
+  // False when the citation could only be matched to a chunk by guest name,
+  // not by the timestamp the model emitted — see lib/citations.ts. The UI
+  // must not offer "open the transcript here" for these, since the chunk
+  // backing them may be a different part of the episode.
+  timestampVerified: boolean
 }
 
 export type ConfidenceBand = 'none' | 'low' | 'high'
+
+// Transcript surrounding a cited moment, served by app/api/source for the
+// source panel. Text is raw transcript straight from the DB, never model-written.
+export interface SourceContextLine {
+  timestamp: string
+  speaker: string
+  text: string
+  isCited: boolean
+}
+
+export interface SourceContextResponse {
+  lines: SourceContextLine[]
+}
 
 export interface ConversationTurn {
   question: string

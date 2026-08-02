@@ -47,6 +47,33 @@ function secondsToTimestamp(totalSeconds: number): string {
   return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':')
 }
 
+// Inside a stored chunk, speaker labels are inline rather than on their own
+// line ("Ada Chen Rekhi (00:04:08): text..."), so HEADER_RE — which is
+// anchored to a whole line — can't read them back. This splits a chunk's
+// content into the speaker turns it was assembled from, for displaying a
+// chunk as a readable transcript rather than one undifferentiated block.
+const INLINE_HEADER_RE = /([A-Z][^()\n]{0,40}?)\s\((\d{1,3}(?::\d{2}){1,2})\):\s*/g
+
+export function parseInlineTurns(content: string): SpeakerTurn[] {
+  const turns: SpeakerTurn[] = []
+  const matches = [...content.matchAll(INLINE_HEADER_RE)]
+
+  matches.forEach((match, i) => {
+    const textStart = match.index + match[0].length
+    const textEnd = i + 1 < matches.length ? matches[i + 1].index : content.length
+    const text = content.slice(textStart, textEnd).trim()
+    if (!text) return
+    turns.push({
+      speaker: match[1].trim(),
+      startTimestamp: match[2],
+      startSeconds: timestampToSeconds(match[2]),
+      text,
+    })
+  })
+
+  return turns
+}
+
 export function isHost(speaker: string): boolean {
   return /lenny/i.test(speaker)
 }

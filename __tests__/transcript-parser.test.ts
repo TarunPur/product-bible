@@ -1,5 +1,38 @@
 import { describe, it, expect } from 'vitest'
-import { parseTranscript, isAdSegment, isHost, isRealGuest, chunkTurns } from '@/lib/transcript-parser'
+import {
+  parseTranscript,
+  isAdSegment,
+  isHost,
+  isRealGuest,
+  chunkTurns,
+  parseInlineTurns,
+} from '@/lib/transcript-parser'
+
+describe('parseInlineTurns', () => {
+  it('splits a stored chunk back into its speaker turns', () => {
+    const turns = parseInlineTurns(
+      'Lenny Rachitsky (00:03:00): what is a curiosity loop? Ada Chen Rekhi (00:04:08): it is how you gather advice'
+    )
+    expect(turns).toHaveLength(2)
+    expect(turns[0]).toMatchObject({ speaker: 'Lenny Rachitsky', startTimestamp: '00:03:00', startSeconds: 180 })
+    expect(turns[0].text).toBe('what is a curiosity loop?')
+    expect(turns[1]).toMatchObject({ speaker: 'Ada Chen Rekhi', startTimestamp: '00:04:08', startSeconds: 248 })
+  })
+
+  it('round-trips content produced by chunkTurns', () => {
+    const chunks = chunkTurns([
+      { speaker: 'Ada Chen Rekhi', startSeconds: 0, startTimestamp: '00:00:00', text: 'first thing' },
+      { speaker: 'Lenny Rachitsky', startSeconds: 12, startTimestamp: '00:00:12', text: 'second thing' },
+    ])
+    const turns = parseInlineTurns(chunks[0].content)
+    expect(turns.map((t) => t.speaker)).toEqual(['Ada Chen Rekhi', 'Lenny Rachitsky'])
+    expect(turns.map((t) => t.text)).toEqual(['first thing', 'second thing'])
+  })
+
+  it('returns nothing for text with no inline speaker labels', () => {
+    expect(parseInlineTurns('just some prose with no labels')).toEqual([])
+  })
+})
 
 describe('parseTranscript', () => {
   it('parses named speaker headers into turns', () => {
