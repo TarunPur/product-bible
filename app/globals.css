@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Warm-neutral editorial palette. Deliberately light-only — this is a
+   reading surface with a specific paper-like character, and a dark variant
+   would need its own type and contrast pass rather than an inversion. The
+   previous prefers-color-scheme block set a near-black body behind a page
+   that always paints itself light, which only ever showed as a flash. */
+@theme {
+  --color-page: #fbfaf8;
+  --color-surface: #ffffff;
+  --color-ink: #171614;
+  --color-ink-soft: #2e2c28;
+  --color-muted: #57544e;
+  --color-faint: #8c8880;
+  --color-fainter: #a8a49b;
+  --color-rule: #e6e3dc;
+  --color-rule-soft: #edeae3;
+  --color-edge: #e0dcd3;
+  --color-wash: #f1efe9;
+  --color-accent: oklch(0.45 0.11 250);
+  --color-accent-wash: oklch(0.94 0.03 250);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-public-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes panel-slide-in {
+  from {
+    transform: translateX(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@utility animate-panel-in {
+  animation: panel-slide-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Small-caps metadata labels ("SOURCES", "THE SHORT ANSWER") recur across
+   the rails and the answer column often enough to name once. */
+@utility label-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-fainter);
 }
