@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Overheard — the Lenny's Podcast operator archive",
+  title: "Playbook — every answer, cited",
   description:
     "Ask a question about product, growth, or leadership and get an attributed answer sourced directly from Lenny's Podcast episodes.",
 };

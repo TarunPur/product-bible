@@ -691,9 +691,9 @@ function Header({ hasTurns, onNewQuestion }: { hasTurns: boolean; onNewQuestion:
       <div className="flex items-center gap-2.5 min-w-0">
         <Wordmark />
         <div className="flex items-baseline gap-2 min-w-0">
-          <span className="text-[15px] font-semibold tracking-[-0.01em]">Overheard</span>
+          <span className="text-[15px] font-semibold tracking-[-0.01em]">Playbook</span>
           <span className="hidden sm:inline text-xs text-faint tracking-[0.02em] truncate">
-            the operator archive
+            every answer, cited
           </span>
         </div>
       </div>
