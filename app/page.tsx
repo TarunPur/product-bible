@@ -257,8 +257,8 @@ function SourceCard({
       onFocus={() => onHover(number)}
       onBlur={() => onHover(null)}
       onClick={onOpen}
-      className={`block w-full text-left rounded-xl p-3.5 bg-surface border transition-all scroll-mt-20 ${
-        isHot ? 'border-accent shadow-[0_0_0_3px_var(--color-accent-wash)]' : 'border-rule'
+      className={`block w-full text-left rounded-xl p-3.5 border transition-all scroll-mt-20 ${
+        isHot ? 'bg-surface border-accent shadow-[0_0_0_3px_var(--color-accent-wash)]' : 'bg-wash border-transparent'
       }`}
     >
       <div className="flex items-baseline justify-between gap-2.5 mb-1.5">
@@ -643,7 +643,7 @@ export default function Home() {
         </article>
 
         {hasSources && (
-          <aside className="w-full xl:w-[340px] shrink-0 xl:sticky xl:top-[60px] px-5 sm:px-8 xl:px-6 py-8 xl:max-h-[calc(100vh-60px)] xl:overflow-auto border-t xl:border-t-0 border-rule">
+          <aside className="w-full xl:w-[340px] shrink-0 xl:sticky xl:top-[60px] px-5 sm:px-8 xl:px-6 pt-8 pb-40 xl:py-8 xl:max-h-[calc(100vh-60px)] xl:overflow-auto border-t xl:border-t-0 border-rule">
             <div className="flex items-baseline justify-between mb-3.5">
               <div className="label-meta">Sources</div>
               <div className="font-mono text-[10px] text-fainter">{activeTurn.citations.length}</div>
