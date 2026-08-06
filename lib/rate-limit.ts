@@ -29,9 +29,12 @@ export function isWithinRateLimit(minuteCount: number, dayCount: number): boolea
 }
 
 // Returns true if the request is allowed (and records it as a hit), false if
-// the caller should be rejected. Requires supabase/004_add_rate_limits.sql —
-// until that's applied, the insert/selects below fail and this throws, same
-// as any other missing-table error.
+// the caller should be rejected. Requires supabase/004_add_rate_limits.sql.
+// Fails CLOSED (rejects) on any Supabase error reading or recording a hit —
+// the Supabase client returns { data: null, error } rather than throwing, so
+// an unread error must never be treated as "0 hits, allow": that's exactly
+// how this silently disabled rate limiting in production once already, when
+// the table didn't exist yet but nothing surfaced it.
 export async function checkRateLimit(supabase: SupabaseAdminClient, ip: string): Promise<boolean> {
   const nowMs = Date.now()
   const minuteAgoIso = new Date(nowMs - MINUTE_MS).toISOString()
@@ -39,13 +42,23 @@ export async function checkRateLimit(supabase: SupabaseAdminClient, ip: string):
 
   await supabase.from('rate_limit_hits').delete().eq('ip', ip).lt('created_at', dayAgoIso)
 
-  const [{ count: minuteCount }, { count: dayCount }] = await Promise.all([
+  const [minuteResult, dayResult] = await Promise.all([
     supabase.from('rate_limit_hits').select('*', { count: 'exact', head: true }).eq('ip', ip).gte('created_at', minuteAgoIso),
     supabase.from('rate_limit_hits').select('*', { count: 'exact', head: true }).eq('ip', ip).gte('created_at', dayAgoIso),
   ])
 
-  if (!isWithinRateLimit(minuteCount ?? 0, dayCount ?? 0)) return false
+  if (minuteResult.error || dayResult.error) {
+    console.error('Rate limit check failed:', minuteResult.error ?? dayResult.error)
+    return false
+  }
 
-  await supabase.from('rate_limit_hits').insert({ ip })
+  if (!isWithinRateLimit(minuteResult.count ?? 0, dayResult.count ?? 0)) return false
+
+  const { error: insertError } = await supabase.from('rate_limit_hits').insert({ ip })
+  if (insertError) {
+    console.error('Rate limit hit-recording failed:', insertError)
+    return false
+  }
+
   return true
 }

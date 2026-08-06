@@ -1,5 +1,34 @@
-import { describe, it, expect } from 'vitest'
-import { getClientIp, isWithinRateLimit } from '@/lib/rate-limit'
+import { describe, it, expect, vi } from 'vitest'
+import { getClientIp, isWithinRateLimit, checkRateLimit } from '@/lib/rate-limit'
+import type { SupabaseAdminClient } from '@/lib/supabase-admin'
+
+function makeFakeSupabase(opts: {
+  minuteCount?: number
+  dayCount?: number
+  minuteError?: unknown
+  dayError?: unknown
+  insertError?: unknown
+}) {
+  const insert = vi.fn().mockResolvedValue({ error: opts.insertError ?? null })
+  let selectCalls = 0
+
+  const from = vi.fn(() => ({
+    delete: () => ({ eq: () => ({ lt: () => Promise.resolve({ error: null }) }) }),
+    select: () => ({
+      eq: () => ({
+        gte: () => {
+          selectCalls += 1
+          return selectCalls === 1
+            ? Promise.resolve({ count: opts.minuteCount ?? 0, error: opts.minuteError ?? null })
+            : Promise.resolve({ count: opts.dayCount ?? 0, error: opts.dayError ?? null })
+        },
+      }),
+    }),
+    insert,
+  }))
+
+  return { from, insert } as unknown as SupabaseAdminClient
+}
 
 describe('getClientIp', () => {
   it('takes the first IP from a comma-separated x-forwarded-for header', () => {
@@ -32,5 +61,39 @@ describe('isWithinRateLimit', () => {
   it('rejects a request at or over the per-day limit, even if the per-minute count is low', () => {
     expect(isWithinRateLimit(0, 20)).toBe(false)
     expect(isWithinRateLimit(1, 25)).toBe(false)
+  })
+})
+
+describe('checkRateLimit', () => {
+  it('allows and records a hit when under both limits', async () => {
+    const supabase = makeFakeSupabase({ minuteCount: 0, dayCount: 0 })
+    await expect(checkRateLimit(supabase, '1.2.3.4')).resolves.toBe(true)
+    expect((supabase as unknown as { insert: ReturnType<typeof vi.fn> }).insert).toHaveBeenCalledWith({ ip: '1.2.3.4' })
+  })
+
+  it('rejects without recording a hit when over the limit', async () => {
+    const supabase = makeFakeSupabase({ minuteCount: 3, dayCount: 0 })
+    await expect(checkRateLimit(supabase, '1.2.3.4')).resolves.toBe(false)
+    expect((supabase as unknown as { insert: ReturnType<typeof vi.fn> }).insert).not.toHaveBeenCalled()
+  })
+
+  it('fails closed (rejects) when the count query errors, instead of treating an unreadable count as zero', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const supabase = makeFakeSupabase({ minuteError: { code: '42P01', message: 'relation "rate_limit_hits" does not exist' } })
+
+    await expect(checkRateLimit(supabase, '1.2.3.4')).resolves.toBe(false)
+    expect(consoleErrorSpy).toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
+  })
+
+  it('fails closed (rejects) when recording the hit fails, even though the counts were under the limit', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const supabase = makeFakeSupabase({ minuteCount: 0, dayCount: 0, insertError: { message: 'insert failed' } })
+
+    await expect(checkRateLimit(supabase, '1.2.3.4')).resolves.toBe(false)
+    expect(consoleErrorSpy).toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
   })
 })
