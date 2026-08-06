@@ -25,6 +25,7 @@ Next.js (App Router) + TypeScript, Supabase (Postgres + pgvector) for storage an
    supabase/002_match_chunks_function.sql
    supabase/003_add_flag_reason.sql
    supabase/004_add_rate_limits.sql
+   supabase/005_enable_rls.sql
    ```
 4. Run the dev server:
    ```bash

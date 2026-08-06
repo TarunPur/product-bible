@@ -188,4 +188,21 @@ describe('POST /api/ask', () => {
       })
     )
   })
+
+  it('sends a generic error message to the client on a pipeline failure, without leaking the raw error', async () => {
+    mockRetrieveChunks.mockResolvedValue({ chunks: [sampleChunk], topSimilarity: 0.6, passesConfidenceGate: true })
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream('An answer [Ada Chen Rekhi, 00:04:08].'))
+    mockGradeGroundedness.mockRejectedValue(new Error('Internal: connection refused at db.internal.example.com'))
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const { events } = await askRoute({ question: 'what are curiosity loops', sessionId: 's1' })
+
+    const errorEvent = events.find((e) => e.type === 'error')
+    expect(errorEvent).toBeDefined()
+    expect(errorEvent.message).toBe('Something went wrong. Please try again.')
+    expect(errorEvent.message).not.toMatch(/internal|db\./i)
+    expect(consoleErrorSpy).toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
+  })
 })

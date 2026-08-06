@@ -125,7 +125,8 @@ export async function POST(req: Request) {
         controller.enqueue(encodeEvent({ type: 'done', citations, confidenceBand, disclaimer }))
         controller.close()
       } catch (err) {
-        controller.enqueue(encodeEvent({ type: 'error', message: err instanceof Error ? err.message : 'Something went wrong.' }))
+        console.error('Ask pipeline error:', err)
+        controller.enqueue(encodeEvent({ type: 'error', message: 'Something went wrong. Please try again.' }))
         controller.close()
       }
     },
