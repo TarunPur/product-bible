@@ -1,26 +1,27 @@
 @import "tailwindcss";
 
-/* Warm-neutral editorial palette. Deliberately light-only — this is a
-   reading surface with a specific paper-like character, and a dark variant
-   would need its own type and contrast pass rather than an inversion. The
-   previous prefers-color-scheme block set a near-black body behind a page
-   that always paints itself light, which only ever showed as a flash. */
+/* Chapter Index palette (see DESIGN.md). Near-black broadcast-studio ground
+   with one amber "tally-light" accent — extended app-wide from the landing
+   state's build. Deliberately dark-only: the prior light warm-editorial
+   tokens are gone, not just overridden, since no surface in the app still
+   depends on them. */
 @theme {
-  --color-page: #fbfaf8;
-  --color-surface: #ffffff;
-  --color-ink: #171614;
-  --color-ink-soft: #2e2c28;
-  --color-muted: #57544e;
-  --color-faint: #8c8880;
-  --color-fainter: #a8a49b;
-  --color-rule: #e6e3dc;
-  --color-rule-soft: #edeae3;
-  --color-edge: #e0dcd3;
-  --color-wash: #f1efe9;
-  --color-accent: oklch(0.45 0.11 250);
-  --color-accent-wash: oklch(0.94 0.03 250);
+  --color-page: #15130f;
+  --color-surface: #1e1b15;
+  --color-ink: #f4efe4;
+  --color-ink-soft: #d8d0c2;
+  --color-muted: #b3a998;
+  --color-faint: #a89882;
+  --color-fainter: #948970;
+  --color-rule: #33302a;
+  --color-rule-soft: #262319;
+  --color-edge: #3a362c;
+  --color-wash: #221f19;
+  --color-accent: #d99a3a;
+  --color-accent-hover: #eab04f;
+  --color-accent-label: #c99a4e;
 
-  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-oswald), sans-serif;
   --font-sans: var(--font-public-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
 }

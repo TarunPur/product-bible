@@ -64,7 +64,7 @@ describe('Home page', () => {
   it('shows example questions when there are no turns, and fills the input on click', () => {
     render(<Home />)
     fireEvent.click(screen.getByText('How do you know if you have product-market fit?'))
-    expect(screen.getByPlaceholderText(/Ask a question/i)).toHaveValue('How do you know if you have product-market fit?')
+    expect(screen.getByPlaceholderText(/what you're trying to figure out/i)).toHaveValue('How do you know if you have product-market fit?')
   })
 
   it('shows a low-confidence badge and lets the user clear the conversation', async () => {
@@ -74,7 +74,7 @@ describe('Home page', () => {
     ])
     render(<Home />)
 
-    fireEvent.change(screen.getByPlaceholderText(/Ask a question/i), { target: { value: 'a borderline question' } })
+    fireEvent.change(screen.getByPlaceholderText(/what you're trying to figure out/i), { target: { value: 'a borderline question' } })
     fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
 
     expect(await screen.findByText('Low confidence')).toBeInTheDocument()
@@ -92,7 +92,7 @@ describe('Home page', () => {
     ])
     render(<Home />)
 
-    fireEvent.change(screen.getByPlaceholderText(/Ask a question/i), { target: { value: 'formatting test' } })
+    fireEvent.change(screen.getByPlaceholderText(/what you're trying to figure out/i), { target: { value: 'formatting test' } })
     fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
 
     expect(await screen.findByText('Bold claim')).toBeInTheDocument()
@@ -110,7 +110,7 @@ describe('Home page', () => {
     ])
     render(<Home />)
 
-    fireEvent.change(screen.getByPlaceholderText(/Ask a question/i), { target: { value: 'what are curiosity loops' } })
+    fireEvent.change(screen.getByPlaceholderText(/what you're trying to figure out/i), { target: { value: 'what are curiosity loops' } })
     fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
 
     const marker = await screen.findByTitle('Ada Chen Rekhi — 00:04:08')
@@ -120,7 +120,7 @@ describe('Home page', () => {
 
   async function askAndWait(events: object[], question = 'what are curiosity loops') {
     render(<Home />)
-    fireEvent.change(screen.getByPlaceholderText(/Ask a question/i), { target: { value: question } })
+    fireEvent.change(screen.getByPlaceholderText(/what you're trying to figure out/i), { target: { value: question } })
     fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
     return screen.findByTitle('Ada Chen Rekhi — 00:04:08')
   }
@@ -178,7 +178,7 @@ describe('Home page', () => {
   it('renders a refusal as its own state rather than as an answer with sources', async () => {
     mockFetchStream([{ type: 'none', message: 'Responses do not exist for this question in the podcast archive.' }])
     render(<Home />)
-    fireEvent.change(screen.getByPlaceholderText(/Ask a question/i), { target: { value: 'something off-topic' } })
+    fireEvent.change(screen.getByPlaceholderText(/what you're trying to figure out/i), { target: { value: 'something off-topic' } })
     fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
 
     expect(await screen.findByText('No sources found')).toBeInTheDocument()

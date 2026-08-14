@@ -40,6 +40,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# impeccable (design-tool trial install, project-local, not part of the app)
+/.claude
+/.impeccable
+
+# supabase CLI local state
+/supabase/.temp
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

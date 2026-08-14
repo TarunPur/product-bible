@@ -166,14 +166,6 @@ function renderAnswer(text: string, ctx: CitationRenderContext): React.ReactNode
   })
 }
 
-function Wordmark() {
-  return (
-    <div className="w-[30px] h-[30px] rounded-[9px] bg-ink text-page grid place-items-center font-serif text-[19px] leading-none pb-0.5 shrink-0">
-      O
-    </div>
-  )
-}
-
 function AnswerSkeleton() {
   return (
     <div className="animate-pulse" aria-label="Searching transcripts">
@@ -193,41 +185,35 @@ function AskForm({
   isAsking,
   onSubmit,
   placeholder,
-  size,
 }: {
   question: string
   setQuestion: (q: string) => void
   isAsking: boolean
   onSubmit: (e: React.FormEvent) => void
   placeholder: string
-  size: 'lg' | 'sm'
 }) {
-  const isLarge = size === 'lg'
   return (
     <form
       onSubmit={onSubmit}
-      className={`flex items-stretch bg-surface border border-edge overflow-hidden ${
-        isLarge
-          ? 'rounded-2xl shadow-[0_1px_2px_rgba(23,22,20,0.04),0_8px_24px_-12px_rgba(23,22,20,0.10)]'
-          : 'rounded-xl shadow-[0_2px_4px_rgba(23,22,20,0.04),0_12px_28px_-14px_rgba(23,22,20,0.16)]'
-      }`}
+      className="flex items-center gap-2.5 bg-surface border border-edge rounded-xl overflow-hidden pl-4 transition-colors focus-within:border-accent"
     >
+      <label htmlFor="cue-input-followup" className="shrink-0 flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] uppercase text-accent-label">
+        <span className="w-[6px] h-[6px] rounded-full bg-accent animate-pulse" aria-hidden="true" />
+        Cue
+      </label>
       <input
+        id="cue-input-followup"
         type="text"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder={placeholder}
         disabled={isAsking}
-        className={`flex-1 min-w-0 bg-transparent border-none outline-none text-ink placeholder:text-fainter ${
-          isLarge ? 'text-[17px] px-5 py-[19px]' : 'text-[15px] px-[18px] py-3.5'
-        }`}
+        className="flex-1 min-w-0 bg-transparent border-none outline-none text-ink placeholder:text-faint text-[15px] py-3.5 font-mono"
       />
       <button
         type="submit"
         disabled={isAsking || !question.trim()}
-        className={`shrink-0 bg-ink text-page font-semibold rounded-lg m-1.5 transition-colors hover:bg-accent disabled:opacity-40 disabled:hover:bg-ink ${
-          isLarge ? 'text-[15px] px-7' : 'text-sm px-5'
-        }`}
+        className="shrink-0 bg-accent text-page font-semibold rounded-lg m-1.5 px-5 py-2 text-sm transition-all hover:bg-accent-hover hover:shadow-[0_0_16px_-4px_var(--color-accent)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-page disabled:opacity-40 disabled:hover:bg-accent disabled:hover:shadow-none"
       >
         Ask
       </button>
@@ -257,12 +243,14 @@ function SourceCard({
       onFocus={() => onHover(number)}
       onBlur={() => onHover(null)}
       onClick={onOpen}
-      className={`block w-full text-left rounded-xl p-3.5 border transition-all scroll-mt-20 ${
-        isHot ? 'bg-surface border-accent shadow-[0_0_0_3px_var(--color-accent-wash)]' : 'bg-wash border-transparent'
+      className={`block w-full text-left rounded-xl p-3.5 border transition-colors scroll-mt-20 ${
+        isHot ? 'bg-surface border-accent' : 'bg-wash border-transparent'
       }`}
     >
       <div className="flex items-baseline justify-between gap-2.5 mb-1.5">
-        <span className="font-mono text-[10px] tracking-[0.06em] text-faint">{number}</span>
+        <span className="font-mono text-[10px] tabular-nums px-1.5 py-0.5 rounded border border-edge text-faint">
+          {String(number).padStart(2, '0')}
+        </span>
         <span className="font-mono text-[10.5px] text-accent">{citation.timestamp}</span>
       </div>
       <div className="text-[13.5px] font-semibold leading-snug tracking-[-0.008em] text-ink mb-1.5">
@@ -313,7 +301,7 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
     <>
       <div
         onClick={onClose}
-        className="fixed inset-0 z-50 bg-ink/28 backdrop-blur-[2px]"
+        className="fixed inset-0 z-50 bg-page/70 backdrop-blur-[2px]"
         aria-hidden="true"
       />
       <div
@@ -333,7 +321,7 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
         </div>
 
         <div className="px-6 pt-6 pb-16">
-          <h2 className="font-serif font-normal text-2xl leading-tight tracking-[-0.015em] mb-1.5">
+          <h2 className="font-semibold text-2xl leading-tight tracking-[-0.015em] text-ink mb-1.5">
             {citation.guestName}
           </h2>
           <div className="font-mono text-[10.5px] tracking-[0.06em] text-faint mb-6">
@@ -354,7 +342,11 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
               {lines.map((line, i) => (
                 <div
                   key={i}
-                  className={`pl-3 -ml-3.5 border-l-2 ${line.isCited ? 'border-accent' : 'border-transparent'}`}
+                  className={
+                    line.isCited
+                      ? 'bg-[color-mix(in_oklch,var(--color-accent)_10%,transparent)] -mx-3 px-3 py-1.5 rounded-lg'
+                      : ''
+                  }
                 >
                   <div className="flex items-baseline gap-2.5 mb-1">
                     <span className="font-mono text-[10.5px] text-accent shrink-0">{line.timestamp}</span>
@@ -476,54 +468,85 @@ export default function Home() {
   const activeTurn = turns[activeIndex]
 
   if (!hasTurns) {
+    let entryNumber = 0
     return (
       <main className="flex-1 flex flex-col bg-page">
         <Header hasTurns={false} onNewQuestion={() => {}} />
-        <section className="flex-1 max-w-[1180px] w-full mx-auto px-5 sm:px-8 pt-12 sm:pt-20 pb-20">
-          <div className="max-w-[780px]">
-            <div className="label-meta mb-5">
-              {ARCHIVE_EPISODES} episodes &nbsp;·&nbsp; indexed through {ARCHIVE_INDEXED_THROUGH}
-            </div>
-            <h1 className="font-serif font-normal text-[clamp(38px,5.4vw,62px)] leading-[1.04] tracking-[-0.022em] mb-5">
-              Ask the people who
-              <br />
-              <em className="italic">actually did the job.</em>
-            </h1>
-            <p className="text-[17px] leading-relaxed text-muted mb-9 max-w-[600px] text-pretty">
-              Every answer is assembled from what guests said on the record — attributed to the guest and the minute.
-              This tool reports what was said; it doesn&apos;t verify claims or decide who&apos;s right.
-            </p>
-          </div>
+        <section className="flex-1 max-w-[900px] w-full mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-20">
+          <h1 className="font-display text-ink text-[clamp(40px,7vw,80px)] leading-[0.98] tracking-[-0.01em] uppercase mb-6 text-balance">
+            Skip to the part
+            <br />
+            that answers you.
+          </h1>
+          <p className="text-[17px] leading-relaxed text-muted mb-10 max-w-[62ch] text-pretty">
+            Ask anything from product-market fit to your first PM interview. Every answer comes only from things
+            real product, design, and growth leaders said on the record — cited to the guest and the minute, like a
+            chapter mark, never guessed.
+          </p>
 
-          <div className="max-w-[820px]">
-            <AskForm
-              question={question}
-              setQuestion={setQuestion}
-              isAsking={isAsking}
-              onSubmit={handleSubmit}
-              placeholder="Ask a question about product, design, hiring..."
-              size="lg"
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center gap-3 bg-surface border border-edge rounded-xl overflow-hidden pl-5 mb-14 transition-colors focus-within:border-accent"
+          >
+            <label htmlFor="cue-input" className="shrink-0 flex items-center gap-2 font-mono text-[10px] tracking-[0.14em] uppercase text-accent-label">
+              <span className="w-[7px] h-[7px] rounded-full bg-accent animate-pulse" aria-hidden="true" />
+              Cue
+            </label>
+            <input
+              id="cue-input"
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="what you're trying to figure out…"
+              disabled={isAsking}
+              className="flex-1 min-w-0 bg-transparent border-none outline-none text-ink placeholder:text-faint text-[17px] py-[19px] font-mono"
             />
-          </div>
+            <button
+              type="submit"
+              disabled={isAsking || !question.trim()}
+              className="shrink-0 bg-accent text-page font-semibold rounded-lg m-1.5 px-7 py-2.5 text-[15px] transition-all hover:bg-accent-hover hover:shadow-[0_0_18px_-3px_var(--color-accent)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-page disabled:opacity-40 disabled:hover:bg-accent disabled:hover:shadow-none"
+            >
+              Ask
+            </button>
+          </form>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-11 mt-14 pt-9 border-t border-rule">
+          <div className="border-t border-rule pt-9">
             {QUESTION_THEMES.map((theme) => (
-              <div key={theme.label}>
-                <div className="label-meta mb-3.5">{theme.label}</div>
+              <div key={theme.label} className="mb-8 last:mb-0">
+                <div className="font-mono text-[10px] tracking-[0.14em] uppercase text-accent-label mb-2.5">
+                  {theme.label}
+                </div>
                 <div className="flex flex-col">
-                  {theme.questions.map((q) => (
-                    <button
-                      key={q}
-                      type="button"
-                      onClick={() => setQuestion(q)}
-                      className="text-left text-[15px] leading-snug text-ink-soft py-2.5 hover:text-accent transition-colors text-pretty"
-                    >
-                      {q}
-                    </button>
-                  ))}
+                  {/* Entries carry the same bordered mono-pill mark real citations use
+                      (see the numbered markers in renderInlineContent below) — no guest
+                      or timestamp is attached because none is verified per example
+                      question, and PRODUCT.md's "don't fabricate citations" principle
+                      rules out inventing one just to look sourced. */}
+                  {theme.questions.map((q) => {
+                    entryNumber += 1
+                    return (
+                      <button
+                        key={q}
+                        type="button"
+                        onClick={() => setQuestion(q)}
+                        className="group flex items-baseline gap-4 text-left py-2.5 border-b border-rule-soft last:border-b-0 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-page"
+                      >
+                        <span className="font-mono text-[10.5px] tabular-nums px-1.5 py-0.5 rounded border border-edge text-muted group-hover:border-accent group-hover:text-accent transition-colors shrink-0">
+                          {String(entryNumber).padStart(2, '0')}
+                        </span>
+                        <span className="text-[15.5px] leading-snug text-ink-soft group-hover:text-ink transition-colors text-pretty">
+                          {q}
+                        </span>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-10 font-mono text-[10.5px] tracking-[0.08em] text-muted">
+            {ARCHIVE_EPISODES} episodes indexed &middot; through {ARCHIVE_INDEXED_THROUGH}
           </div>
         </section>
       </main>
@@ -593,7 +616,7 @@ export default function Home() {
                   setActiveIndex(i)
                   setOpenCitation(null)
                 }}
-                className={`shrink-0 max-w-[220px] truncate text-[12.5px] px-3 py-1.5 rounded-full border transition-colors ${
+                className={`shrink-0 max-w-[220px] truncate text-[12.5px] px-3 py-1.5 rounded-lg border transition-colors ${
                   i === activeIndex ? 'bg-ink text-page border-ink' : 'bg-transparent text-muted border-edge'
                 }`}
               >
@@ -605,7 +628,7 @@ export default function Home() {
 
         <article className="flex-1 min-w-0 w-full bg-surface xl:border-x border-rule px-5 sm:px-8 py-8 pb-40 min-h-screen">
           <div className="max-w-[720px] mx-auto">
-            <h1 className="font-serif font-normal text-[clamp(28px,3.6vw,42px)] leading-[1.1] tracking-[-0.02em] mb-3.5 text-pretty">
+            <h1 className="font-display text-[clamp(28px,3.6vw,42px)] leading-[1.1] tracking-[-0.01em] text-ink mb-3.5 text-pretty">
               {activeTurn.question}
             </h1>
 
@@ -672,7 +695,6 @@ export default function Home() {
             isAsking={isAsking}
             onSubmit={handleSubmit}
             placeholder="Ask a follow-up, or start a new thread…"
-            size="sm"
           />
           <p className="text-[11px] text-fainter text-center mt-2">
             Answers are attributed to guests, not verified.
@@ -687,12 +709,14 @@ export default function Home() {
 
 function Header({ hasTurns, onNewQuestion }: { hasTurns: boolean; onNewQuestion: () => void }) {
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-between gap-6 px-5 sm:px-8 py-3.5 bg-page/86 backdrop-blur-md border-b border-rule">
+    <header className="sticky top-0 z-40 flex items-center justify-between gap-6 px-5 sm:px-8 py-4 bg-page/92 backdrop-blur-md border-b border-rule">
       <div className="flex items-center gap-2.5 min-w-0">
-        <Wordmark />
-        <div className="flex items-baseline gap-2 min-w-0">
-          <span className="text-[15px] font-semibold tracking-[-0.01em]">Playbook</span>
-          <span className="hidden sm:inline text-xs text-faint tracking-[0.02em] truncate">
+        <div className="w-[28px] h-[28px] rounded-[7px] bg-accent text-page grid place-items-center font-display text-[15px] leading-none font-bold shrink-0">
+          P
+        </div>
+        <div className="flex items-baseline gap-2.5 min-w-0">
+          <span className="text-[15px] font-semibold tracking-[-0.01em] text-ink">Playbook</span>
+          <span className="hidden sm:inline font-mono text-[10px] tracking-[0.1em] uppercase text-accent-label truncate">
             every answer, cited
           </span>
         </div>
@@ -717,13 +741,13 @@ function Header({ hasTurns, onNewQuestion }: { hasTurns: boolean; onNewQuestion:
 function CoverageNote({ band, disclaimer }: { band: ConfidenceBand | null; disclaimer?: string }) {
   if (band === 'low') {
     return (
-      <div className="flex items-start gap-2.5 px-3.5 py-3 bg-amber-50 border border-amber-200 rounded-lg mb-6">
-        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-[7px] shrink-0" />
+      <div className="flex items-start gap-2.5 px-3.5 py-3 bg-[color-mix(in_oklch,var(--color-accent)_12%,var(--color-page))] border border-[color-mix(in_oklch,var(--color-accent)_35%,var(--color-page))] rounded-lg mb-6">
+        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-[7px] shrink-0" />
         <div>
-          <span className="text-[11.5px] font-semibold uppercase tracking-[0.03em] text-amber-800">
+          <span className="text-[11.5px] font-semibold uppercase tracking-[0.03em] text-accent">
             Low confidence
           </span>
-          {disclaimer && <p className="mt-1 text-[12.5px] leading-relaxed text-amber-900">{disclaimer}</p>}
+          {disclaimer && <p className="mt-1 text-[12.5px] leading-relaxed text-ink-soft">{disclaimer}</p>}
         </div>
       </div>
     )
@@ -732,8 +756,8 @@ function CoverageNote({ band, disclaimer }: { band: ConfidenceBand | null; discl
   if (band !== 'high') return null
 
   return (
-    <div className="flex items-start gap-2.5 px-3.5 py-3 bg-page border border-rule rounded-lg mb-6">
-      <span className="w-1.5 h-1.5 rounded-full bg-[oklch(0.52_0.09_160)] mt-[7px] shrink-0" />
+    <div className="flex items-start gap-2.5 px-3.5 py-3 bg-surface border border-rule rounded-lg mb-6">
+      <span className="w-1.5 h-1.5 rounded-full bg-ink-soft mt-[7px] shrink-0" />
       <p className="text-[12.5px] leading-relaxed text-muted">
         Well covered. Every claim below resolves to a timestamped passage in the archive.
       </p>
