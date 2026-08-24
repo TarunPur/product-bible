@@ -45,11 +45,11 @@ Name: **Playbook**. Tagline: **"every answer, cited."** Both are current and con
 ## Evidence on Hand
 
 - Real example questions already live in `app/page.tsx`'s `QUESTION_THEMES` (3 themes × 3 questions each): Product & strategy, Hiring & teams, Growth & positioning — e.g. "How do you know if you have product-market fit?", "What's the best way to prep for a PM interview?", "How do you find the right positioning for a product?".
-- Real headline/subhead copy already live: "Ask the people who *actually did the job.*" / "Every answer is assembled from what guests said on the record — attributed to the guest and the minute. This tool reports what was said; it doesn't verify claims or decide who's right."
+- Real headline/subhead copy already live: "Skip to the part that answers you." / "Ask anything from product-market fit to your first PM interview. Every answer comes only from things real product, design, and growth leaders said on the record — cited to the guest and the minute, like a chapter mark, never guessed." — replaced the earlier "Ask the people who actually did the job" copy as part of the Chapter Index redesign (`6d25eee`, 2026-08-14, live in production).
 - Real stat: `ARCHIVE_EPISODES = 329`, `ARCHIVE_INDEXED_THROUGH = 'Jul 2026'`.
 - Real guest names surfaced via live citations in prior sessions: April Dunford, Nikita Bier, Jen Abel, Sarah Tavel, Nikhyl Singhal, and others across the 329-episode corpus.
-- Existing live visual system (code evidence, not yet a confirmed binding constraint for this exercise): warm-neutral editorial palette in `app/globals.css` (`--color-page #fbfaf8`, `--color-ink #171614`, accent `oklch(0.45 0.11 250)`), Newsreader (serif) / Public Sans (sans) / JetBrains Mono (mono) via `next/font`, light-only, no dark mode.
-- A prior hand-built comparison artifact exists (Tarun's own take on this landing screen, grounded in the real tokens above and real copy, using one verbatim April Dunford quote as its one added element) — the baseline this exercise is being compared against, not a spec to copy.
+- **Current live visual system, "Chapter Index"** (`DESIGN.md` is the source of truth for tokens — read it directly rather than re-deriving from this file): near-black dark ground (`--color-page #15130f`, `--color-ink #f4efe4`), single amber accent (`#d99a3a`), Oswald (display) / Public Sans (body) / JetBrains Mono (structural/numeric) via `next/font`, dark-only, no light mode. This fully replaced the earlier warm-neutral "Overheard" palette (`#fbfaf8`/Newsreader) — don't reference that system as current.
+- The pre-Chapter-Index "Overheard" hand-built comparison artifact and its standalone HTML reference file were deleted from the repo (`6d25eee`) since they described a palette the app no longer uses.
 - Absences future work must not fabricate: no testimonials, no customer logos, no press, no pricing/plans (the app is free/unauthenticated), no audio.
 
 ## Product Principles
