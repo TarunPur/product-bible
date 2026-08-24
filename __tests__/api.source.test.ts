@@ -35,6 +35,12 @@ vi.mock('@/lib/supabase-admin', () => ({
   createAdminClient: vi.fn(() => ({ from: vi.fn(() => makeQuery()) })),
 }))
 
+const mockCheckRateLimit = vi.fn()
+vi.mock('@/lib/rate-limit', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/rate-limit')>('@/lib/rate-limit')
+  return { ...actual, checkRateLimit: mockCheckRateLimit }
+})
+
 async function sourceRoute(body: unknown) {
   const { POST } = await import('@/app/api/source/route')
   const res = await POST(new Request('http://localhost/api/source', { method: 'POST', body: JSON.stringify(body) }))
@@ -44,9 +50,27 @@ async function sourceRoute(body: unknown) {
 beforeEach(() => {
   rows = []
   for (const key of Object.keys(captured)) delete captured[key]
+  mockCheckRateLimit.mockReset()
+  mockCheckRateLimit.mockResolvedValue(true)
 })
 
 describe('POST /api/source', () => {
+  it('rejects with 429 and never queries chunks when the rate limit is exceeded', async () => {
+    mockCheckRateLimit.mockResolvedValue(false)
+    const { status } = await sourceRoute({ episodeId: 'ep-1', startSeconds: 60 })
+    expect(status).toBe(429)
+    expect(captured['eq:episode_id']).toBeUndefined()
+  })
+
+  it('uses a source-prefixed rate-limit key on a looser tier than /api/ask', async () => {
+    await sourceRoute({ episodeId: 'ep-1', startSeconds: 60 })
+    expect(mockCheckRateLimit).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(String),
+      expect.objectContaining({ key: expect.stringMatching(/^source:/), perMinute: 20, perDay: 300 })
+    )
+  })
+
   it('rejects a request without an episodeId or a numeric startSeconds', async () => {
     expect((await sourceRoute({ startSeconds: 100 })).status).toBe(400)
     expect((await sourceRoute({ episodeId: 'ep-1' })).status).toBe(400)

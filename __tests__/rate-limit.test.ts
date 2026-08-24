@@ -96,4 +96,16 @@ describe('checkRateLimit', () => {
 
     consoleErrorSpy.mockRestore()
   })
+
+  it('honors a custom perMinute/perDay tier instead of the default /api/ask limits', async () => {
+    // Under the default 3/min limit but still allowed here under a looser tier.
+    const supabase = makeFakeSupabase({ minuteCount: 5, dayCount: 5 })
+    await expect(checkRateLimit(supabase, '1.2.3.4', { perMinute: 20, perDay: 300 })).resolves.toBe(true)
+  })
+
+  it('records the hit under a prefixed key when one is given, not the raw IP', async () => {
+    const supabase = makeFakeSupabase({ minuteCount: 0, dayCount: 0 })
+    await checkRateLimit(supabase, '1.2.3.4', { key: 'source:1.2.3.4' })
+    expect((supabase as unknown as { insert: ReturnType<typeof vi.fn> }).insert).toHaveBeenCalledWith({ ip: 'source:1.2.3.4' })
+  })
 })

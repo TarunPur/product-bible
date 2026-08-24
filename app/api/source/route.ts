@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { parseInlineTurns } from '@/lib/transcript-parser'
+import { getClientIp, checkRateLimit, GENEROUS_PER_MINUTE_LIMIT, GENEROUS_PER_DAY_LIMIT } from '@/lib/rate-limit'
 import type { SourceContextLine, SourceContextResponse } from '@/lib/types'
 
 // How much transcript to show either side of a cited moment. Deliberately
@@ -31,6 +32,20 @@ export async function POST(req: Request) {
   }
 
   const supabase = createAdminClient()
+
+  // No per-request $ cost here (a plain Supabase read, no LLM/embedding
+  // call), so a looser tier than /api/ask's — this only needs to bound bulk
+  // scraping of the transcript archive, not control API spend.
+  const clientIp = getClientIp(req)
+  const allowed = await checkRateLimit(supabase, clientIp, {
+    key: `source:${clientIp}`,
+    perMinute: GENEROUS_PER_MINUTE_LIMIT,
+    perDay: GENEROUS_PER_DAY_LIMIT,
+  })
+  if (!allowed) {
+    return Response.json({ error: 'Too many requests. Please slow down.' }, { status: 429 })
+  }
+
   const { data, error } = await supabase
     .from('chunks')
     .select('start_timestamp, start_seconds, primary_speaker, content')
