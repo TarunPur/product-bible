@@ -23,7 +23,7 @@
     "@anthropic-ai/sdk": "^0.112.5",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.110.8",
-    "next": "16.2.6",
+    "next": "16.4.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -36,7 +36,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.4",
     "eslint": "^9",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.4.6",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
