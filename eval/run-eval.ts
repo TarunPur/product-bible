@@ -3,8 +3,9 @@
  * retrieval to measure recall and gather real similarity-score data for
  * calibrating LOW_CONFIDENCE_SIMILARITY_THRESHOLD in lib/retrieval.ts.
  *
- * This only exercises retrieval (Voyage embeddings + Supabase vector search)
- * — no Claude call, so it works while ANTHROPIC_API_KEY is unavailable.
+ * Exercises query planning (one small Claude call each, well under $0.001) and
+ * retrieval. Off-topic questions are now declined by the answering model, not
+ * at retrieval, so 'unanswerable' items only count as declined in eval:natural.
  *
  * Usage: npm run eval
  * Requires NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, VOYAGE_API_KEY in .env.local.
@@ -16,7 +17,7 @@ import { loadEnvFile } from '../lib/load-env'
 
 loadEnvFile()
 
-import { retrieveChunks } from '../lib/retrieval'
+import { planAndRetrieveAll } from './pipeline'
 import { containsInjectionAttempt, containsProfanity } from '../lib/moderation'
 import { scoreItem, scoreAdversarialItem, summarize, type ItemEvalResult } from './scoring'
 import type { GoldenSetItem } from './types'
@@ -42,6 +43,10 @@ async function main() {
   const items: GoldenSetItem[] = JSON.parse(readFileSync(GOLDEN_SET_PATH, 'utf-8'))
   console.log(`Running ${items.length} golden-set questions against live retrieval...\n`)
 
+  const searched = items.filter((item) => item.category !== 'adversarial')
+  const planned = await planAndRetrieveAll(searched.map((item) => item.question))
+  const retrievalFor = new Map(searched.map((item, i) => [item.id, planned[i].retrieval]))
+
   const results: ItemEvalResult[] = []
   for (const [i, item] of items.entries()) {
     // NOTE: this only checks whether the regex would FLAG the question — it
@@ -57,7 +62,7 @@ async function main() {
       continue
     }
 
-    const retrieval = await retrieveChunks(item.question)
+    const retrieval = retrievalFor.get(item.id)!
     const result = scoreItem(item, retrieval)
     results.push(result)
 

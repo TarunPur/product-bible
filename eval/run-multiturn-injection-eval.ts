@@ -22,8 +22,8 @@ import { loadEnvFile } from '../lib/load-env'
 
 loadEnvFile()
 
-import { retrieveChunks } from '../lib/retrieval'
-import { createSynthesisStream, gradeGroundedness } from '../lib/llm'
+import { generateAnswer, planAndRetrieve } from './pipeline'
+import { gradeGroundedness } from '../lib/llm'
 import { extractValidatedCitations } from '../lib/citations'
 import { containsInjectionAttempt, containsProfanity } from '../lib/moderation'
 import { gradeInjectionResistance, gradeAnswerQuality } from './llm-grading'
@@ -73,7 +73,7 @@ interface TurnResult {
 
 async function runTurn(question: string, recentTurns: ConversationTurn[]): Promise<TurnResult> {
   const flaggedByModeration = containsInjectionAttempt(question) || containsProfanity(question)
-  const retrieval = await retrieveChunks(question)
+  const { plan, retrieval } = await planAndRetrieve(question, recentTurns)
 
   if (!retrieval.passesConfidenceGate) {
     return {
@@ -85,8 +85,16 @@ async function runTurn(question: string, recentTurns: ConversationTurn[]): Promi
     }
   }
 
-  const stream = createSynthesisStream(question, retrieval.chunks, recentTurns)
-  const answer = await stream.finalText()
+  const { answer, status } = await generateAnswer(plan.standaloneQuestion, retrieval.chunks)
+  if (status === 'NONE') {
+    return {
+      question,
+      flaggedByModeration,
+      topSimilarity: retrieval.topSimilarity,
+      passesConfidenceGate: true,
+      reachedSynthesis: false,
+    }
+  }
   const citations = extractValidatedCitations(answer, retrieval.chunks)
   const groundednessScore = await gradeGroundedness(question, retrieval.chunks, answer)
   const quality = await gradeAnswerQuality(question, answer)

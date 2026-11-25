@@ -1,0 +1,452 @@
+{
+ "How do you know if you have product-market fit?": [
+  {
+   "id": "dcb06df8-b52b-4fb7-9e2d-0ded47d91cf4",
+   "similarity": 0.6768
+  },
+  {
+   "id": "ec6dd510-1804-4ab5-9f37-1eaa136ecb66",
+   "similarity": 0.6647
+  },
+  {
+   "id": "1e88f7e4-63b4-409d-a93a-c6b6a712575d",
+   "similarity": 0.6528
+  },
+  {
+   "id": "acd1f2e5-564b-4f9e-8102-b1f218fe7eb9",
+   "similarity": 0.6523
+  },
+  {
+   "id": "f38c1ce9-656c-4ef7-9f41-e060ca114a35",
+   "similarity": 0.6521
+  },
+  {
+   "id": "7f864e79-5e2e-458a-a24d-457c774cf97a",
+   "similarity": 0.6501
+  },
+  {
+   "id": "79e3a8cc-87fa-4e7f-af01-f9ca033e0b76",
+   "similarity": 0.6496
+  },
+  {
+   "id": "7e23551f-0923-4e45-a1bc-937b3b04e121",
+   "similarity": 0.6471
+  },
+  {
+   "id": "d75a8f9f-c451-496a-8699-c397490c1419",
+   "similarity": 0.6436
+  },
+  {
+   "id": "3151d462-1ec9-4b58-9482-7e7af877ef69",
+   "similarity": 0.6359
+  },
+  {
+   "id": "f4c87a05-7e2e-4bd8-85bf-adf5c257270b",
+   "similarity": 0.6326
+  },
+  {
+   "id": "40b925bb-5dcf-480a-8dae-97f54d8761d2",
+   "similarity": 0.6317
+  }
+ ],
+ "When should a team kill a bet instead of doubling down?": [
+  {
+   "id": "27389cb9-d839-4649-af84-f15a36b56b02",
+   "similarity": 0.5684
+  },
+  {
+   "id": "8db8f0a6-222a-42c8-9fd3-a170fb71ff7f",
+   "similarity": 0.5488
+  },
+  {
+   "id": "64922e44-f564-4b56-8f7f-59213b180dc2",
+   "similarity": 0.53
+  },
+  {
+   "id": "e3a9d6b0-9a98-4522-b7fc-8a140ce523d1",
+   "similarity": 0.523
+  },
+  {
+   "id": "20a3e5fc-1b14-4cbc-907b-4e1d73e17b77",
+   "similarity": 0.523
+  },
+  {
+   "id": "cd1e4c4b-b9a8-493d-96b8-768dd8425ccf",
+   "similarity": 0.5187
+  },
+  {
+   "id": "1886f852-3227-45fc-9c27-039add61c586",
+   "similarity": 0.5104
+  },
+  {
+   "id": "28bd2952-f661-48c8-8607-ddf02374fe96",
+   "similarity": 0.4705
+  },
+  {
+   "id": "3717890d-8ce1-4426-a996-02b585846c48",
+   "similarity": 0.4517
+  },
+  {
+   "id": "c070b185-ac13-4b6e-9f37-91808a1ae8ac",
+   "similarity": 0.4469
+  },
+  {
+   "id": "04847edd-d09b-4c0a-894f-81c516c5f0c5",
+   "similarity": 0.4174
+  },
+  {
+   "id": "baabc2d9-c1ee-41cf-b141-960873fb5feb",
+   "similarity": 0.4174
+  }
+ ],
+ "How should an early-stage startup think about pricing?": [
+  {
+   "id": "68b35842-c6b8-4f1e-8fa6-b91beecb3540",
+   "similarity": 0.6236
+  },
+  {
+   "id": "57f81386-74c1-4a5e-aff2-744bab6b2a81",
+   "similarity": 0.6201
+  },
+  {
+   "id": "852671d0-0886-462d-ba12-d2ef2f542ecb",
+   "similarity": 0.6176
+  },
+  {
+   "id": "378722e3-fe7b-4d34-8e53-659eec101efe",
+   "similarity": 0.6159
+  },
+  {
+   "id": "cb2b352f-8ca7-4b4b-af4f-aa889faa538c",
+   "similarity": 0.6138
+  },
+  {
+   "id": "ccc00a77-9944-4abf-ab90-afee1de086d7",
+   "similarity": 0.6112
+  },
+  {
+   "id": "d00eeb86-10ba-4e1b-b92e-15345c253c72",
+   "similarity": 0.6087
+  },
+  {
+   "id": "889836a3-e146-4724-99e2-87a22b93c3bf",
+   "similarity": 0.6059
+  },
+  {
+   "id": "18b529f1-a927-4224-b0b9-a4c3e633f66c",
+   "similarity": 0.6046
+  },
+  {
+   "id": "780aec9f-e1ab-4a91-a918-4618f9dd46a7",
+   "similarity": 0.6042
+  },
+  {
+   "id": "eca77cee-cfcd-4ecf-849a-dd7b03c90d05",
+   "similarity": 0.6021
+  },
+  {
+   "id": "7ed708f3-6764-44c5-9cd1-20c425da35fd",
+   "similarity": 0.5997
+  }
+ ],
+ "What's the best way to prep for a PM interview?": [
+  {
+   "id": "45349f6b-59e1-47c2-9b07-02fc5f85745e",
+   "similarity": 0.6971
+  },
+  {
+   "id": "03cf55aa-58bf-47a9-abcc-b6341dbe5615",
+   "similarity": 0.68
+  },
+  {
+   "id": "27c9ca44-b1ed-428b-9f2b-7112d07d0b39",
+   "similarity": 0.6776
+  },
+  {
+   "id": "640d1dee-6c95-467e-8c15-9aca4ecc5286",
+   "similarity": 0.673
+  },
+  {
+   "id": "69815872-8dcc-4a44-b8c8-810f56db1d44",
+   "similarity": 0.6721
+  },
+  {
+   "id": "4dbea806-7439-4e27-a56e-f5921cfcb640",
+   "similarity": 0.6617
+  },
+  {
+   "id": "d9914db9-5fe8-46e4-80d0-e15ceaab8970",
+   "similarity": 0.6415
+  },
+  {
+   "id": "40b16acd-11db-4e8d-b627-7bd4b2b81b76",
+   "similarity": 0.6331
+  },
+  {
+   "id": "10833926-7fb5-40e8-8c51-26575c133769",
+   "similarity": 0.6328
+  },
+  {
+   "id": "7c2c5c9b-542c-4ac3-9017-e91f2554dd1c",
+   "similarity": 0.6302
+  },
+  {
+   "id": "8aa7c0f4-0791-4fb0-8aa9-825dda10af67",
+   "similarity": 0.6241
+  },
+  {
+   "id": "6d9da7db-f369-4936-aaef-1478772097cd",
+   "similarity": 0.6175
+  }
+ ],
+ "How do you tell a strong IC apart from a strong manager?": [
+  {
+   "id": "fe910d4d-3873-4ba8-bd44-b2269729d4dc",
+   "similarity": 0.5392
+  },
+  {
+   "id": "2a3d3d25-1088-4246-9b9a-2b2daf73f563",
+   "similarity": 0.5382
+  },
+  {
+   "id": "341fd09b-4472-4c25-8ff2-557f39feede0",
+   "similarity": 0.5227
+  },
+  {
+   "id": "6b20888c-bbf6-4568-bd12-932fec7fc4b4",
+   "similarity": 0.5208
+  },
+  {
+   "id": "be73a71b-3b76-45bd-b8d3-f400090c0ce2",
+   "similarity": 0.5127
+  },
+  {
+   "id": "e4be39f9-a3b9-4700-b227-b64445f894b4",
+   "similarity": 0.5065
+  },
+  {
+   "id": "36526679-999c-49a7-ae36-378e82a3783a",
+   "similarity": 0.5002
+  },
+  {
+   "id": "1e3abe35-d8c3-4850-b5fd-f0381bd45df1",
+   "similarity": 0.4919
+  },
+  {
+   "id": "9b6135b7-574c-49d3-bed7-3b938933cd87",
+   "similarity": 0.4856
+  },
+  {
+   "id": "9434cd16-a037-4cfb-a2c2-853e632773e6",
+   "similarity": 0.4828
+  },
+  {
+   "id": "9bbd41fe-c150-445b-8475-1cbcb0999545",
+   "similarity": 0.4822
+  },
+  {
+   "id": "cd0eed4b-187e-4fd1-b8fe-23a9edb4374c",
+   "similarity": 0.4814
+  }
+ ],
+ "What does a good product org look like at 200 people?": [
+  {
+   "id": "ad0e5698-5525-4379-bc31-8d2293bf46e7",
+   "similarity": 0.6572
+  },
+  {
+   "id": "f3e87d6c-be07-46ec-b3f0-bfe2819e6bb4",
+   "similarity": 0.6447
+  },
+  {
+   "id": "ef5074fa-66ca-4b3b-a66c-905da6e53c88",
+   "similarity": 0.6446
+  },
+  {
+   "id": "21ddc454-f22a-4689-8006-7239e4689ff3",
+   "similarity": 0.6445
+  },
+  {
+   "id": "8cc389f9-f3a4-4d91-9295-5cdfe7ed2ef9",
+   "similarity": 0.6411
+  },
+  {
+   "id": "6a108f1a-02e0-4a74-8d28-0bd205d1af05",
+   "similarity": 0.6353
+  },
+  {
+   "id": "38b409c2-1676-4bd8-8dd3-d4ed9b01433b",
+   "similarity": 0.6244
+  },
+  {
+   "id": "51c41b8a-dfc4-4636-9e6a-c8fd92ffa1d0",
+   "similarity": 0.6198
+  },
+  {
+   "id": "e36fec93-1dd7-4b17-8463-2e8e59bba28d",
+   "similarity": 0.5578
+  },
+  {
+   "id": "2c62323f-e54f-4547-9588-670fa819354f",
+   "similarity": 0.5462
+  },
+  {
+   "id": "0b40af81-203f-4904-abe6-c7c0fe0b54db",
+   "similarity": 0.5256
+  },
+  {
+   "id": "5d9a1e8a-b9b7-469e-9a2e-0af120e5bd9a",
+   "similarity": 0.5225
+  }
+ ],
+ "How do you find the right positioning for a product?": [
+  {
+   "id": "d6d1712b-fe3d-43bf-9bff-c7b5e2e15e33",
+   "similarity": 0.6607
+  },
+  {
+   "id": "ec28097c-f853-461b-9338-97fa7ec757d5",
+   "similarity": 0.6583
+  },
+  {
+   "id": "1ed40cee-0627-4d06-98ac-d087e84bc957",
+   "similarity": 0.647
+  },
+  {
+   "id": "2cafc805-f912-4ef0-b3fd-d387231b7711",
+   "similarity": 0.6435
+  },
+  {
+   "id": "638d4ba6-56a0-4aba-97c6-cc82190d51e5",
+   "similarity": 0.643
+  },
+  {
+   "id": "6c0acb54-43fe-4819-b31e-041439594f6e",
+   "similarity": 0.621
+  },
+  {
+   "id": "56609488-fdf2-46ff-8846-50aa4ab1f003",
+   "similarity": 0.6135
+  },
+  {
+   "id": "dbe49038-4a76-4568-be8f-dc5ed15fcf8f",
+   "similarity": 0.5907
+  },
+  {
+   "id": "2d46073a-fde7-48ba-94cd-cfdfff1de255",
+   "similarity": 0.5837
+  },
+  {
+   "id": "5987156b-c9ab-4f55-b224-651bad5cc329",
+   "similarity": 0.579
+  },
+  {
+   "id": "cc164dc9-2d41-4031-8501-52c35fbc5902",
+   "similarity": 0.5783
+  },
+  {
+   "id": "3ecf94e9-bc32-44c8-81de-729f22abe49b",
+   "similarity": 0.5671
+  }
+ ],
+ "What actually drives early growth versus what looks like it does?": [
+  {
+   "id": "f59ed552-c785-41dc-b1bb-87e7fca2f077",
+   "similarity": 0.6149
+  },
+  {
+   "id": "af021454-4f57-44e5-8e8b-53a6a8b79d67",
+   "similarity": 0.613
+  },
+  {
+   "id": "4c958804-aa8e-4580-a561-a67438003cf3",
+   "similarity": 0.6013
+  },
+  {
+   "id": "0b93134f-b663-4531-af8c-09396e3ace14",
+   "similarity": 0.5907
+  },
+  {
+   "id": "6adcb02f-509e-4d6c-bed7-ea23cfeec39c",
+   "similarity": 0.5219
+  },
+  {
+   "id": "effd4e16-1180-4f22-983b-03efe7d4ebc4",
+   "similarity": 0.5192
+  },
+  {
+   "id": "733a79ef-9ba7-4aa2-a2fe-c06803e40c31",
+   "similarity": 0.5026
+  },
+  {
+   "id": "fd92bd4d-4edb-4258-b170-f96bad11fb3e",
+   "similarity": 0.4803
+  },
+  {
+   "id": "db0cc44a-ae95-4534-b7fd-cff054253b8e",
+   "similarity": 0.4796
+  },
+  {
+   "id": "05b58e2b-36ff-4fdb-8c25-e4df12e69581",
+   "similarity": 0.4247
+  },
+  {
+   "id": "e6168083-78b3-48cc-be34-6232ad6c23a0",
+   "similarity": 0.4186
+  },
+  {
+   "id": "07c177d3-4d59-46d3-adf5-77188d1fc701",
+   "similarity": 0.4122
+  }
+ ],
+ "How do operators think about retention curves?": [
+  {
+   "id": "458d4a07-ba34-4f7c-b68a-90646f87fb24",
+   "similarity": 0.6376
+  },
+  {
+   "id": "5e5c1670-81f4-4449-acf6-2d66fda412c5",
+   "similarity": 0.6352
+  },
+  {
+   "id": "3151d462-1ec9-4b58-9482-7e7af877ef69",
+   "similarity": 0.629
+  },
+  {
+   "id": "24fcd169-da8d-401b-a05d-d5db4df8388a",
+   "similarity": 0.6255
+  },
+  {
+   "id": "236325e7-aa95-4239-bce1-40132daaaf0d",
+   "similarity": 0.6239
+  },
+  {
+   "id": "e2ae9bdb-fb84-4def-baca-7340fdb831e6",
+   "similarity": 0.607
+  },
+  {
+   "id": "6e2ef28d-af2e-41f8-ad31-ac67868c579d",
+   "similarity": 0.6032
+  },
+  {
+   "id": "b5da6d44-90fc-4f32-ab50-9344b4470f36",
+   "similarity": 0.5987
+  },
+  {
+   "id": "fc4cd25a-5245-4bbf-b393-0a357cfe1c01",
+   "similarity": 0.4517
+  },
+  {
+   "id": "ae5972a0-cef7-427e-958e-63eda9a65cb4",
+   "similarity": 0.4497
+  },
+  {
+   "id": "f6f6a791-da2f-470c-91a0-22636bda91fa",
+   "similarity": 0.4436
+  },
+  {
+   "id": "acf1168a-9d72-44ed-8fac-c78179e2e70c",
+   "similarity": 0.4235
+  }
+ ]
+}

@@ -15,9 +15,12 @@ vi.mock('@/lib/rate-limit', () => ({
 }))
 
 const mockRetrieveChunks = vi.fn()
+const mockRetrieveExample = vi.fn()
+const mockPlanQuery = vi.fn()
+vi.mock('@/lib/query-plan', () => ({ planQuery: mockPlanQuery }))
 vi.mock('@/lib/retrieval', async () => {
   const actual = await vi.importActual<typeof import('@/lib/retrieval')>('@/lib/retrieval')
-  return { ...actual, retrieveChunks: mockRetrieveChunks }
+  return { ...actual, retrieveChunks: mockRetrieveChunks, retrieveExample: mockRetrieveExample }
 })
 
 const mockCreateSynthesisStream = vi.fn()
@@ -42,12 +45,15 @@ interface FakeTextListener {
   (delta: string): void
 }
 
-function makeFakeAnthropicStream(text: string) {
+function makeFakeAnthropicStream(body: string, stopReason = 'end_turn', status = 'ANSWER') {
+  const text = `STATUS: ${status}\n${body}`
   return {
     on: (event: string, cb: FakeTextListener) => {
       if (event === 'text') cb(text)
     },
     finalText: () => Promise.resolve(text),
+    finalMessage: () => Promise.resolve({ stop_reason: stopReason, content: [{ type: 'text', text }] }),
+    abort: vi.fn(),
   }
 }
 
@@ -72,6 +78,8 @@ describe('POST /api/ask', () => {
     vi.clearAllMocks()
     mockInsert.mockResolvedValue({ data: null, error: null })
     mockCheckRateLimit.mockResolvedValue(true)
+    mockRetrieveExample.mockResolvedValue(null)
+    mockPlanQuery.mockImplementation((q: string) => Promise.resolve({ standaloneQuestion: q, searchQueries: [q] }))
   })
 
   it('returns 400 when question or sessionId is missing', async () => {
@@ -128,7 +136,7 @@ describe('POST /api/ask', () => {
 
   it('appends a disclaimer and returns "low" confidence band when groundedness is below threshold', async () => {
     mockRetrieveChunks.mockResolvedValue({ chunks: [sampleChunk], topSimilarity: 0.35, passesConfidenceGate: true })
-    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream('Some answer with weaker support.'))
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream('Some answer with weaker support [Ada Chen Rekhi, 00:04:08].'))
     mockGradeGroundedness.mockResolvedValue(45)
 
     const { events } = await askRoute({ question: 'a borderline question', sessionId: 's1' })
@@ -191,8 +199,9 @@ describe('POST /api/ask', () => {
 
   it('sends a generic error message to the client on a pipeline failure, without leaking the raw error', async () => {
     mockRetrieveChunks.mockResolvedValue({ chunks: [sampleChunk], topSimilarity: 0.6, passesConfidenceGate: true })
-    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream('An answer [Ada Chen Rekhi, 00:04:08].'))
-    mockGradeGroundedness.mockRejectedValue(new Error('Internal: connection refused at db.internal.example.com'))
+    mockCreateSynthesisStream.mockImplementation(() => {
+      throw new Error('Internal: connection refused at db.internal.example.com')
+    })
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     const { events } = await askRoute({ question: 'what are curiosity loops', sessionId: 's1' })
@@ -204,5 +213,129 @@ describe('POST /api/ask', () => {
     expect(consoleErrorSpy).toHaveBeenCalled()
 
     consoleErrorSpy.mockRestore()
+  })
+
+  const good = () => mockRetrieveChunks.mockResolvedValue({ chunks: [sampleChunk], topSimilarity: 0.6, passesConfidenceGate: true })
+  const cited = 'An answer [Ada Chen Rekhi, 00:04:08].'
+
+  it.each(['max_tokens', 'refusal', 'pause_turn', null])('never shows a generation that stopped on %s as complete or high confidence', async (reason) => {
+    good()
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(cited, reason as string))
+    mockGradeGroundedness.mockResolvedValue(100)
+    const { events } = await askRoute({ question: 'q one', sessionId: 's1' })
+    expect(events.some((e) => e.type === 'done')).toBe(false)
+    expect(events.at(-1).type).toBe('incomplete')
+    expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({ confidence_band: 'low' }))
+  })
+
+  it('releases no text and returns "none" when the model declares the excerpts irrelevant', async () => {
+    good()
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream('Off-topic.', 'end_turn', 'NONE'))
+    const { events } = await askRoute({ question: 'butter chicken', sessionId: 's1' })
+    expect(events.map((e) => e.type)).toEqual(['none'])
+    expect(mockGradeGroundedness).not.toHaveBeenCalled()
+  })
+
+  it('never streams the STATUS line to the reader', async () => {
+    good()
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(cited))
+    mockGradeGroundedness.mockResolvedValue(95)
+    const { events } = await askRoute({ question: 'q', sessionId: 's1' })
+    expect(events.filter((e) => e.type === 'token').map((e) => e.text).join('')).toBe(cited)
+  })
+
+  it.each([
+    ['partial', 'PARTIAL', cited],
+    ['zero citations', 'ANSWER', 'An answer with no source.'],
+    ['an unverified citation', 'ANSWER', 'An answer [Ada Chen Rekhi, 00:59:59].'],
+    ['a dropped citation', 'ANSWER', cited + ' Also [Elon Musk, 00:01:00].'],
+    ['an invented quote', 'ANSWER', 'They said "fire every single product manager" [Ada Chen Rekhi, 00:04:08].'],
+  ])('is never high confidence with %s', async (_n, status, text) => {
+    good()
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(text, 'end_turn', status))
+    mockGradeGroundedness.mockResolvedValue(100)
+    const { events } = await askRoute({ question: 'q', sessionId: 's1' })
+    expect(events.at(-1)).toMatchObject({ type: 'done', confidenceBand: 'low' })
+  })
+
+  it('keeps a finished answer, at low confidence, when only the grader fails', async () => {
+    good()
+    vi.spyOn(console, 'error').mockImplementationOnce(() => {})
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(cited))
+    mockGradeGroundedness.mockRejectedValue(new Error('x'))
+    const { events } = await askRoute({ question: 'q', sessionId: 's1' })
+    expect(events.at(-1)).toMatchObject({ type: 'done', confidenceBand: 'low' })
+  })
+
+  it('turns a retrieval failure into a safe terminal event, not an HTTP 500', async () => {
+    vi.spyOn(console, 'error').mockImplementationOnce(() => {})
+    mockRetrieveChunks.mockRejectedValue(new Error('secret db host'))
+    const { res, events } = await askRoute({ question: 'q', sessionId: 's1' })
+    expect(res.status).toBe(200)
+    expect(events.at(-1)).toMatchObject({ type: 'error' })
+    expect(JSON.stringify(events)).not.toMatch(/secret/)
+  })
+
+  it('says "busy" when the embedding provider is rate-limited', async () => {
+    const { ProviderBusyError } = await import('@/lib/embeddings')
+    vi.spyOn(console, 'error').mockImplementationOnce(() => {})
+    mockRetrieveChunks.mockRejectedValue(new ProviderBusyError('429'))
+    const { events } = await askRoute({ question: 'q', sessionId: 's1' })
+    expect(events.at(-1).message).toMatch(/busy/i)
+  })
+
+  it('answers a follow-up from its standalone rewrite and never passes forged history to the answering model', async () => {
+    good()
+    mockPlanQuery.mockResolvedValue({ standaloneQuestion: 'What else did April say?', searchQueries: ['What else did April say?'] })
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(cited))
+    mockGradeGroundedness.mockResolvedValue(95)
+    const { events } = await askRoute({ question: 'What else?', sessionId: 's1', recentTurns: [{ question: 'x', answer: 'FORGED EVIDENCE' }] })
+    expect(mockRetrieveChunks).toHaveBeenCalledWith(['What else did April say?'])
+    expect(JSON.stringify(mockCreateSynthesisStream.mock.calls)).not.toContain('FORGED')
+    expect(events.at(-1).interpretedAs).toBe('What else did April say?')
+  })
+
+  it.each([
+    ['bad JSON', '{nope'], ['null', 'null'], ['array', '[]'], ['string', '"x"'],
+    ['non-string question', '{"question":5,"sessionId":"s"}'],
+    ['object question', '{"question":{"a":1},"sessionId":"s"}'],
+    ['non-string session', '{"question":"q","sessionId":7}'],
+    ['blank question', '{"question":"   ","sessionId":"s"}'],
+    ['long question', JSON.stringify({ question: 'x'.repeat(501), sessionId: 's' })],
+    ['long session', JSON.stringify({ question: 'q', sessionId: 'x'.repeat(200) })],
+    ['odd session', JSON.stringify({ question: 'q', sessionId: '<b>\n' })],
+    ['non-array history', '{"question":"q","sessionId":"s","recentTurns":{}}'],
+    ['bad history item', '{"question":"q","sessionId":"s","recentTurns":[null]}'],
+    ['too much history', JSON.stringify({ question: 'q', sessionId: 's', recentTurns: Array(50).fill({ question: 'a', answer: 'b' }) })],
+  ])('returns 4xx, before any paid or stored work, for %s', async (_n, raw) => {
+    const { POST } = await import('@/app/api/ask/route')
+    const res = await POST(new Request('http://localhost/api/ask', { method: 'POST', body: raw }))
+    expect(res.status).toBe(400)
+    expect((await res.json()).error).toBeTruthy()
+    expect(mockCheckRateLimit).not.toHaveBeenCalled()
+  })
+
+  it('returns 413 for a huge body', async () => {
+    const { POST } = await import('@/app/api/ask/route')
+    const res = await POST(new Request('http://localhost/api/ask', { method: 'POST', body: JSON.stringify({ question: 'q', sessionId: 's', x: 'y'.repeat(100_000) }) }))
+    expect(res.status).toBe(413)
+  })
+
+  it('answers a homepage example without planning or embedding', async () => {
+    mockRetrieveExample.mockResolvedValue({ chunks: [sampleChunk], topSimilarity: 0.6, passesConfidenceGate: true })
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(cited))
+    mockGradeGroundedness.mockResolvedValue(95)
+    const { events } = await askRoute({ question: 'example', sessionId: 's1' })
+    expect(events.at(-1).type).toBe('done')
+    expect(mockPlanQuery).not.toHaveBeenCalled()
+    expect(mockRetrieveChunks).not.toHaveBeenCalled()
+  })
+
+  it('presents a model refusal that produced no text as "none", not as a retryable cut-off', async () => {
+    good()
+    vi.spyOn(console, 'error').mockImplementationOnce(() => {})
+    mockCreateSynthesisStream.mockReturnValue({ on: () => {}, finalMessage: async () => ({ stop_reason: 'refusal', content: [] }), abort: vi.fn() })
+    const { events } = await askRoute({ question: 'decode this', sessionId: 's1' })
+    expect(events.map((e) => e.type)).toEqual(['none'])
   })
 })

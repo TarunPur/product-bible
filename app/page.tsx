@@ -1,6 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { askStream, AskFailure } from '@/lib/ask-client'
+import { citationKey, parseAnswer } from '@/lib/citation-tags'
+import { EXAMPLE_QUESTIONS, QUESTION_THEMES } from '@/lib/example-questions'
 import type {
   AskStreamEvent,
   Citation,
@@ -9,19 +12,24 @@ import type {
   SourceContextLine,
 } from '@/lib/types'
 
-type TurnKind = 'answer' | 'blocked' | 'none' | 'error'
+type TurnKind = 'answer' | 'blocked' | 'none' | 'error' | 'incomplete'
 
 interface Turn {
+  id: string
   question: string
   answer: string
   citations: Citation[]
   confidenceBand: ConfidenceBand | null
   disclaimer?: string
+  // Why a partial answer stopped. Only set when kind is 'incomplete'.
+  notice?: string
+  interpretedAs?: string
   status: 'streaming' | 'done' | 'error'
   kind: TurnKind
 }
 
 const RECENT_TURNS_LIMIT = 3
+const MAX_QUESTION_CHARS = 500
 const SESSION_STORAGE_KEY = 'lenny-qa-session-id'
 
 // 329 of 331 archived episodes are ingested; the two skipped files use a
@@ -29,33 +37,6 @@ const SESSION_STORAGE_KEY = 'lenny-qa-session-id'
 // can be checked against the database are stated here.
 const ARCHIVE_EPISODES = 329
 const ARCHIVE_INDEXED_THROUGH = 'Jul 2026'
-
-const QUESTION_THEMES = [
-  {
-    label: 'Product & strategy',
-    questions: [
-      'How do you know if you have product-market fit?',
-      'When should a team kill a bet instead of doubling down?',
-      'How should an early-stage startup think about pricing?',
-    ],
-  },
-  {
-    label: 'Hiring & teams',
-    questions: [
-      "What's the best way to prep for a PM interview?",
-      'How do you tell a strong IC apart from a strong manager?',
-      'What does a good product org look like at 200 people?',
-    ],
-  },
-  {
-    label: 'Growth & positioning',
-    questions: [
-      'How do you find the right positioning for a product?',
-      'What actually drives early growth versus what looks like it does?',
-      'How do operators think about retention curves?',
-    ],
-  },
-]
 
 function getSessionId(): string {
   const existing = window.localStorage.getItem(SESSION_STORAGE_KEY)
@@ -65,50 +46,36 @@ function getSessionId(): string {
   return fresh
 }
 
-function citationKey(guestName: string, timestamp: string): string {
-  return `${guestName.toLowerCase()}|${timestamp}`
-}
-
 function buildCitationIndex(citations: Citation[]): Map<string, number> {
   const map = new Map<string, number>()
-  citations.forEach((c, i) => map.set(citationKey(c.guestName, c.timestamp), i + 1))
+  citations.forEach((c, i) => map.set(citationKey(c), i + 1))
   return map
 }
 
-const CITATION_TAG_RE = /\[([^,[\]]+),\s*(\d{1,2}:\d{2}(?::\d{2})?)\]/g
-
-type TextPart = { type: 'text'; value: string } | { type: 'citation'; guestName: string; timestamp: string }
-
-// Splits out [Guest, timestamp] tags from surrounding prose so they can be
-// rendered as numbered reference markers instead of raw bracket text.
-function splitCitationTags(text: string): TextPart[] {
-  const parts: TextPart[] = []
-  let lastIndex = 0
-  let match: RegExpExecArray | null
-  CITATION_TAG_RE.lastIndex = 0
-  while ((match = CITATION_TAG_RE.exec(text)) !== null) {
-    if (match.index > lastIndex) parts.push({ type: 'text', value: text.slice(lastIndex, match.index) })
-    parts.push({ type: 'citation', guestName: match[1].trim(), timestamp: match[2] })
-    lastIndex = match.index + match[0].length
-  }
-  if (lastIndex < text.length) parts.push({ type: 'text', value: text.slice(lastIndex) })
-  return parts
+// Transcripts label the host two ways; they are one person.
+function speakerId(name: string): string {
+  const id = name.trim().toLowerCase()
+  return id === 'lenny' ? 'lenny rachitsky' : id
 }
 
-function renderBold(text: string, keyPrefix: string): React.ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
-    part.startsWith('**') && part.endsWith('**') ? (
-      <strong key={`${keyPrefix}-${i}`} className="font-semibold text-ink">
-        {part.slice(2, -2)}
-      </strong>
-    ) : (
-      <span key={`${keyPrefix}-${i}`}>{part}</span>
-    )
-  )
+function renderEmphasis(text: string, keyPrefix: string): React.ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*|(?<![\w*])\*[^*\s](?:[^*\n]*[^*\s])?\*(?![\w*]))/g).map((part, i) => {
+    const key = `${keyPrefix}-${i}`
+    if (part.length > 4 && part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={key} className="font-semibold text-ink">
+          {part.slice(2, -2)}
+        </strong>
+      )
+    }
+    if (part.length > 2 && part.startsWith('*') && part.endsWith('*')) return <em key={key}>{part.slice(1, -1)}</em>
+    return <span key={key}>{part}</span>
+  })
 }
 
 interface CitationRenderContext {
   index: Map<string, number>
+  citations: Citation[]
   hovered: number | null
   onHover: (n: number | null) => void
   onOpen: (n: number) => void
@@ -116,59 +83,100 @@ interface CitationRenderContext {
 
 // Citation tags the model emits are only rendered as numbered markers when
 // they match a real, validated citation (see lib/citations.ts) — a tag for a
-// guest that was never actually retrieved is silently dropped here rather
-// than left visible as raw, unverifiable bracket text.
+// guest that was never actually retrieved is dropped here rather than left
+// visible as raw, unverifiable bracket text.
 function renderInlineContent(text: string, ctx: CitationRenderContext, keyPrefix: string): React.ReactNode[] {
-  return splitCitationTags(text).flatMap((part, i) => {
-    if (part.type === 'text') return renderBold(part.value, `${keyPrefix}-t${i}`)
+  return parseAnswer(text).flatMap((part, i) => {
+    if (part.type === 'text') return renderEmphasis(part.value, `${keyPrefix}-t${i}`)
+    if (part.type === 'unreadable') return []
 
-    const number = ctx.index.get(citationKey(part.guestName, part.timestamp))
-    if (!number) return []
-    const isHot = ctx.hovered === number
-    return [
-      <button
-        key={`${keyPrefix}-c${i}`}
-        type="button"
-        title={`${part.guestName} — ${part.timestamp}`}
-        onMouseEnter={() => ctx.onHover(number)}
-        onMouseLeave={() => ctx.onHover(null)}
-        onFocus={() => ctx.onHover(number)}
-        onBlur={() => ctx.onHover(null)}
-        onClick={() => ctx.onOpen(number)}
-        className={`font-mono text-[9.5px] tracking-[0.04em] align-super mx-0.5 px-1.5 py-0.5 rounded border transition-colors cursor-pointer ${
-          isHot ? 'border-accent bg-accent text-page' : 'border-edge bg-page text-faint hover:border-fainter'
-        }`}
-      >
-        {number}
-      </button>,
-    ]
+    return part.refs.flatMap((ref, j) => {
+      const number = ctx.index.get(citationKey(ref))
+      if (!number) return []
+      const citation = ctx.citations[number - 1]
+      const isHot = ctx.hovered === number
+      const verified = citation.timestampVerified
+      return [
+        <button
+          key={`${keyPrefix}-c${i}-${j}`}
+          type="button"
+          title={`${citation.guestName} — ${citation.timestamp}`}
+          aria-label={`Source ${number}: ${citation.guestName} at ${citation.timestamp}${verified ? '' : ', timestamp not confirmed'}`}
+          aria-disabled={!verified}
+          onMouseEnter={() => ctx.onHover(number)}
+          onMouseLeave={() => ctx.onHover(null)}
+          onFocus={() => ctx.onHover(number)}
+          onBlur={() => ctx.onHover(null)}
+          onClick={() => ctx.onOpen(number)}
+          className={`relative font-mono text-[9.5px] tracking-[0.04em] align-super mx-0.5 min-w-6 min-h-6 px-1.5 rounded border transition-colors ${
+            verified ? 'cursor-pointer' : 'border-dashed cursor-default'
+          } ${isHot ? 'border-accent bg-accent text-page' : 'border-edge bg-page text-faint hover:border-fainter'}`}
+        >
+          {number}
+        </button>,
+      ]
+    })
   })
 }
 
+const BULLET_RE = /^\s*[-*]\s+/
+const NUMBER_RE = /^\s*\d+[.)]\s+/
+const HEADING_RE = /^\s*#{1,4}\s+(.+)$/
+
+type Block = { kind: 'p' | 'ul' | 'ol' | 'h'; lines: string[]; start?: number }
+
+function toBlocks(text: string): Block[] {
+  const blocks: Block[] = []
+  let gap = true
+  for (const line of text.split('\n')) {
+    if (!line.trim()) {
+      gap = true
+      continue
+    }
+    const heading = line.match(HEADING_RE)
+    const kind = heading ? 'h' : BULLET_RE.test(line) ? 'ul' : NUMBER_RE.test(line) ? 'ol' : 'p'
+    const content = heading ? heading[1] : kind === 'ul' ? line.replace(BULLET_RE, '') : kind === 'ol' ? line.replace(NUMBER_RE, '') : line
+    const last = blocks.at(-1)
+    const joins = last && last.kind === kind && kind !== 'h' && (!gap || kind !== 'p')
+    if (joins) last.lines.push(content)
+    else blocks.push({ kind, lines: [content], start: kind === 'ol' ? parseInt(line, 10) : undefined })
+    gap = false
+  }
+  return blocks
+}
+
 function renderAnswer(text: string, ctx: CitationRenderContext): React.ReactNode {
-  return text.split(/\n\n+/).map((block, i) => {
-    const lines = block.split('\n').filter((l) => l.trim().length > 0)
-    const isList = lines.length > 0 && lines.every((l) => l.trim().startsWith('- '))
-    if (isList) {
+  return toBlocks(text).map((block, i) => {
+    if (block.kind === 'h') {
       return (
-        <ul key={i} className="list-disc pl-5 space-y-2 my-4">
-          {lines.map((l, j) => (
-            <li key={j}>{renderInlineContent(l.trim().slice(2), ctx, `b${i}-l${j}`)}</li>
-          ))}
-        </ul>
+        <h2 key={i} className="font-semibold text-[17px] text-ink mt-6 mb-2">
+          {renderInlineContent(block.lines[0], ctx, `b${i}`)}
+        </h2>
       )
     }
-    return (
-      <p key={i} className="whitespace-pre-wrap my-4 first:mt-0">
-        {renderInlineContent(block, ctx, `b${i}`)}
-      </p>
+    if (block.kind === 'p') {
+      return (
+        <p key={i} className="whitespace-pre-wrap my-4 first:mt-0">
+          {renderInlineContent(block.lines.join('\n'), ctx, `b${i}`)}
+        </p>
+      )
+    }
+    const items = block.lines.map((l, j) => <li key={j}>{renderInlineContent(l, ctx, `b${i}-l${j}`)}</li>)
+    return block.kind === 'ul' ? (
+      <ul key={i} className="list-disc pl-5 space-y-2 my-4">
+        {items}
+      </ul>
+    ) : (
+      <ol key={i} start={block.start} className="list-decimal pl-5 space-y-2 my-4">
+        {items}
+      </ol>
     )
   })
 }
 
 function AnswerSkeleton() {
   return (
-    <div className="animate-pulse" aria-label="Searching transcripts">
+    <div className="animate-pulse" role="img" aria-label="Searching transcripts">
       <div className="label-meta mb-4">Searching transcripts</div>
       <div className="space-y-3">
         <div className="h-4 bg-rule-soft rounded w-full" />
@@ -207,6 +215,7 @@ function AskForm({
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder={placeholder}
+        maxLength={MAX_QUESTION_CHARS}
         disabled={isAsking}
         className="flex-1 min-w-0 bg-transparent border-none outline-none text-ink placeholder:text-faint text-[15px] py-3.5 font-mono"
       />
@@ -257,9 +266,9 @@ function SourceCard({
         {citation.guestName}
       </div>
       <p className="text-[12.5px] text-muted leading-relaxed line-clamp-4">{citation.excerpt}</p>
-      {citation.timestampVerified && (
-        <span className="mt-2 inline-block font-mono text-[10px] text-fainter">Open transcript →</span>
-      )}
+      <span className="mt-2 inline-block font-mono text-[10px] text-fainter">
+        {citation.timestampVerified ? 'Open transcript →' : 'Timestamp not confirmed'}
+      </span>
     </button>
   )
 }
@@ -268,18 +277,23 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
   const [lines, setLines] = useState<SourceContextLine[] | null>(null)
   const [failed, setFailed] = useState(false)
 
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // The parent remounts this per citation (key), so state starts fresh and
+  // nothing needs resetting here.
   useEffect(() => {
     let cancelled = false
-    setLines(null)
-    setFailed(false)
     fetch('/api/source', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ episodeId: citation.episodeId, startSeconds: citation.startSeconds }),
+      body: JSON.stringify({ episodeId: citation.episodeId, startSeconds: citation.startSeconds, speaker: citation.guestName }),
     })
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('failed'))))
       .then((data: { lines: SourceContextLine[] }) => {
-        if (!cancelled) setLines(data.lines)
+        if (!cancelled) {
+          if (Array.isArray(data.lines)) setLines(data.lines)
+          else setFailed(true)
+        }
       })
       .catch(() => {
         if (!cancelled) setFailed(true)
@@ -287,15 +301,35 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
     return () => {
       cancelled = true
     }
-  }, [citation.episodeId, citation.startSeconds])
+  }, [citation.episodeId, citation.startSeconds, citation.guestName])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') return onClose()
+      if (e.key !== 'Tab' || !dialogRef.current) return
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>('button, a[href], [tabindex="0"]')
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const inside = dialogRef.current.contains(document.activeElement)
+      if (e.shiftKey && (document.activeElement === first || !inside)) {
+        e.preventDefault()
+        last?.focus()
+      } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
+        e.preventDefault()
+        first?.focus()
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
+
+  useEffect(() => {
+    const opener = document.activeElement
+    dialogRef.current?.querySelector('button')?.focus()
+    return () => {
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus()
+    }
+  }, [])
 
   return (
     <>
@@ -305,7 +339,9 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
         aria-hidden="true"
       />
       <div
+        ref={dialogRef}
         role="dialog"
+        aria-modal="true"
         aria-label={`Transcript for ${citation.guestName}`}
         className="fixed top-0 right-0 bottom-0 z-[51] w-[min(560px,100%)] bg-surface border-l border-edge overflow-auto animate-panel-in shadow-[-24px_0_60px_-30px_rgba(23,22,20,0.4)]"
       >
@@ -314,7 +350,7 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
           <button
             type="button"
             onClick={onClose}
-            className="text-[13px] text-muted border border-rule rounded-lg px-3 py-1.5 hover:border-fainter hover:text-ink transition-colors"
+            className="min-h-8 text-[13px] text-muted border border-rule rounded-lg px-3 py-1.5 hover:border-fainter hover:text-ink transition-colors"
           >
             Close
           </button>
@@ -365,6 +401,30 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
   )
 }
 
+function applyEvent(turn: Turn, event: Exclude<AskStreamEvent, { type: 'error' }>): Turn {
+  switch (event.type) {
+    case 'token':
+      return { ...turn, answer: turn.answer + event.text }
+    case 'blocked':
+      return { ...turn, answer: event.message, status: 'done', kind: 'blocked' }
+    case 'none':
+      return { ...turn, answer: event.message, interpretedAs: event.interpretedAs, status: 'done', kind: 'none' }
+    case 'incomplete':
+      return turn.answer
+        ? { ...turn, citations: event.citations, notice: event.message, status: 'error', kind: 'incomplete' }
+        : { ...turn, answer: event.message, status: 'error', kind: 'error' }
+    case 'done':
+      return {
+        ...turn,
+        citations: event.citations,
+        confidenceBand: event.confidenceBand,
+        disclaimer: event.disclaimer,
+        interpretedAs: event.interpretedAs,
+        status: 'done',
+      }
+  }
+}
+
 export default function Home() {
   const [question, setQuestion] = useState('')
   const [turns, setTurns] = useState<Turn[]>([])
@@ -373,94 +433,84 @@ export default function Home() {
   const [hoveredCitation, setHoveredCitation] = useState<number | null>(null)
   const [openCitation, setOpenCitation] = useState<Citation | null>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
+  const abortRef = useRef<AbortController | null>(null)
+  const closeSource = useCallback(() => setOpenCitation(null), [])
+
+  useEffect(() => () => abortRef.current?.abort(), [])
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const trimmed = question.trim()
-    if (!trimmed || isAsking) return
-
+    if (!trimmed || abortRef.current) return
     setQuestion('')
+    void ask(trimmed, turns)
+  }
+
+  function retry(turn: Turn) {
+    if (abortRef.current) return
+    void ask(
+      turn.question,
+      turns.filter((t) => t.id !== turn.id)
+    )
+  }
+
+  function clearConversation() {
+    abortRef.current?.abort()
+    abortRef.current = null
+    setIsAsking(false)
+    setTurns([])
+    setActiveIndex(0)
+    setQuestion('')
+    setOpenCitation(null)
+  }
+
+  async function ask(text: string, previous: Turn[]) {
+    const abort = new AbortController()
+    abortRef.current = abort
+    const id = crypto.randomUUID()
+
     setIsAsking(true)
     setHoveredCitation(null)
     setOpenCitation(null)
+    setTurns([
+      ...previous,
+      { id, question: text, answer: '', citations: [], confidenceBand: null, status: 'streaming', kind: 'answer' },
+    ])
+    setActiveIndex(previous.length)
+    window.scrollTo?.({ top: 0 })
 
-    const recentTurns: ConversationTurn[] = turns
+    const recentTurns: ConversationTurn[] = previous
       .filter((t) => t.kind === 'answer' && t.status === 'done')
       .slice(-RECENT_TURNS_LIMIT)
       .map((t) => ({ question: t.question, answer: t.answer }))
 
-    setTurns((prev) => {
-      const next: Turn[] = [
-        ...prev,
-        { question: trimmed, answer: '', citations: [], confidenceBand: null, status: 'streaming', kind: 'answer' },
-      ]
-      setActiveIndex(next.length - 1)
-      return next
-    })
+    // Updates are addressed to this turn by id, so a cleared or superseded
+    // request can never write into a later one.
+    const update = (change: (turn: Turn) => Turn) =>
+      setTurns((prev) => prev.map((t) => (t.id === id ? change(t) : t)))
+    const fail = (message: string) =>
+      update((t) =>
+        t.answer
+          ? { ...t, status: 'error', kind: 'incomplete', notice: message }
+          : { ...t, status: 'error', kind: 'error', answer: message }
+      )
 
     try {
-      const res = await fetch('/api/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: trimmed, sessionId: getSessionId(), recentTurns }),
-      })
-
-      if (!res.body) throw new Error('No response body')
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-
-      for (;;) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-
-        const lines = buffer.split('\n')
-        buffer = lines.pop() ?? ''
-
-        for (const line of lines) {
-          if (!line.trim()) continue
-          const event = JSON.parse(line) as AskStreamEvent
-          applyEvent(event)
-        }
-      }
-    } catch {
-      updateLastTurn((t) => ({
-        ...t,
-        status: 'error',
-        kind: 'error',
-        answer: 'Something went wrong. Please try again.',
-      }))
+      await askStream(
+        { question: text, sessionId: getSessionId(), recentTurns },
+        (event) => {
+          if (event.type === 'error') fail(event.message)
+          else update((t) => applyEvent(t, event))
+        },
+        abort
+      )
+    } catch (err) {
+      fail(err instanceof AskFailure ? err.message : 'Something went wrong. Please try again.')
     } finally {
-      setIsAsking(false)
-    }
-  }
-
-  function updateLastTurn(update: (turn: Turn) => Turn) {
-    setTurns((prev) => {
-      if (prev.length === 0) return prev
-      const next = [...prev]
-      next[next.length - 1] = update(next[next.length - 1])
-      return next
-    })
-  }
-
-  function applyEvent(event: AskStreamEvent) {
-    if (event.type === 'token') {
-      updateLastTurn((t) => ({ ...t, answer: t.answer + event.text }))
-    } else if (event.type === 'blocked') {
-      updateLastTurn((t) => ({ ...t, answer: event.message, status: 'done', kind: 'blocked' }))
-    } else if (event.type === 'none') {
-      updateLastTurn((t) => ({ ...t, answer: event.message, status: 'done', kind: 'none' }))
-    } else if (event.type === 'error') {
-      updateLastTurn((t) => ({ ...t, answer: event.message, status: 'error', kind: 'error' }))
-    } else if (event.type === 'done') {
-      updateLastTurn((t) => ({
-        ...t,
-        citations: event.citations,
-        confidenceBand: event.confidenceBand,
-        disclaimer: event.disclaimer,
-        status: 'done',
-      }))
+      if (abortRef.current === abort) {
+        abortRef.current = null
+        setIsAsking(false)
+      }
     }
   }
 
@@ -468,7 +518,6 @@ export default function Home() {
   const activeTurn = turns[activeIndex]
 
   if (!hasTurns) {
-    let entryNumber = 0
     return (
       <main className="flex-1 flex flex-col bg-page">
         <Header hasTurns={false} onNewQuestion={() => {}} />
@@ -498,6 +547,7 @@ export default function Home() {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="what you're trying to figure out…"
+              maxLength={MAX_QUESTION_CHARS}
               disabled={isAsking}
               className="flex-1 min-w-0 bg-transparent border-none outline-none text-ink placeholder:text-faint text-[17px] py-[19px] font-mono"
             />
@@ -523,7 +573,7 @@ export default function Home() {
                       question, and PRODUCT.md's "don't fabricate citations" principle
                       rules out inventing one just to look sourced. */}
                   {theme.questions.map((q) => {
-                    entryNumber += 1
+                    const entryNumber = EXAMPLE_QUESTIONS.indexOf(q) + 1
                     return (
                       <button
                         key={q}
@@ -546,7 +596,7 @@ export default function Home() {
           </div>
 
           <div className="mt-10 font-mono text-[10.5px] tracking-[0.08em] text-muted">
-            {ARCHIVE_EPISODES} episodes indexed &middot; through {ARCHIVE_INDEXED_THROUGH}
+            {ARCHIVE_EPISODES} episodes indexed &middot; through {ARCHIVE_INDEXED_THROUGH} &middot; questions are stored
           </div>
         </section>
       </main>
@@ -556,6 +606,7 @@ export default function Home() {
   const citationIndex = buildCitationIndex(activeTurn.citations)
   const citationCtx: CitationRenderContext = {
     index: citationIndex,
+    citations: activeTurn.citations,
     hovered: hoveredCitation,
     onHover: setHoveredCitation,
     onOpen: (n) => {
@@ -567,18 +618,13 @@ export default function Home() {
   const isLoading = activeTurn.status === 'streaming' && activeTurn.answer === ''
   const hasSources = activeTurn.citations.length > 0
   const episodesMatched = new Set(activeTurn.citations.map((c) => c.episodeId)).size
-  const operators = new Set(activeTurn.citations.map((c) => c.guestName.toLowerCase())).size
+  const operators = new Set(activeTurn.citations.map((c) => speakerId(c.guestName))).size
 
   return (
     <main className="flex-1 flex flex-col bg-page">
       <Header
         hasTurns
-        onNewQuestion={() => {
-          setTurns([])
-          setActiveIndex(0)
-          setQuestion('')
-          setOpenCitation(null)
-        }}
+        onNewQuestion={clearConversation}
       />
 
       <div className="flex-1 w-full max-w-[1560px] mx-auto flex flex-col xl:flex-row items-start">
@@ -632,6 +678,14 @@ export default function Home() {
               {activeTurn.question}
             </h1>
 
+            <p role="status" aria-live="polite" className="sr-only">
+              {liveStatus(activeTurn)}
+            </p>
+
+            {activeTurn.interpretedAs && (
+              <p className="text-[13px] text-muted mb-3.5">Understood as: {activeTurn.interpretedAs}</p>
+            )}
+
             {activeTurn.kind === 'answer' && hasSources && (
               <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 font-mono text-[11px] tracking-[0.04em] text-faint pb-4">
                 <span>
@@ -649,18 +703,32 @@ export default function Home() {
             )}
 
             {activeTurn.status === 'done' && activeTurn.kind === 'answer' && (
-              <CoverageNote band={activeTurn.confidenceBand} disclaimer={activeTurn.disclaimer} />
+              <CoverageNote band={activeTurn.confidenceBand} disclaimer={activeTurn.disclaimer} citations={activeTurn.citations} />
             )}
 
             {isLoading ? (
               <AnswerSkeleton />
-            ) : activeTurn.kind === 'answer' ? (
-              <div className="text-[16px] text-ink-soft leading-[1.72]">
-                {renderAnswer(activeTurn.answer, citationCtx)}
+            ) : activeTurn.kind === 'answer' || activeTurn.kind === 'incomplete' ? (
+              <div className="text-[16px] text-ink-soft leading-[1.72] break-words">
+                {activeTurn.kind === 'incomplete' && (
+                  <Notice label="Incomplete answer" text={activeTurn.notice} />
+                )}
+                {renderAnswer(activeTurn.status === 'streaming' ? hideOpenBracket(activeTurn.answer) : activeTurn.answer, citationCtx)}
                 {activeTurn.status === 'streaming' && <span className="animate-pulse">▍</span>}
               </div>
             ) : (
               <NonAnswer kind={activeTurn.kind} message={activeTurn.answer} />
+            )}
+
+            {activeTurn.status === 'error' && (
+              <button
+                type="button"
+                onClick={() => retry(activeTurn)}
+                disabled={isAsking}
+                className="mt-5 text-[13px] font-medium text-ink border border-edge rounded-lg px-4 py-2 hover:border-accent transition-colors disabled:opacity-40"
+              >
+                Try again
+              </button>
             )}
           </div>
         </article>
@@ -697,12 +765,18 @@ export default function Home() {
             placeholder="Ask a follow-up, or start a new thread…"
           />
           <p className="text-[11px] text-fainter text-center mt-2">
-            Answers are attributed to guests, not verified.
+            AI-written from transcripts. Guests&apos; views aren&apos;t fact-checked. Questions are stored.
           </p>
         </div>
       </div>
 
-      {openCitation && <SourcePanel citation={openCitation} onClose={() => setOpenCitation(null)} />}
+      {openCitation && (
+        <SourcePanel
+          key={`${openCitation.episodeId}|${openCitation.guestName}|${openCitation.startSeconds}`}
+          citation={openCitation}
+          onClose={closeSource}
+        />
+      )}
     </main>
   )
 }
@@ -738,29 +812,50 @@ function Header({ hasTurns, onNewQuestion }: { hasTurns: boolean; onNewQuestion:
 // post-generation one. Low confidence keeps the exact disclaimer wording the
 // API sends rather than restating it, so the text a user sees is the text
 // that was logged against the query.
-function CoverageNote({ band, disclaimer }: { band: ConfidenceBand | null; disclaimer?: string }) {
-  if (band === 'low') {
-    return (
-      <div className="flex items-start gap-2.5 px-3.5 py-3 bg-[color-mix(in_oklch,var(--color-accent)_12%,var(--color-page))] border border-[color-mix(in_oklch,var(--color-accent)_35%,var(--color-page))] rounded-lg mb-6">
-        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-[7px] shrink-0" />
-        <div>
-          <span className="text-[11.5px] font-semibold uppercase tracking-[0.03em] text-accent">
-            Low confidence
-          </span>
-          {disclaimer && <p className="mt-1 text-[12.5px] leading-relaxed text-ink-soft">{disclaimer}</p>}
-        </div>
-      </div>
-    )
-  }
+function CoverageNote({
+  band,
+  disclaimer,
+  citations,
+}: {
+  band: ConfidenceBand | null
+  disclaimer?: string
+  citations: Citation[]
+}) {
+  if (band === 'low') return <Notice label="Low confidence" text={disclaimer} />
 
-  if (band !== 'high') return null
+  if (band !== 'high' || citations.length === 0 || citations.some((c) => !c.timestampVerified)) return null
 
   return (
     <div className="flex items-start gap-2.5 px-3.5 py-3 bg-surface border border-rule rounded-lg mb-6">
       <span className="w-1.5 h-1.5 rounded-full bg-ink-soft mt-[7px] shrink-0" />
       <p className="text-[12.5px] leading-relaxed text-muted">
-        Well covered. Every claim below resolves to a timestamped passage in the archive.
+        Citations checked: each source opens on that speaker at that timestamp. The summary is AI-written.
       </p>
+    </div>
+  )
+}
+
+// While streaming, a half-arrived citation would flash as raw bracket text.
+function hideOpenBracket(text: string): string {
+  return text.replace(/\[[^\]]{0,400}$/, '')
+}
+
+function liveStatus(turn: Turn): string {
+  if (turn.status === 'streaming') return turn.answer ? 'Writing the answer.' : 'Searching transcripts.'
+  if (turn.kind === 'incomplete') return 'The answer stopped before it was finished.'
+  if (turn.kind === 'answer') return `Answer ready, ${turn.citations.length} sources.`
+  if (turn.kind === 'none') return 'No sources found for this question.'
+  return turn.kind === 'blocked' ? 'This question was not answered.' : 'Something went wrong.'
+}
+
+function Notice({ label, text }: { label: string; text?: string }) {
+  return (
+    <div className="flex items-start gap-2.5 px-3.5 py-3 bg-[color-mix(in_oklch,var(--color-accent)_12%,var(--color-page))] border border-[color-mix(in_oklch,var(--color-accent)_35%,var(--color-page))] rounded-lg mb-6">
+      <span className="w-1.5 h-1.5 rounded-full bg-accent mt-[7px] shrink-0" />
+      <div>
+        <span className="text-[11.5px] font-semibold uppercase tracking-[0.03em] text-accent">{label}</span>
+        {text && <p className="mt-1 text-[12.5px] leading-relaxed text-ink-soft">{text}</p>}
+      </div>
     </div>
   )
 }

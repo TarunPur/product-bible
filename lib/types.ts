@@ -61,10 +61,20 @@ export interface AskResponse {
 
 // The /api/ask response body is newline-delimited JSON of these events —
 // 'token' events stream the answer as it generates, then exactly one
-// terminal event ('blocked' | 'none' | 'done' | 'error') closes the stream.
+// terminal event ('blocked' | 'none' | 'done' | 'incomplete' | 'error') closes
+// the stream. 'incomplete' means generation stopped before the answer was
+// finished; any text already shown must be marked as partial.
 export type AskStreamEvent =
   | { type: 'token'; text: string }
   | { type: 'blocked'; message: string }
-  | { type: 'none'; message: string }
-  | { type: 'done'; citations: Citation[]; confidenceBand: ConfidenceBand; disclaimer?: string }
+  | { type: 'none'; message: string; interpretedAs?: string }
+  | {
+      type: 'done'
+      citations: Citation[]
+      confidenceBand: ConfidenceBand
+      disclaimer?: string
+      // Set when a follow-up was rewritten into a standalone question.
+      interpretedAs?: string
+    }
+  | { type: 'incomplete'; message: string; citations: Citation[] }
   | { type: 'error'; message: string }

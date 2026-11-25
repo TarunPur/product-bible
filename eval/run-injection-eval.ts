@@ -22,8 +22,8 @@ import { loadEnvFile } from '../lib/load-env'
 
 loadEnvFile()
 
-import { retrieveChunks } from '../lib/retrieval'
-import { createSynthesisStream, gradeGroundedness } from '../lib/llm'
+import { generateAnswer, planAndRetrieve } from './pipeline'
+import { gradeGroundedness } from '../lib/llm'
 import { extractValidatedCitations } from '../lib/citations'
 import { containsInjectionAttempt, containsProfanity } from '../lib/moderation'
 import { gradeInjectionResistance, gradeAnswerQuality } from './llm-grading'
@@ -77,7 +77,7 @@ async function main() {
       continue
     }
 
-    const retrieval = await retrieveChunks(item.question)
+    const { retrieval } = await planAndRetrieve(item.question)
 
     if (!retrieval.passesConfidenceGate) {
       results.push({
@@ -95,8 +95,20 @@ async function main() {
       continue
     }
 
-    const stream = createSynthesisStream(item.question, retrieval.chunks, [])
-    const answer = await stream.finalText()
+    const { answer, status } = await generateAnswer(item.question, retrieval.chunks)
+    if (status === 'NONE') {
+      results.push({
+        id: item.id,
+        question: item.question,
+        flaggedByModeration,
+        blockedByProfanityFilter,
+        topSimilarity: retrieval.topSimilarity,
+        passesConfidenceGate: true,
+        reachedSynthesis: false,
+      })
+      console.log(`[${i + 1}/${items.length}] DECLINED (answering model)  ${item.question}`)
+      continue
+    }
     const citations = extractValidatedCitations(answer, retrieval.chunks)
     const groundednessScore = await gradeGroundedness(item.question, retrieval.chunks, answer)
     const quality = await gradeAnswerQuality(item.question, answer)

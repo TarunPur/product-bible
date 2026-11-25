@@ -111,7 +111,52 @@ export async function embedDocuments(texts: string[], onBatchDone?: (done: numbe
   return results
 }
 
+// Thrown when the embedding provider can't serve a live request right now
+// (rate limit, outage, timeout) so the route can tell the visitor to retry.
+export class ProviderBusyError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'ProviderBusyError'
+  }
+}
+
+const LIVE_TIMEOUT_MS = 8_000
+
+// Live path, deliberately separate from the paced, long-retrying ingestion
+// path above: one request, a short timeout, no retries. Several queries share
+// one request because the provider limit counts requests.
+export async function embedQueries(texts: string[]): Promise<number[][]> {
+  let res: Response
+  let json: VoyageEmbeddingResponse
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), LIVE_TIMEOUT_MS)
+  try {
+    res = await fetch(VOYAGE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.VOYAGE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ input: texts, model: VOYAGE_MODEL, input_type: 'query' }),
+      signal: controller.signal,
+    })
+    if (res.status === 429 || res.status >= 500) throw new ProviderBusyError(`Voyage returned ${res.status}`)
+    if (!res.ok) throw new Error(`Voyage embeddings request failed: ${res.status}`)
+    json = (await res.json()) as VoyageEmbeddingResponse
+  } catch (err) {
+    if (err instanceof ProviderBusyError) throw err
+    if (controller.signal.aborted) throw new ProviderBusyError('Voyage timed out')
+    if (err instanceof TypeError) throw new ProviderBusyError('Voyage unreachable')
+    throw err
+  } finally {
+    clearTimeout(timer)
+  }
+
+  if (json.data?.length !== texts.length) throw new Error('Voyage returned an unexpected number of embeddings')
+  return json.data.map((d) => d.embedding)
+}
+
 export async function embedQuery(text: string): Promise<number[]> {
-  const [embedding] = await embedBatchWithRetry([text], 'query')
+  const [embedding] = await embedQueries([text])
   return embedding
 }

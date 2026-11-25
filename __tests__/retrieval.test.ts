@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { groupChunksByGuest, hasMultipleGuestPerspectives, type RetrievedChunk } from '@/lib/retrieval'
+import { groupChunksByGuest, hasMultipleGuestPerspectives, mergeResults, type RetrievedChunk } from '@/lib/retrieval'
 
 function makeChunk(overrides: Partial<RetrievedChunk>): RetrievedChunk {
   return {
@@ -44,5 +44,18 @@ describe('hasMultipleGuestPerspectives', () => {
       makeChunk({ id: '2', primarySpeaker: 'Andrew Wilkinson' }),
     ]
     expect(hasMultipleGuestPerspectives(chunks)).toBe(true)
+  })
+})
+
+describe('mergeResults', () => {
+  it('keeps one copy per chunk at its best similarity, interleaving so every query is represented', () => {
+    const a = [makeChunk({ id: '1', similarity: 0.6 }), makeChunk({ id: '2', similarity: 0.55 })]
+    const b = [makeChunk({ id: '3', similarity: 0.5 }), makeChunk({ id: '1', similarity: 0.7 })]
+    const got = mergeResults([a, b], 3)
+    expect(got.map((c) => c.id).sort()).toEqual(['1', '2', '3'])
+    expect(got.find((c) => c.id === '1')!.similarity).toBe(0.7)
+  })
+  it('respects the limit', () => {
+    expect(mergeResults([Array.from({ length: 30 }, (_, i) => makeChunk({ id: String(i) }))], 12)).toHaveLength(12)
   })
 })

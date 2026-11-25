@@ -27,8 +27,9 @@ import { loadEnvFile } from '../lib/load-env'
 
 loadEnvFile()
 
-import { retrieveChunks } from '../lib/retrieval'
-import { createSynthesisStream, gradeGroundedness } from '../lib/llm'
+import type { RetrievalResult } from '../lib/retrieval'
+import { generateAnswer, planAndRetrieve } from './pipeline'
+import { gradeGroundedness } from '../lib/llm'
 import { extractValidatedCitations } from '../lib/citations'
 import { containsInjectionAttempt, containsProfanity } from '../lib/moderation'
 import { gradeAnswerQuality } from './llm-grading'
@@ -57,9 +58,8 @@ function formatRange(nums: number[]): string {
   return `min=${min.toFixed(1)} median=${median(nums)!.toFixed(1)} max=${max.toFixed(1)} (n=${nums.length})`
 }
 
-async function runFullPipeline(item: GoldenSetItem, retrieval: Awaited<ReturnType<typeof retrieveChunks>>) {
-  const stream = createSynthesisStream(item.question, retrieval.chunks, [])
-  const answer = await stream.finalText()
+async function runFullPipeline(item: GoldenSetItem, retrieval: RetrievalResult) {
+  const { answer } = await generateAnswer(item.question, retrieval.chunks)
   const citations = extractValidatedCitations(answer, retrieval.chunks)
   const groundedness = await gradeGroundedness(item.question, retrieval.chunks, answer)
   const quality = await gradeAnswerQuality(item.question, answer)
@@ -104,7 +104,7 @@ async function main() {
       continue
     }
 
-    const retrieval = await retrieveChunks(item.question)
+    const { retrieval } = await planAndRetrieve(item.question)
     const base = scoreItem(item, retrieval)
 
     // Matches production: the LLM is never called for an unanswerable item

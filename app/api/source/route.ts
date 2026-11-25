@@ -1,35 +1,32 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { parseInlineTurns } from '@/lib/transcript-parser'
 import { getClientIp, checkRateLimit, GENEROUS_PER_MINUTE_LIMIT, GENEROUS_PER_DAY_LIMIT } from '@/lib/rate-limit'
-import type { SourceContextLine, SourceContextResponse } from '@/lib/types'
+import { BadRequestError, parseSourceRequest } from '@/lib/request-validation'
+import type { SourceRequest } from '@/lib/request-validation'
+import type { SourceContextResponse, SpeakerTurn } from '@/lib/types'
 
 // How much transcript to show either side of a cited moment. Deliberately
 // bounded rather than open-ended: this endpoint is unauthenticated, and the
 // transcript archive isn't ours to serve in bulk.
 const WINDOW_BEFORE_SECONDS = 180
 const WINDOW_AFTER_SECONDS = 300
-const MAX_LINES = 8
+const MAX_CHUNKS = 8
 const TURNS_BEFORE = 2
 const TURNS_AFTER = 5
 
-function toSeconds(timestamp: string): number {
-  const parts = timestamp.split(':').map(Number)
-  return parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + parts[1]
-}
-
-interface ChunkRow {
-  start_timestamp: string
-  start_seconds: number
-  primary_speaker: string
-  content: string
+function matchesSpeaker(turn: SpeakerTurn, speaker: string): boolean {
+  return turn.speaker.toLowerCase() === speaker.trim().toLowerCase()
 }
 
 export async function POST(req: Request) {
-  const { episodeId, startSeconds } = (await req.json()) as { episodeId?: string; startSeconds?: number }
-
-  if (!episodeId || typeof startSeconds !== 'number' || !Number.isFinite(startSeconds)) {
-    return Response.json({ error: 'episodeId and startSeconds are required' }, { status: 400 })
+  let input: SourceRequest
+  try {
+    input = await parseSourceRequest(req)
+  } catch (err) {
+    if (err instanceof BadRequestError) return Response.json({ error: err.message }, { status: err.status })
+    return Response.json({ error: 'The request could not be read.' }, { status: 400 })
   }
+  const { episodeId, startSeconds, speaker } = input
 
   const supabase = createAdminClient()
 
@@ -48,48 +45,43 @@ export async function POST(req: Request) {
 
   const { data, error } = await supabase
     .from('chunks')
-    .select('start_timestamp, start_seconds, primary_speaker, content')
+    .select('content')
     .eq('episode_id', episodeId)
     .gte('start_seconds', Math.max(0, startSeconds - WINDOW_BEFORE_SECONDS))
     .lte('start_seconds', startSeconds + WINDOW_AFTER_SECONDS)
     .order('start_seconds', { ascending: true })
-    .limit(MAX_LINES)
+    .limit(MAX_CHUNKS)
 
   if (error) {
     return Response.json({ error: 'Could not load transcript context' }, { status: 500 })
   }
 
-  const rows = (data ?? []) as ChunkRow[]
-
-  // Chunks are multi-speaker and deliberately overlap by a turn, so rendering
-  // them raw would attribute the opening words to the wrong person and repeat
-  // text across cards. Split them back into speaker turns and de-duplicate.
-  const byTimestamp = new Map<string, SourceContextLine>()
-  for (const row of rows) {
+  // Chunks are multi-speaker and deliberately overlap by a turn, so split them
+  // back into turns and drop the repeats. Two people can share a timestamp, so
+  // a turn is identified by time, speaker and text together.
+  const turns = new Map<string, SpeakerTurn>()
+  for (const row of (data ?? []) as { content: string }[]) {
     for (const turn of parseInlineTurns(row.content)) {
-      if (!byTimestamp.has(turn.startTimestamp)) {
-        byTimestamp.set(turn.startTimestamp, {
-          timestamp: turn.startTimestamp,
-          speaker: turn.speaker,
-          text: turn.text,
-          isCited: false,
-        })
-      }
+      turns.set(`${turn.startSeconds}|${turn.speaker}|${turn.text}`, turn)
     }
   }
+  const ordered = [...turns.values()].sort((a, b) => a.startSeconds - b.startSeconds)
 
-  const ordered = [...byTimestamp.values()].sort(
-    (a, b) => toSeconds(a.timestamp) - toSeconds(b.timestamp)
+  const citedIndex = ordered.findIndex(
+    (turn) => turn.startSeconds === startSeconds && (speaker === undefined || matchesSpeaker(turn, speaker))
   )
-
-  // The cited turn is the last one starting at or before the cited moment.
-  let citedIndex = ordered.findIndex((line) => toSeconds(line.timestamp) > startSeconds) - 1
-  if (citedIndex < 0) citedIndex = ordered.length - 1
+  // Highlighting a neighbour instead would put words in the wrong mouth.
+  if (citedIndex === -1) {
+    return Response.json({ error: 'That passage could not be found.' }, { status: 404 })
+  }
 
   const from = Math.max(0, citedIndex - TURNS_BEFORE)
-  const lines = ordered
-    .slice(from, citedIndex + TURNS_AFTER + 1)
-    .map((line, i) => ({ ...line, isCited: from + i === citedIndex }))
+  const lines = ordered.slice(from, citedIndex + TURNS_AFTER + 1).map((turn, i) => ({
+    timestamp: turn.startTimestamp,
+    speaker: turn.speaker,
+    text: turn.text,
+    isCited: from + i === citedIndex,
+  }))
 
   return Response.json({ lines } satisfies SourceContextResponse)
 }

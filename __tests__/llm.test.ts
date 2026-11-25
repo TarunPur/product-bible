@@ -33,7 +33,7 @@ describe('excerpt caching between synthesis and groundedness calls', () => {
   it('sends the same system prompt on both calls', async () => {
     const { createSynthesisStream, gradeGroundedness } = await import('@/lib/llm')
 
-    createSynthesisStream('what are curiosity loops', sampleChunks, [])
+    createSynthesisStream('what are curiosity loops', sampleChunks)
     await gradeGroundedness('what are curiosity loops', sampleChunks, 'some answer')
 
     const synthesisParams = mockStream.mock.calls[0][0]
@@ -44,7 +44,7 @@ describe('excerpt caching between synthesis and groundedness calls', () => {
   it('marks the excerpt block as an identical cached breakpoint on both calls', async () => {
     const { createSynthesisStream, gradeGroundedness } = await import('@/lib/llm')
 
-    createSynthesisStream('what are curiosity loops', sampleChunks, [])
+    createSynthesisStream('what are curiosity loops', sampleChunks)
     await gradeGroundedness('what are curiosity loops', sampleChunks, 'some answer')
 
     const synthesisExcerptBlock = mockStream.mock.calls[0][0].messages[0].content[0]
@@ -59,7 +59,7 @@ describe('excerpt caching between synthesis and groundedness calls', () => {
   it('keeps the varying question/answer content in an uncached second block', async () => {
     const { createSynthesisStream, gradeGroundedness } = await import('@/lib/llm')
 
-    createSynthesisStream('what are curiosity loops', sampleChunks, [])
+    createSynthesisStream('what are curiosity loops', sampleChunks)
     await gradeGroundedness('what are curiosity loops', sampleChunks, 'some answer')
 
     const synthesisSuffix = mockStream.mock.calls[0][0].messages[0].content[1]
@@ -99,5 +99,27 @@ describe('gradeGroundedness thinking config', () => {
 
     const score = await gradeGroundedness('what are curiosity loops', sampleChunks, 'some answer')
     expect(score).toBe(50)
+  })
+})
+
+describe('createSynthesisStream budget and framing', () => {
+  beforeEach(() => void mockStream.mockReset())
+
+  it('spends the whole budget on visible text and leaves room for a complete answer', async () => {
+    const { createSynthesisStream } = await import('@/lib/llm')
+    createSynthesisStream('q', sampleChunks)
+    const p = mockStream.mock.calls[0][0]
+    expect(p.thinking).toEqual({ type: 'disabled' })
+    expect(p.max_tokens).toBeGreaterThanOrEqual(2000)
+  })
+
+  it('labels every speaker turn with its own speaker and timestamp, not the chunk header', async () => {
+    const { createSynthesisStream } = await import('@/lib/llm')
+    createSynthesisStream('q', [{ ...sampleChunks[0], primarySpeaker: 'Jen Abel', startTimestamp: '00:39:44',
+      content: 'Lenny Rachitsky (00:39:44): how?\n\nJen Abel (00:40:03): growing' }])
+    const text = mockStream.mock.calls[0][0].messages[0].content[0].text
+    expect(text).toContain('[Lenny Rachitsky, 00:39:44] how?')
+    expect(text).toContain('[Jen Abel, 00:40:03] growing')
+    expect(text).not.toContain('[Jen Abel, 00:39:44]')
   })
 })
