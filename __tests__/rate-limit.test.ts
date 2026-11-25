@@ -108,4 +108,25 @@ describe('checkRateLimit', () => {
     await checkRateLimit(supabase, '1.2.3.4', { key: 'source:1.2.3.4' })
     expect((supabase as unknown as { insert: ReturnType<typeof vi.fn> }).insert).toHaveBeenCalledWith({ ip: 'source:1.2.3.4' })
   })
+
+  it('never admits more than the limit when requests arrive in parallel', async () => {
+    const rows: string[] = []
+    const tick = () => new Promise((r) => setTimeout(r, 1))
+    const fake = {
+      from: () => ({
+        delete: () => ({ eq: () => ({ lt: async () => ({ error: null }) }) }),
+        select: () => ({ eq: (_c: string, k: string) => ({ gte: async () => { await tick(); return { count: rows.filter((r) => r === k).length, error: null } } }) }),
+        insert: async ({ ip }: { ip: string }) => { await tick(); rows.push(ip); return { error: null } },
+      }),
+    } as unknown as SupabaseAdminClient
+    const got = await Promise.all(Array.from({ length: 10 }, () => checkRateLimit(fake, '9.9.9.9')))
+    expect(got.filter(Boolean).length).toBeLessThanOrEqual(3)
+  })
+
+  it('fails closed when the database client throws', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const fake = { from: () => { throw new Error('network') } } as unknown as SupabaseAdminClient
+    await expect(checkRateLimit(fake, '1.1.1.1')).resolves.toBe(false)
+    spy.mockRestore()
+  })
 })

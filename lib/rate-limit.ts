@@ -61,6 +61,24 @@ export async function checkRateLimit(
   ip: string,
   opts: RateLimitOptions = {}
 ): Promise<boolean> {
+  try {
+    return await recordIfWithinLimit(supabase, ip, opts)
+  } catch (err) {
+    console.error('Rate limit check threw:', err instanceof Error ? err.message : 'unknown error')
+    return false
+  }
+}
+
+// Count, record, then count again including our own hit. Counting only before
+// recording lets parallel requests all see room and all get in; the second
+// count sees every hit recorded so far, so the limit can't be exceeded. Under
+// a simultaneous burst it may turn away a request that would have fit, which
+// is the safe direction.
+async function recordIfWithinLimit(
+  supabase: SupabaseAdminClient,
+  ip: string,
+  opts: RateLimitOptions
+): Promise<boolean> {
   const key = opts.key ?? ip
   const perMinute = opts.perMinute ?? PER_MINUTE_LIMIT
   const perDay = opts.perDay ?? PER_DAY_LIMIT
@@ -69,19 +87,23 @@ export async function checkRateLimit(
   const minuteAgoIso = new Date(nowMs - MINUTE_MS).toISOString()
   const dayAgoIso = new Date(nowMs - DAY_MS).toISOString()
 
-  await supabase.from('rate_limit_hits').delete().eq('ip', key).lt('created_at', dayAgoIso)
-
-  const [minuteResult, dayResult] = await Promise.all([
-    supabase.from('rate_limit_hits').select('*', { count: 'exact', head: true }).eq('ip', key).gte('created_at', minuteAgoIso),
-    supabase.from('rate_limit_hits').select('*', { count: 'exact', head: true }).eq('ip', key).gte('created_at', dayAgoIso),
-  ])
-
-  if (minuteResult.error || dayResult.error) {
-    console.error('Rate limit check failed:', minuteResult.error ?? dayResult.error)
-    return false
+  const countHits = async (): Promise<{ minute: number; day: number } | null> => {
+    const [minute, day] = await Promise.all([
+      supabase.from('rate_limit_hits').select('*', { count: 'exact', head: true }).eq('ip', key).gte('created_at', minuteAgoIso),
+      supabase.from('rate_limit_hits').select('*', { count: 'exact', head: true }).eq('ip', key).gte('created_at', dayAgoIso),
+    ])
+    if (minute.error || day.error || minute.count === null || day.count === null) {
+      console.error('Rate limit check failed:', minute.error ?? day.error ?? 'missing count')
+      return null
+    }
+    return { minute: minute.count, day: day.count }
   }
 
-  if (!isWithinRateLimit(minuteResult.count ?? 0, dayResult.count ?? 0, perMinute, perDay)) return false
+  const [, before] = await Promise.all([
+    supabase.from('rate_limit_hits').delete().eq('ip', key).lt('created_at', dayAgoIso),
+    countHits(),
+  ])
+  if (!before || !isWithinRateLimit(before.minute, before.day, perMinute, perDay)) return false
 
   const { error: insertError } = await supabase.from('rate_limit_hits').insert({ ip: key })
   if (insertError) {
@@ -89,5 +111,6 @@ export async function checkRateLimit(
     return false
   }
 
-  return true
+  const after = await countHits()
+  return after !== null && after.minute <= perMinute && after.day <= perDay
 }
