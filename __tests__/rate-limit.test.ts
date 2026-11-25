@@ -50,17 +50,17 @@ describe('getClientIp', () => {
 describe('isWithinRateLimit', () => {
   it('allows a request under both the per-minute and per-day limits', () => {
     expect(isWithinRateLimit(0, 0)).toBe(true)
-    expect(isWithinRateLimit(2, 19)).toBe(true)
+    expect(isWithinRateLimit(9, 59)).toBe(true)
   })
 
   it('rejects a request at or over the per-minute limit', () => {
-    expect(isWithinRateLimit(3, 0)).toBe(false)
-    expect(isWithinRateLimit(4, 0)).toBe(false)
+    expect(isWithinRateLimit(10, 0)).toBe(false)
+    expect(isWithinRateLimit(11, 0)).toBe(false)
   })
 
   it('rejects a request at or over the per-day limit, even if the per-minute count is low', () => {
-    expect(isWithinRateLimit(0, 20)).toBe(false)
-    expect(isWithinRateLimit(1, 25)).toBe(false)
+    expect(isWithinRateLimit(0, 60)).toBe(false)
+    expect(isWithinRateLimit(1, 65)).toBe(false)
   })
 })
 
@@ -72,7 +72,7 @@ describe('checkRateLimit', () => {
   })
 
   it('rejects without recording a hit when over the limit', async () => {
-    const supabase = makeFakeSupabase({ minuteCount: 3, dayCount: 0 })
+    const supabase = makeFakeSupabase({ minuteCount: 10, dayCount: 0 })
     await expect(checkRateLimit(supabase, '1.2.3.4')).resolves.toBe(false)
     expect((supabase as unknown as { insert: ReturnType<typeof vi.fn> }).insert).not.toHaveBeenCalled()
   })
@@ -98,8 +98,8 @@ describe('checkRateLimit', () => {
   })
 
   it('honors a custom perMinute/perDay tier instead of the default /api/ask limits', async () => {
-    // Under the default 3/min limit but still allowed here under a looser tier.
-    const supabase = makeFakeSupabase({ minuteCount: 5, dayCount: 5 })
+    // Over the default 10/min limit, but still allowed here under a looser tier.
+    const supabase = makeFakeSupabase({ minuteCount: 12, dayCount: 12 })
     await expect(checkRateLimit(supabase, '1.2.3.4', { perMinute: 20, perDay: 300 })).resolves.toBe(true)
   })
 
@@ -119,8 +119,8 @@ describe('checkRateLimit', () => {
         insert: async ({ ip }: { ip: string }) => { await tick(); rows.push(ip); return { error: null } },
       }),
     } as unknown as SupabaseAdminClient
-    const got = await Promise.all(Array.from({ length: 10 }, () => checkRateLimit(fake, '9.9.9.9')))
-    expect(got.filter(Boolean).length).toBeLessThanOrEqual(3)
+    const got = await Promise.all(Array.from({ length: 25 }, () => checkRateLimit(fake, '9.9.9.9')))
+    expect(got.filter(Boolean).length).toBeLessThanOrEqual(10)
   })
 
   it('fails closed when the database client throws', async () => {

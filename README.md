@@ -61,7 +61,7 @@ Next.js (App Router) + TypeScript, Supabase (Postgres + pgvector) for storage an
 - `lib/request-validation.ts` — runtime validation and size caps for both API routes
 - `lib/ask-client.ts` — browser stream reader that always ends in an answer, an error or an "incomplete" state
 - `lib/moderation.ts` — pre-LLM profanity and prompt-injection screening
-- `lib/rate-limit.ts` — per-IP request throttling (3/minute, 20/day) so a flood can't run up API costs
+- `lib/rate-limit.ts` — per-IP request throttling (10/minute, 60/day) so a flood can't run up API costs
 - `app/api/ask/route.ts` — the full pipeline: validation → rate limit → moderation → query planning → retrieval → relevance verdict → streamed synthesis → citation and quote checks → groundedness grade → query log
 - `app/page.tsx` — the search UI
 - `eval/`, `golden-set/` — the eval harness and hand-curated + LLM-generated golden question set (137 items as of the last update — answerable, out-of-corpus negatives, multi-guest, near-miss traps, and adversarial/injection cases)

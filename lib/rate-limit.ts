@@ -1,11 +1,12 @@
 import type { SupabaseAdminClient } from './supabase-admin'
 
 // Per-IP throttle on /api/ask, since every allowed question costs real money
-// (a Voyage embedding call plus up to two Claude calls). Strict on purpose —
-// this is a small side project, not a high-traffic product, so cost control
-// wins over accommodating a very high-volume single user.
-const PER_MINUTE_LIMIT = 3
-const PER_DAY_LIMIT = 20
+// (a Voyage embedding call plus up to two Claude calls). Set so a
+// team sharing one office network can use it; worst case is about $1.40 a day
+// per network. There is no cap across networks: the provider's spend limit is
+// the backstop.
+const PER_MINUTE_LIMIT = 10
+const PER_DAY_LIMIT = 60
 
 // Looser tier for callers with no per-request $ cost (e.g. /api/source, a
 // plain Supabase read) — the goal there is bounding bulk scraping of the

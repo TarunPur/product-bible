@@ -35,7 +35,7 @@ Single-page, single-anonymous-session web app — no accounts, no login, no save
 - 329/331 episodes ingested and searchable; 2 files (`Adriel Frederick.txt`, `Ryan Hoover.txt`) are permanently unparseable (different transcript format, no timestamps) — accepted, not fixed.
 - No episode titles, air dates, EP numbers, guest roles/companies, or audio/video links exist anywhere in the source data — filenames are guest names only, some with ad-hoc disambiguation (`April Dunford 2.0.txt`). Any UI element implying a "play from timestamp" or episode metadata beyond guest name would need to be marked as not-currently-buildable or synthetic.
 - Confidence is a 3-state band (`none` / `low` / `high`), not a numeric coverage score — real per-answer stats like "N of 329 episodes matched" are derivable from retrieval results at answer time, not available pre-answer.
-- Rate-limited (3 req/min, 20/day per IP, fail-closed) and moderated (profanity blocked, injection attempts flagged/scrutinized) — real dollar cost per question (Voyage embed + up to 2 Claude calls), so the experience should not encourage reckless/rapid-fire querying.
+- Rate-limited (10 req/min, 60/day per IP, fail-closed) and moderated (profanity blocked, injection attempts flagged/scrutinized) — real dollar cost per question (Voyage embed + up to 2 Claude calls), so the experience should not encourage reckless/rapid-fire querying.
 - **Real traffic evidence**: as of 2026-08-07, "How do you know if you have product-market fit?" is by far the most-asked real question (9 times across 7 distinct real sessions) — the strongest repeated-intent signal in the data. Other real questions cluster around positioning and pricing.
 
 ## Brand Commitments
