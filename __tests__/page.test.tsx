@@ -321,6 +321,22 @@ describe('answer rendering and trust', () => {
     expect(scroll).toHaveBeenCalled()
     expect(scroll.mock.contexts[0]).toHaveTextContent('cited')
   })
+  it('stops waiting when the source panel request hangs', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const signals: AbortSignal[] = []
+    global.fetch = vi.fn().mockImplementation((url: string, init: RequestInit) => {
+      if (!String(url).includes('/api/source')) return Promise.resolve(askResponse([{ type: 'token', text: 'P [Ada Chen Rekhi, 00:04:08].' }, { type: 'done', citations: [validatedCitation], confidenceBand: 'high' }]))
+      signals.push(init.signal as AbortSignal)
+      return new Promise((_r, reject) => init.signal?.addEventListener('abort', () => reject(new Error('aborted'))))
+    }) as unknown as typeof fetch
+    render(<Home />)
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'q' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
+    fireEvent.click(await screen.findByTitle('Ada Chen Rekhi — 00:04:08'))
+    await vi.advanceTimersByTimeAsync(16_000)
+    expect(await screen.findByText(/load the surrounding transcript/)).toBeInTheDocument()
+    vi.useRealTimers()
+  })
   it('counts Lenny and Lenny Rachitsky as one operator', async () => {
     await show('A [Lenny, 00:01:00] B [Lenny Rachitsky, 00:02:00]', [
       { ...validatedCitation, guestName: 'Lenny', timestamp: '00:01:00' }, { ...validatedCitation, guestName: 'Lenny Rachitsky', timestamp: '00:02:00' }])

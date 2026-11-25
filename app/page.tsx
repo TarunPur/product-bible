@@ -30,6 +30,7 @@ interface Turn {
 
 const RECENT_TURNS_LIMIT = 3
 const MAX_QUESTION_CHARS = 500
+const SOURCE_TIMEOUT_MS = 15_000
 const SESSION_STORAGE_KEY = 'lenny-qa-session-id'
 
 // 329 of 331 archived episodes are ingested; the two skipped files use a
@@ -287,7 +288,10 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
   // nothing needs resetting here.
   useEffect(() => {
     let cancelled = false
+    const abort = new AbortController()
+    const timer = setTimeout(() => abort.abort(), SOURCE_TIMEOUT_MS)
     fetch('/api/source', {
+      signal: abort.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ episodeId: citation.episodeId, startSeconds: citation.startSeconds, speaker: citation.guestName }),
@@ -302,8 +306,10 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
       .catch(() => {
         if (!cancelled) setFailed(true)
       })
+      .finally(() => clearTimeout(timer))
     return () => {
       cancelled = true
+      abort.abort()
     }
   }, [citation.episodeId, citation.startSeconds, citation.guestName])
 

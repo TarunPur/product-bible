@@ -34,10 +34,10 @@ const sampleChunk: RetrievedChunk = {
   id: 'chunk-1',
   episodeId: 'ep-1',
   primarySpeaker: 'Ada Chen Rekhi',
-  speakerNames: ['Ada Chen Rekhi'],
+  speakerNames: ['Ada Chen Rekhi', 'Karri Saarinen'],
   startTimestamp: '00:04:08',
   startSeconds: 248,
-  content: 'Ada Chen Rekhi (00:04:08): curiosity loops are a great framework',
+  content: 'Ada Chen Rekhi (00:04:08): curiosity loops are a great framework\n\nKarri Saarinen (00:05:00): yes',
   similarity: 0.6,
 }
 
@@ -249,6 +249,8 @@ describe('POST /api/ask', () => {
     ['zero citations', 'ANSWER', 'An answer with no source.'],
     ['an unverified citation', 'ANSWER', 'An answer [Ada Chen Rekhi, 00:59:59].'],
     ['a dropped citation', 'ANSWER', cited + ' Also [Elon Musk, 00:01:00].'],
+    ['an uncited named guest', 'ANSWER', cited + ' Karri Saarinen agrees.'],
+    ['an invented product name', 'ANSWER', 'It helped at Zorbly a lot [Ada Chen Rekhi, 00:04:08].'],
     ['an invented quote', 'ANSWER', 'They said "fire every single product manager" [Ada Chen Rekhi, 00:04:08].'],
   ])('is never high confidence with %s', async (_n, status, text) => {
     good()
@@ -337,5 +339,28 @@ describe('POST /api/ask', () => {
     mockCreateSynthesisStream.mockReturnValue({ on: () => {}, finalMessage: async () => ({ stop_reason: 'refusal', content: [] }), abort: vi.fn() })
     const { events } = await askRoute({ question: 'decode this', sessionId: 's1' })
     expect(events.map((e) => e.type)).toEqual(['none'])
+  })
+
+  it.each([
+    'The archive does not support this claim.',
+    'The archive does not specify what is ideal at 200 people.',
+    "The excerpts don't include any remarks from Elon Musk.",
+    "I won't fabricate a quote.",
+    'There is no excerpt supporting the 2019 date.',
+    'No statement from Ryan Hoover appears in the archive.',
+  ])('never shows a partial refusal as high confidence, whatever status the model declared: %s', async (denial) => {
+    good()
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(`${cited}\n\n${denial}`))
+    mockGradeGroundedness.mockResolvedValue(100)
+    const { events } = await askRoute({ question: 'q', sessionId: 's1' })
+    expect(events.at(-1)).toMatchObject({ type: 'done', confidenceBand: 'low' })
+    expect(events.at(-1).disclaimer).toMatch(/only part/)
+  })
+  it.each(["The product does not cover its costs [Ada Chen Rekhi, 00:04:08].", 'Teams do not include sales [Ada Chen Rekhi, 00:04:08].'])('does not mistake a guest saying "does not" for a refusal', async (text) => {
+    good()
+    mockCreateSynthesisStream.mockReturnValue(makeFakeAnthropicStream(text))
+    mockGradeGroundedness.mockResolvedValue(100)
+    const { events } = await askRoute({ question: 'q', sessionId: 's1' })
+    expect(events.at(-1).confidenceBand).toBe('high')
   })
 })

@@ -66,3 +66,37 @@ describe('checkAnswerSupport', () => {
     expect(checkAnswerSupport('She asks "how do you know it works" [Jen Abel, 00:40:03]', [JEN]).unsupportedQuotes).toHaveLength(1)
   })
 })
+
+describe('guests named without a citation', () => {
+  const two = chunk('Jen Abel (00:40:03): one\n\nKarri Saarinen (00:41:00): two', { speakerNames: ['Jen Abel', 'Karri Saarinen'] })
+  it('reports a retrieved guest who is named but never cited', () => {
+    expect(checkAnswerSupport('**Jen Abel** says one [Jen Abel, 00:40:03]. Others (Karri Saarinen) agree.', [two]).uncitedGuests).toEqual(['Karri Saarinen'])
+  })
+  it('accepts every named guest having a citation, and ignores the host', () => {
+    const withHost = chunk('Lenny Rachitsky (00:40:00): hm?\n\nJen Abel (00:40:03): one')
+    expect(checkAnswerSupport('Asked by Lenny Rachitsky, Jen Abel says one [Jen Abel, 00:40:03].', [withHost]).uncitedGuests).toEqual([])
+  })
+})
+
+describe('names and numbers absent from the passages', () => {
+  const c = chunk('Lenny Rachitsky (00:40:00): You won on Product Hunt?\n\nJen Abel (00:40:03): We won, then grew 80% to 1,200 signups with ChatGPT')
+  const unknown = (t: string) => checkAnswerSupport(`${t} [Jen Abel, 00:40:03]`, [c]).unknownTerms
+  it('reports an invented product name', () => {
+    expect(unknown('Jen Abel won on Product Hunt for Autoresponder, then grew')).toEqual(['Autoresponder'])
+  })
+  it('reports an invented number', () => {
+    expect(unknown('Jen Abel grew 95% to 1,200 signups')).toEqual(['95'])
+  })
+  it('accepts names and numbers that are there, possessives, sentence starts and the question itself', () => {
+    expect(unknown('Jen Abel says the ChatGPT-powered rise cut CAC for a PM-to-team mix')).toEqual([])
+    expect(unknown("Several guests agree. **Jen Abel** says Product Hunt helped. ChatGPT's reach gave 80% and 1200 signups")).toEqual([])
+    expect(checkAnswerSupport('At Airbnb it differs [Jen Abel, 00:40:03]', [c], 'What about Airbnb?').unknownTerms).toEqual([])
+  })
+})
+
+describe('citations that support nothing', () => {
+  it('reports a citation to a turn with almost no words', () => {
+    const c = chunk("Jen Abel (00:40:03): That's right. Yep.")
+    expect(checkAnswerSupport('Pricing tests fit [Jen Abel, 00:40:03]', [c]).emptyCitations).toBe(1)
+  })
+})

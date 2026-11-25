@@ -17,6 +17,7 @@ const PROFANITY_PATTERNS = [
 const INJECTION_PATTERNS = [
   /ignore (all |the )?(previous|above|prior) instructions/i,
   /disregard (all |the )?(previous|above|prior) instructions/i,
+  /\b(?:forget|ignore|disregard) (?:all )?(?:your|everything you)\b/i,
   /you are now/i,
   /new instructions:/i,
   /system prompt/i,

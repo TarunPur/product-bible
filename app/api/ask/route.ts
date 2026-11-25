@@ -7,7 +7,7 @@ import { planQuery } from '@/lib/query-plan'
 import { ProviderBusyError } from '@/lib/embeddings'
 import { createSynthesisStream, gradeGroundedness } from '@/lib/llm'
 import { StatusGate } from '@/lib/status-gate'
-import { checkAnswerSupport, extractValidatedCitations } from '@/lib/citations'
+import { checkAnswerSupport, disclaimsCoverage, extractValidatedCitations } from '@/lib/citations'
 import { BadRequestError, parseAskRequest } from '@/lib/request-validation'
 import type { AskRequest, AskStreamEvent, Citation, ConfidenceBand } from '@/lib/types'
 
@@ -79,11 +79,21 @@ interface Verdict {
   disclaimer?: string
 }
 
-function assess(partial: boolean, groundedness: number, threshold: number, citations: Citation[], supportOk: boolean): Verdict {
+function assess(
+  partial: boolean,
+  groundedness: number,
+  threshold: number,
+  citations: Citation[],
+  supportOk: boolean,
+  termsOk: boolean
+): Verdict {
   if (!supportOk || citations.length === 0 || citations.some((c) => !c.timestampVerified)) {
     return { band: 'low', disclaimer: UNCHECKED_DISCLAIMER }
   }
   if (partial) return { band: 'low', disclaimer: PARTIAL_DISCLAIMER }
+  // After the partial check: a reply declining part of a question naturally
+  // names things the passages don't.
+  if (!termsOk) return { band: 'low', disclaimer: UNCHECKED_DISCLAIMER }
   if (groundedness < threshold) return { band: 'low', disclaimer: LOW_CONFIDENCE_DISCLAIMER }
   return { band: 'high' }
 }
@@ -170,11 +180,16 @@ export async function POST(req: Request) {
     }
     if (gate.status === 'NONE' || !answer.trim()) return refuse()
 
-    const support = checkAnswerSupport(answer, retrieval.chunks)
-    const supportOk = support.droppedCitations === 0 && support.unsupportedQuotes.length === 0
+    const support = checkAnswerSupport(answer, retrieval.chunks, standalone)
+    const supportOk =
+      support.droppedCitations === 0 &&
+      support.emptyCitations === 0 &&
+      support.unsupportedQuotes.length === 0 &&
+      support.uncitedGuests.length === 0
     const groundedness = await safeGroundedness(standalone, retrieval.chunks, answer)
     const threshold = injectionAttempted ? HIGH_CONFIDENCE_THRESHOLD_FLAGGED : HIGH_CONFIDENCE_THRESHOLD
-    const { band, disclaimer } = assess(gate.status === 'PARTIAL', groundedness, threshold, citations, supportOk)
+    const partial = gate.status === 'PARTIAL' || disclaimsCoverage(answer)
+    const { band, disclaimer } = assess(partial, groundedness, threshold, citations, supportOk, support.unknownTerms.length === 0)
 
     await logQuery(supabase, sessionId, question, disclaimer ? `${answer}\n\n${disclaimer}` : answer, band, citations, flagReason)
     send({ type: 'done', citations, confidenceBand: band, disclaimer, interpretedAs })
