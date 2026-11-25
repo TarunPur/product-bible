@@ -273,6 +273,10 @@ function SourceCard({
   )
 }
 
+function scrollToLine(element: HTMLElement | null) {
+  element?.scrollIntoView?.({ block: 'start' })
+}
+
 function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () => void }) {
   const [lines, setLines] = useState<SourceContextLine[] | null>(null)
   const [failed, setFailed] = useState(false)
@@ -378,9 +382,10 @@ function SourcePanel({ citation, onClose }: { citation: Citation; onClose: () =>
               {lines.map((line, i) => (
                 <div
                   key={i}
+                  ref={line.isCited ? scrollToLine : undefined}
                   className={
                     line.isCited
-                      ? 'bg-[color-mix(in_oklch,var(--color-accent)_10%,transparent)] -mx-3 px-3 py-1.5 rounded-lg'
+                      ? 'scroll-mt-24 bg-[color-mix(in_oklch,var(--color-accent)_10%,transparent)] -mx-3 px-3 py-1.5 rounded-lg'
                       : ''
                   }
                 >

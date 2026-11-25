@@ -309,6 +309,18 @@ describe('answer rendering and trust', () => {
     expect(document.querySelector('em')).toHaveTextContent('soft')
     expect(document.querySelector('img')).toBeNull()
   })
+  it('scrolls the source panel to the cited line', async () => {
+    const scroll = vi.fn(); Element.prototype.scrollIntoView = scroll
+    mockFetchRoutes([{ type: 'token', text: 'P [Ada Chen Rekhi, 00:04:08].' }, { type: 'done', citations: [validatedCitation], confidenceBand: 'high' }],
+      [{ timestamp: '00:03:00', speaker: 'Lenny', text: 'before', isCited: false }, { timestamp: '00:04:08', speaker: 'Ada Chen Rekhi', text: 'cited', isCited: true }])
+    render(<Home />)
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'q' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
+    fireEvent.click(await screen.findByTitle('Ada Chen Rekhi — 00:04:08'))
+    await screen.findByText('cited')
+    expect(scroll).toHaveBeenCalled()
+    expect(scroll.mock.contexts[0]).toHaveTextContent('cited')
+  })
   it('counts Lenny and Lenny Rachitsky as one operator', async () => {
     await show('A [Lenny, 00:01:00] B [Lenny Rachitsky, 00:02:00]', [
       { ...validatedCitation, guestName: 'Lenny', timestamp: '00:01:00' }, { ...validatedCitation, guestName: 'Lenny Rachitsky', timestamp: '00:02:00' }])
