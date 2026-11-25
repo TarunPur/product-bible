@@ -69,4 +69,4 @@ Next.js (App Router) + TypeScript, Supabase (Postgres + pgvector) for storage an
 ## Known gaps
 
 - 2 of 331 transcript files use a different, timestamp-less format and are skipped by the parser (`Adriel Frederick.txt`, `Ryan Hoover.txt`).
-- Voyage's tier without a payment method allows 3 embedding requests per minute across all visitors; beyond that a question gets a "busy" message. Homepage examples don't use that allowance.
+- When the embedding provider rate-limits or times out, a typed question gets a "busy" message rather than a long wait. Homepage examples don't call it.
