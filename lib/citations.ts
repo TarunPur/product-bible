@@ -1,98 +1,119 @@
+import { citationKey, parseAnswer, timestampToSeconds } from './citation-tags'
+import type { CitationRef } from './citation-tags'
 import type { RetrievedChunk } from './retrieval'
-import type { Citation } from './types'
-
-const CITATION_TAG_RE = /\[([^,[\]]+),\s*(\d{1,2}:\d{2}(?::\d{2})?)\]/g
-
-// Excerpts are labelled to the model as HH:MM:SS, but it sometimes emits
-// MM:SS. Two-part timestamps are read as MM:SS, matching how the transcripts
-// themselves are written.
-function toSeconds(timestamp: string): number | null {
-  const parts = timestamp.split(':').map(Number)
-  if (parts.some(Number.isNaN)) return null
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
-  if (parts.length === 2) return parts[0] * 60 + parts[1]
-  return null
-}
-
-function speaks(chunk: RetrievedChunk, guestName: string): boolean {
-  return chunk.speakerNames.some((s) => s.toLowerCase() === guestName.toLowerCase())
-}
+import { parseInlineTurns } from './transcript-parser'
+import type { Citation, SpeakerTurn } from './types'
 
 const EXCERPT_CHARS = 300
 
-// A chunk usually opens with the host's question before the guest answers, so
-// slicing from character 0 puts Lenny's words under the guest's name. Start at
-// the cited guest's own turn instead — preferring the exact cited moment, then
-// their first turn in the chunk, then falling back to the chunk start.
-function excerptFor(chunk: RetrievedChunk, guestName: string, timestamp: string): string {
-  const atCitedTurn = chunk.content.indexOf(`${guestName} (${timestamp})`)
-  const start = atCitedTurn !== -1 ? atCitedTurn : chunk.content.indexOf(`${guestName} (`)
-  return chunk.content.slice(start === -1 ? 0 : start, (start === -1 ? 0 : start) + EXCERPT_CHARS)
+function sameSpeaker(a: string, b: string): boolean {
+  return a.trim().toLowerCase() === b.trim().toLowerCase()
 }
 
-interface ChunkMatch {
-  chunk: RetrievedChunk
-  startSeconds: number
-  timestampVerified: boolean
+function speaks(chunk: RetrievedChunk, guestName: string): boolean {
+  return chunk.speakerNames.some((s) => sameSpeaker(s, guestName))
 }
 
-// Resolving a [Guest, timestamp] tag to the chunk it actually came from, in
-// descending order of confidence. Matching on guest name alone (the last
-// case) is enough to prove the guest was really retrieved — the original
-// hallucination guard — but not that the timestamp points anywhere real, so
-// those are flagged rather than trusted with a transcript position.
-function findSourceChunk(chunks: RetrievedChunk[], guestName: string, timestamp: string): ChunkMatch | null {
-  const citedSeconds = toSeconds(timestamp)
+function excerptOf(turn: SpeakerTurn): string {
+  return `${turn.speaker} (${turn.startTimestamp}): ${turn.text}`.slice(0, EXCERPT_CHARS)
+}
 
-  // 1. The tag reproduces an excerpt's own header timestamp.
-  if (citedSeconds !== null) {
-    const exact = chunks.find((c) => speaks(c, guestName) && toSeconds(c.startTimestamp) === citedSeconds)
-    if (exact) return { chunk: exact, startSeconds: exact.startSeconds, timestampVerified: true }
+// A citation is verified only when that exact speaker has a turn starting at
+// that exact timestamp. A chunk's own header is not enough (it is often the
+// host's question), and neither is the timestamp appearing somewhere in text.
+// Matching the guest by name alone still proves they were retrieved, but the
+// result is flagged so the UI never opens a transcript on it.
+function resolve(ref: CitationRef, chunks: RetrievedChunk[]): Citation | null {
+  const seconds = timestampToSeconds(ref.timestamp)
+  const matches = chunks.flatMap((chunk) =>
+    parseInlineTurns(chunk.content)
+      .filter((t) => t.startSeconds === seconds && sameSpeaker(t.speaker, ref.guestName))
+      .map((turn) => ({ chunk, turn }))
+  )
+  // Returning guests can have a turn at the same second in two episodes; a
+  // tag doesn't say which, so don't vouch for either.
+  const oneEpisode = new Set(matches.map((m) => m.chunk.episodeId)).size === 1
+  if (oneEpisode) {
+    const { chunk, turn } = matches[0]
+    return {
+      guestName: turn.speaker,
+      timestamp: turn.startTimestamp,
+      excerpt: excerptOf(turn),
+      episodeId: chunk.episodeId,
+      startSeconds: turn.startSeconds,
+      timestampVerified: true,
+    }
   }
 
-  // 2. The tag points at a speaker turn inside a chunk — chunk text keeps
-  //    inline "Name (HH:MM:SS):" labels, so the timestamp is verifiable there.
-  const inline = chunks.find((c) => speaks(c, guestName) && c.content.includes(timestamp))
-  if (inline) {
-    return { chunk: inline, startSeconds: citedSeconds ?? inline.startSeconds, timestampVerified: true }
+  const byName = chunks.find((c) => speaks(c, ref.guestName))
+  if (!byName) return null
+  const firstTurn = parseInlineTurns(byName.content).find((t) => sameSpeaker(t.speaker, ref.guestName))
+  return {
+    guestName: ref.guestName,
+    timestamp: ref.timestamp,
+    excerpt: firstTurn ? excerptOf(firstTurn) : byName.content.slice(0, EXCERPT_CHARS),
+    episodeId: byName.episodeId,
+    startSeconds: firstTurn?.startSeconds ?? byName.startSeconds,
+    timestampVerified: false,
   }
+}
 
-  // 3. Guest was retrieved, timestamp is unaccounted for.
-  const byName = chunks.find((c) => speaks(c, guestName))
-  if (byName) return { chunk: byName, startSeconds: byName.startSeconds, timestampVerified: false }
-
-  return null
+function citationRefs(answerText: string): CitationRef[] {
+  return parseAnswer(answerText).flatMap((p) => (p.type === 'citations' ? p.refs : []))
 }
 
 // Defense against fabricated citations (from hallucination or prompt
-// injection): only keep a [Guest, timestamp] tag the model emitted if that
-// guest actually appears among the chunks that were really retrieved. A tag
-// naming a guest never in the retrieved set is dropped rather than shown.
+// injection): a tag naming a guest never in the retrieved set is dropped.
 export function extractValidatedCitations(answerText: string, chunks: RetrievedChunk[]): Citation[] {
-  const citations: Citation[] = []
-  const seen = new Set<string>()
-  let match: RegExpExecArray | null
-
-  CITATION_TAG_RE.lastIndex = 0
-  while ((match = CITATION_TAG_RE.exec(answerText)) !== null) {
-    const guestName = match[1].trim()
-    const timestamp = match[2]
-    const key = `${guestName.toLowerCase()}|${timestamp}`
-    if (seen.has(key)) continue
-
-    const found = findSourceChunk(chunks, guestName, timestamp)
-    if (!found) continue
-
-    seen.add(key)
-    citations.push({
-      guestName,
-      timestamp,
-      excerpt: excerptFor(found.chunk, guestName, timestamp),
-      episodeId: found.chunk.episodeId,
-      startSeconds: found.startSeconds,
-      timestampVerified: found.timestampVerified,
-    })
+  const byKey = new Map<string, Citation>()
+  for (const ref of citationRefs(answerText)) {
+    const key = citationKey(ref)
+    if (byKey.has(key)) continue
+    const citation = resolve(ref, chunks)
+    if (citation) byKey.set(key, citation)
   }
+  return [...byKey.values()]
+}
 
-  return citations
+const MIN_QUOTE_WORDS = 4
+
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim()
+}
+
+export interface AnswerSupport {
+  droppedCitations: number
+  unsupportedQuotes: string[]
+}
+
+// Deterministic checks the model can't talk its way past: every bracketed
+// citation must be readable and name a retrieved guest, and every quotation
+// of four words or more must occur in the words of a speaker cited in the
+// same paragraph (any retrieved turn when the paragraph cites nobody).
+export function checkAnswerSupport(answerText: string, chunks: RetrievedChunk[]): AnswerSupport {
+  const turns = chunks.flatMap((c) => parseInlineTurns(c.content))
+  const droppedCitations =
+    parseAnswer(answerText).filter((p) => p.type === 'unreadable').length +
+    citationRefs(answerText).filter((ref) => !chunks.some((c) => speaks(c, ref.guestName))).length
+
+  const unsupportedQuotes: string[] = []
+  for (const paragraph of answerText.split(/\n\s*\n|\n(?=\s*(?:[-*]|\d+\.)\s)/)) {
+    const cited = citationRefs(paragraph).map((r) => r.guestName)
+    const spoken = normalize(
+      turns
+        .filter((t) => cited.length === 0 || cited.some((name) => sameSpeaker(name, t.speaker)))
+        .map((t) => t.text)
+        .join(' ')
+    )
+    for (const match of paragraph.matchAll(/["“]([^"“”]+)["”]/g)) {
+      const fragments = match[1].split(/\.{3}|…|\[[^\]]*\]/).map(normalize)
+      if (fragments.join(' ').split(' ').length < MIN_QUOTE_WORDS) continue
+      if (!fragments.every((f) => ` ${spoken} `.includes(f ? ` ${f} ` : ''))) unsupportedQuotes.push(match[1])
+    }
+  }
+  return { droppedCitations, unsupportedQuotes }
 }

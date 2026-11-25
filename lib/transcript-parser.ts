@@ -47,12 +47,11 @@ function secondsToTimestamp(totalSeconds: number): string {
   return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':')
 }
 
-// Inside a stored chunk, speaker labels are inline rather than on their own
-// line ("Ada Chen Rekhi (00:04:08): text..."), so HEADER_RE — which is
-// anchored to a whole line — can't read them back. This splits a chunk's
-// content into the speaker turns it was assembled from, for displaying a
-// chunk as a readable transcript rather than one undifferentiated block.
-const INLINE_HEADER_RE = /([A-Z][^()\n]{0,40}?)\s\((\d{1,3}(?::\d{2}){1,2})\):\s*/g
+// Inside a stored chunk each turn is its own block opening with an inline
+// label ("Ada Chen Rekhi (00:04:08): text..."). Labels only count at the
+// start of a line: turn text never contains newlines (see parseTranscript),
+// so words spoken mid-turn can't be mistaken for a new speaker.
+const INLINE_HEADER_RE = /(?:^|\n)[^\S\n]*([^()\n]{1,80}?)\s*\((\d{1,3}(?::\d{2}){1,2})\):\s*/g
 
 export function parseInlineTurns(content: string): SpeakerTurn[] {
   const turns: SpeakerTurn[] = []

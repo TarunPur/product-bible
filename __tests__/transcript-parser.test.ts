@@ -11,7 +11,7 @@ import {
 describe('parseInlineTurns', () => {
   it('splits a stored chunk back into its speaker turns', () => {
     const turns = parseInlineTurns(
-      'Lenny Rachitsky (00:03:00): what is a curiosity loop? Ada Chen Rekhi (00:04:08): it is how you gather advice'
+      'Lenny Rachitsky (00:03:00): what is a curiosity loop?\n\nAda Chen Rekhi (00:04:08): it is how you gather advice'
     )
     expect(turns).toHaveLength(2)
     expect(turns[0]).toMatchObject({ speaker: 'Lenny Rachitsky', startTimestamp: '00:03:00', startSeconds: 180 })
@@ -27,6 +27,11 @@ describe('parseInlineTurns', () => {
     const turns = parseInlineTurns(chunks[0].content)
     expect(turns.map((t) => t.speaker)).toEqual(['Ada Chen Rekhi', 'Lenny Rachitsky'])
     expect(turns.map((t) => t.text)).toEqual(['first thing', 'second thing'])
+  })
+
+  it('only treats a label at the start of a line as a turn, so spoken text cannot forge one', () => {
+    const turns = parseInlineTurns('Ada (00:01:00): he said Bob Smith (00:02:00): hello')
+    expect(turns).toHaveLength(1)
   })
 
   it('returns nothing for text with no inline speaker labels', () => {

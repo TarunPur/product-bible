@@ -54,7 +54,7 @@ describe('extractValidatedCitations', () => {
   })
 
   it('verifies a timestamp that matches the chunk header, and carries its position', () => {
-    const chunks = [makeChunk({ startTimestamp: '00:04:08', startSeconds: 248, episodeId: 'ep-42' })]
+    const chunks = [makeChunk({ startTimestamp: '00:04:08', startSeconds: 248, episodeId: 'ep-42', content: 'Ada Chen Rekhi (00:04:08): hi' })]
     const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
     expect(citation.timestampVerified).toBe(true)
     expect(citation.startSeconds).toBe(248)
@@ -66,7 +66,7 @@ describe('extractValidatedCitations', () => {
       makeChunk({
         startTimestamp: '00:03:00',
         startSeconds: 180,
-        content: 'Ada Chen Rekhi (00:03:00): setup\nAda Chen Rekhi (00:04:08): curiosity loops',
+        content: 'Ada Chen Rekhi (00:03:00): setup\n\nAda Chen Rekhi (00:04:08): curiosity loops',
       }),
     ]
     const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
@@ -101,7 +101,7 @@ describe('extractValidatedCitations', () => {
         startSeconds: 180,
         speakerNames: ['Lenny Rachitsky', 'Ada Chen Rekhi'],
         content:
-          'Lenny Rachitsky (00:03:00): so what is a curiosity loop?\nAda Chen Rekhi (00:04:08): a curiosity loop is how you gather advice fast',
+          'Lenny Rachitsky (00:03:00): so what is a curiosity loop?\n\nAda Chen Rekhi (00:04:08): a curiosity loop is how you gather advice fast',
       }),
     ]
     const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 00:04:08].', chunks)
@@ -116,7 +116,7 @@ describe('extractValidatedCitations', () => {
   })
 
   it('reads a two-part timestamp as MM:SS', () => {
-    const chunks = [makeChunk({ startTimestamp: '00:04:08', startSeconds: 248 })]
+    const chunks = [makeChunk({ startTimestamp: '00:04:08', startSeconds: 248, content: 'Ada Chen Rekhi (00:04:08): hi' })]
     const [citation] = extractValidatedCitations('Point made [Ada Chen Rekhi, 4:08].', chunks)
     expect(citation.timestampVerified).toBe(true)
   })
