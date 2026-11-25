@@ -24,11 +24,11 @@ Common thread across segments: some existing awareness of Lenny/the podcast, and
 
 ## Positioning
 
-**"Every answer, cited."** The differentiator against a generic podcast summarizer or transcript search tool is attribution safety, not just retrieval: every `[Guest, timestamp]` citation the model emits is validated against the chunks actually retrieved for that query (`lib/citations.ts`) and dropped if it doesn't match a real chunk. A retrieval-similarity confidence gate (threshold 0.5, `lib/retrieval.ts`) declines to answer rather than guess when a question falls outside the corpus. The product's core promise is "confidently wrong" and "misattributed quote" are the two failure modes it's built to refuse, not just avoid.
+**"Every answer, cited."** The differentiator against a generic podcast summarizer or transcript search tool is attribution safety, not just retrieval: every `[Guest, timestamp]` citation the model emits is matched to an exact speaker turn in the passages retrieved for that query (`lib/citations.ts`) and dropped if its guest wasn't retrieved. The answering model must declare whether the passages answer the question before any text is released (`lib/status-gate.ts`); if they don't, the app declines rather than guesses. The product's core promise is "confidently wrong" and "misattributed quote" are the two failure modes it's built to refuse, not just avoid.
 
 ## Operating Context
 
-Single-page, single-anonymous-session web app — no accounts, no login, no saved history across visits. A visitor types a question or picks a suggested prompt, watches a streamed synthesized answer arrive with numbered inline citations, and may ask follow-ups within the same session (conversation history considered for injection resistance, not for personalization). Typical use is a one-off research moment, not a recurring habit tool.
+Single-page, single-anonymous-session web app — no accounts, no login, no saved history across visits. A visitor types a question or picks a suggested prompt, watches a streamed synthesized answer arrive with numbered inline citations, and may ask follow-ups within the same session (history is used only to rewrite a follow-up into a standalone question, never as evidence). Typical use is a one-off research moment, not a recurring habit tool.
 
 ## Capabilities and Constraints
 

@@ -20,10 +20,16 @@ const oswald = Oswald({
   display: "swap",
 });
 
+const title = "Playbook — every answer, cited";
+const description =
+  "Ask a question about product, growth, or leadership and get an attributed answer sourced directly from Lenny's Podcast episodes.";
+
 export const metadata: Metadata = {
-  title: "Playbook — every answer, cited",
-  description:
-    "Ask a question about product, growth, or leadership and get an attributed answer sourced directly from Lenny's Podcast episodes.",
+  metadataBase: new URL("https://product-bible.vercel.app"),
+  title,
+  description,
+  openGraph: { title, description, url: "/", siteName: "Playbook", type: "website" },
+  twitter: { card: "summary", title, description },
 };
 
 export default function RootLayout({
