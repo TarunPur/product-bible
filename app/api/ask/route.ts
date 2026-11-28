@@ -3,6 +3,7 @@ import type { SupabaseAdminClient } from '@/lib/supabase-admin'
 import { containsProfanity, containsInjectionAttempt, PROFANITY_REFUSAL_MESSAGE } from '@/lib/moderation'
 import { getClientIp, checkRateLimit } from '@/lib/rate-limit'
 import { retrieveChunks, retrieveExample } from '@/lib/retrieval'
+import { getCachedAnswer } from '@/lib/answer-cache'
 import { planQuery } from '@/lib/query-plan'
 import { ProviderBusyError } from '@/lib/embeddings'
 import { createSynthesisStream, gradeGroundedness } from '@/lib/llm'
@@ -142,7 +143,15 @@ export async function POST(req: Request) {
   const abort = new AbortController()
   req.signal.addEventListener('abort', () => abort.abort(), { once: true })
 
+  const cached = getCachedAnswer(question)
+
   async function run(send: (event: AskStreamEvent) => void): Promise<void> {
+    if (cached) {
+      send({ type: 'token', text: cached.answer })
+      await logQuery(supabase, sessionId, question, cached.answer, 'high', cached.citations, flagReason)
+      return send({ type: 'done', citations: cached.citations, confidenceBand: 'high' })
+    }
+
     const example = await retrieveExample(question)
     const plan = example ? null : await planQuery(question, recentTurns)
     const standalone = plan?.standaloneQuestion ?? question
@@ -218,6 +227,10 @@ export async function POST(req: Request) {
   })
 
   return new Response(stream, {
-    headers: { 'Content-Type': 'application/x-ndjson', 'Cache-Control': 'no-store' },
+    headers: {
+      'Content-Type': 'application/x-ndjson',
+      'Cache-Control': 'no-store',
+      'X-Answer-Source': cached ? 'cache' : 'live',
+    },
   })
 }

@@ -15,6 +15,7 @@
     "eval": "tsx eval/run-eval.ts",
     "eval:full": "tsx eval/run-full-eval.ts",
     "examples:precompute": "tsx scripts/precompute-examples.ts",
+    "answers:precompute": "tsx scripts/precompute-answers.ts",
     "eval:natural": "tsx eval/run-natural-eval.ts",
     "eval:injection": "tsx eval/run-injection-eval.ts",
     "eval:multiturn": "tsx eval/run-multiturn-injection-eval.ts"

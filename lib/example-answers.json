@@ -1,0 +1,413 @@
+{
+ "How do you know if you have product-market fit?": {
+  "answer": "Several guests converge on the Sean Ellis survey as a key tool, though they frame it differently.\n\n**Sean Ellis** himself describes the question as asking users how they'd feel if they could no longer use the product, with options of very disappointed, somewhat disappointed, or not disappointed, and looking for a strong showing of very disappointed responses [Sean Ellis, 00:03:19]. He notes this is a leading indicator, while actual retention cohorts are the lagging, more accurate signal, but retention takes much longer to observe [Sean Ellis, 00:06:40]. Over time, sharing this question across many startups, he saw that a high enough percentage of very disappointed responses correlated with products doing well, and low percentages correlated with struggle [Sean Ellis, 00:07:01].\n\n**Rahul Vohra** explains that Sean Ellis found companies that struggled to grow almost always had less than 40% very disappointed responses, while fast-growing companies almost always exceeded 40%, and calls this more predictive than NPS [Rahul Vohra, 00:55:30].\n\n**Jag Duggal** describes the same three-point methodology, noting that if at least 40% of customers aren't very disappointed, you haven't reached product-market fit, though NewBank raised its own threshold to 50% because Brazilians are culturally more polite and optimistic than average [Jag Duggal, 00:15:24].\n\n**Sarah Tavel** also favors Sean Ellis's question over NPS, citing people retaining and reaching back out with enthusiasm, and says if at least 40% say they'd be very disappointed, you're on the right track [Sarah Tavel, 00:57:39].\n\nOther guests take different angles: **Benjamin Lauzier** says to measure it classically using the same disappointment-style question, independent of marketplace dynamics [Benjamin Lauzier, 00:22:50]. **Nikita Bier** says it's binary and you'll just know, citing unusual metrics like hourly actives [Nikita Bier, 00:36:06]. **Nikhyl Singhal** looks at how much effort is needed to generate pull from users [Nikhyl Singhal, 00:20:36].",
+  "citations": [
+   {
+    "guestName": "Sean Ellis",
+    "timestamp": "00:03:19",
+    "excerpt": "Sean Ellis (00:03:19): It's a simple question that helps you figure out, does anyone consider your product a must-have, or ideally, who and how many people consider it, but ultimately it's about trying to figure out is your product a must-have, which could be equated to having product market fit. An",
+    "episodeId": "7dd0e371-d6ef-4b26-991a-4cebaed3ddd3",
+    "startSeconds": 199,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Sean Ellis",
+    "timestamp": "00:06:40",
+    "excerpt": "Sean Ellis (00:06:40): I would say it's a leading indicator of product market fit. The lightning indicator is, do they actually keep using it? So probably retention cohorts are more accurate, but the problem is, like your time at Airbnb, how long do you have to look at a retention cohort before you ",
+    "episodeId": "7dd0e371-d6ef-4b26-991a-4cebaed3ddd3",
+    "startSeconds": 400,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Sean Ellis",
+    "timestamp": "00:07:01",
+    "excerpt": "Sean Ellis (00:07:01): And so with this question, you can kind of find out day one, you don't need a good analytics system in place to be able to see if product market fit exists. And so yeah, the 40% was not something I originally had in there. Originally, I was trying to have just a filter so that",
+    "episodeId": "7dd0e371-d6ef-4b26-991a-4cebaed3ddd3",
+    "startSeconds": 421,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Rahul Vohra",
+    "timestamp": "00:55:30",
+    "excerpt": "Rahul Vohra (00:55:30): What Sean Ellis found, Sean Ellis, if you don't know him, is the guy who coined the term growth hacker, and he instrumented, benchmarked this initial question. What he found, is that the companies that struggled to grow almost always had less than 40%, very disappointed. Wher",
+    "episodeId": "4ff8ab7b-17ff-48c8-853c-5a59c4d2e8d1",
+    "startSeconds": 3330,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Jag Duggal",
+    "timestamp": "00:15:24",
+    "excerpt": "Jag Duggal (00:15:24): Yeah, the Sean Ellis score is a really simple methodology used by lots and lots of companies that a gentleman named Sean Ellis popularized well over a decade ago. Which basically asks your customers at each stage, and at each stage you have a small number of customers, then a ",
+    "episodeId": "1e38d536-adde-4d34-8e8c-c5d00949384e",
+    "startSeconds": 924,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Sarah Tavel",
+    "timestamp": "00:57:39",
+    "excerpt": "Sarah Tavel (00:57:39): The only thing I'll add, those two things related I'll add. I don't like NPS for this, and I have a whole blog post on this. I like Sean Ellis's question of how disappointed would you be if this product disappeared? And I think it's if you have at least 40% of people respond ",
+    "episodeId": "449b1b12-a756-4161-9519-1fbfc724d60f",
+    "startSeconds": 3459,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Benjamin Lauzier",
+    "timestamp": "00:22:50",
+    "excerpt": "Benjamin Lauzier (00:22:50): So, questions like this I think go to the heart of how valuable is your solution to users, and you can do this on the supply side and the demand side. I think here my advice is typically to consider that you have two product market fits essentially. You want to make sure",
+    "episodeId": "2f948871-c006-4e43-a7e7-2e3ecf1aa4e9",
+    "startSeconds": 1370,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Nikita Bier",
+    "timestamp": "00:36:06",
+    "excerpt": "Nikita Bier (00:36:06): A lot of people ask me like, \"What's the benchmark for product-market fit?\" And this founder that I'm friends with, his name's Roger Dickey, he told me this one time, \"If your product's working, you'll know. And if there's any uncertainty, it's not working.\" And it really is ",
+    "episodeId": "7d93d62d-1af6-4ff0-9cfa-8aaa58e2ae89",
+    "startSeconds": 2166,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Nikhyl Singhal",
+    "timestamp": "00:20:36",
+    "excerpt": "Nikhyl Singhal (00:20:36): For me, it's always around this pull that sort of how much work do you have to do to basically generate pull? So right now with OpenAI for example, we're seeing ridiculous pull, but we may not be seeing, for example, massive revenue or profitability. So that's the reason w",
+    "episodeId": "48df09fa-5682-4011-b394-55759b9d583f",
+    "startSeconds": 1236,
+    "timestampVerified": true
+   }
+  ]
+ },
+ "When should a team kill a bet instead of doubling down?": {
+  "answer": "**Shaun Clowes** reflects on a product kept alive for two years despite being, in hindsight, a clear mismatch for the company, its distribution, and the market. He says it was a zombie product within six months, and he regrets not calling it dead earlier instead of letting it drain resources for another year and a half [Shaun Clowes, 01:11:11]. The project was only killed when a customer finally wanted to pay millions for it, since signing that contract would have locked the company in forever [Shaun Clowes, 01:09:33].\n\n**Annie Duke** explains that teams need kill criteria, specific signals set in advance that indicate it is time to pivot or stop, because once something launches, teams become very slow to quit due to biases like sunk cost [Annie Duke, 01:06:18]. She also describes a founder who ran back-of-the-envelope math on customer acquisition costs and break-even timelines, realized the business would never be venture scale as assumed, and shut it down even though no one else saw the need to [Annie Duke, 01:16:58].\n\n**Ryan Singer** describes Basecamp's circuit breaker principle: if a project isn't on track to finish within its cycle, it gets cancelled and rethought rather than pushed into overtime, though he notes few teams can stomach a full cancellation. A more workable version is pulling the project out of build mode and back into shaping mode to figure out what is still unclear [Ryan Singer, 00:30:43]. He adds that the clearest sign it's time to act is when a project keeps dragging, teams aren't shipping, and they're going in circles with no end in sight [Ryan Singer, 01:14:44].\n\n**Hilary Gridley** says there is always a shot clock on a zero-to-one product, and even though it's tempting to feel like there's unlimited time to get it right, if an outside solution exists and your own build is taking too long, the right call is to buy rather than keep building [Hilary Gridley, 01:38:28].",
+  "citations": [
+   {
+    "guestName": "Shaun Clowes",
+    "timestamp": "01:11:11",
+    "excerpt": "Shaun Clowes (01:11:11): Yeah. I think if I could do it differently, I might not have necessarily been able to 100% change the decision, but I should have tried. I mean, it was pretty obvious after six months, this thing was a bit of a zombie product walking, and the least I could have done is said,",
+    "episodeId": "5dbd3bb4-0b74-4a4e-8c5d-62b4c07d8243",
+    "startSeconds": 4271,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Shaun Clowes",
+    "timestamp": "01:09:33",
+    "excerpt": "Shaun Clowes (01:09:33): It's still an area of active research and investment or whatever, but it was one of those things, talk about the wrong company, wrong place, wrong time, wrong distribution. We had literally no right to win, no right to play, just absolutely no business in hindsight being in ",
+    "episodeId": "5dbd3bb4-0b74-4a4e-8c5d-62b4c07d8243",
+    "startSeconds": 4173,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Annie Duke",
+    "timestamp": "01:06:18",
+    "excerpt": "Annie Duke (01:06:18): So kill criteria are just a set of signals that you might see that would tell you that it's time to pivot or stop because once we actually launch something, we're very, very slow to decide to quit. I'm sure that everybody has felt that way before. Things go on way too long, ev",
+    "episodeId": "a9e207de-5eef-414a-ac9c-3a75a7ea5b2d",
+    "startSeconds": 3978,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Annie Duke",
+    "timestamp": "01:16:58",
+    "excerpt": "Annie Duke (01:16:58): Now notice nobody would do this in this case, right? But this is what happened is that the issue is that you really have to see is this worthwhile or not? Would I start this today? That's a forecast of the future, right? And what he did was some back-of-the-envelope math, and ",
+    "episodeId": "a9e207de-5eef-414a-ac9c-3a75a7ea5b2d",
+    "startSeconds": 4618,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Ryan Singer",
+    "timestamp": "00:30:43",
+    "excerpt": "Ryan Singer (00:30:43): And now, we go into the next cycle with this debt feeling that we didn't actually finish the thing we were supposed to finish, so now, we're like overtime. None of that is good. And if we also go the other extreme and just say, well, should we say in the book, we had this pri",
+    "episodeId": "0e7ec381-ffb2-40f0-b780-e9be04e95c2b",
+    "startSeconds": 1843,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Ryan Singer",
+    "timestamp": "01:14:44",
+    "excerpt": "Ryan Singer (01:14:44): There are pains all along the journey. So I think the place where it's most obvious is at the end of the line when we thought we were going to be done and this thing is just dragging and dragging and dragging. The teams, we're not shipping things. We're running in place. We k",
+    "episodeId": "0e7ec381-ffb2-40f0-b780-e9be04e95c2b",
+    "startSeconds": 4484,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Hilary Gridley",
+    "timestamp": "01:38:28",
+    "excerpt": "Hilary Gridley (01:38:28): And I think the lesson that I learned from that is, I think there's always a shot clock. When you're working, especially on a zero to one product, I think it can be very easy to feel like you have the luxury of time, of just like, we got to take the time to figure this out",
+    "episodeId": "bed06337-81d4-4c18-b79f-40b65598e2a2",
+    "startSeconds": 5908,
+    "timestampVerified": true
+   }
+  ]
+ },
+ "What's the best way to prep for a PM interview?": {
+  "answer": "Several guests describe how they structure interviews, which offers clues for how to prepare.\n\n**Matt MacInnis** describes a difficult case study framework used in his hiring process, where every product person at every level gets the same extremely challenging case, requiring thinking about many dimensions simultaneously, including data propagation issues [Matt MacInnis, 00:37:03]. He notes candidates who do well are not necessarily those who solve everything, but those who see around several of the hardest corners, stay non-defensive when given new information that challenges their solution, and are willing to interrupt to ask more questions [Matt MacInnis, 00:37:37].\n\n**Jeremy Henrickson** similarly uses a case study that is intentionally too complex to fully solve, and watches how candidates react when asked ad hoc questions or when an assumption is changed, since that reveals how deeply they understand a new problem and how mentally agile they are [Jeremy Henrickson, 00:53:00].\n\n**Casey Winters** takes a contrarian view, saying interviewing has become performative, like handing out awards for the best-rehearsed \"tell me about a time\" answer rather than assessing actual job ability [Casey Winters, 00:22:14]. He avoids asking about work history and instead gives real scenarios from the role, looking for whether candidates can generate a few reasonable ideas and figure out how to test them quickly without analyst or research support [Casey Winters, 00:22:36].\n\n**Jules Walter** offers direct prep advice: practice so much that even at your worst, you're good enough, noting that in most of his own interviews he felt he did his worst but had practiced enough that it was still sufficient to pass [Jules Walter, 00:20:21].\n\n**Melissa Tan** describes looking for first-principles thinking through live problem-solving, and recommends a prep call before the presentation portion of her interview process, where she gives candidates feedback beforehand to see how they incorporate it [Melissa Tan, 00:43:13].",
+  "citations": [
+   {
+    "guestName": "Matt MacInnis",
+    "timestamp": "00:37:03",
+    "excerpt": "Matt MacInnis (00:37:03): When I first started working in the product organization, I was introduced to an interview framework or an interview tactic that I hadn't really used much at all, I think in my career, which is that every product person at every seniority level is given the same case study.",
+    "episodeId": "8f32c932-00a0-42c5-9d9c-10e729089e65",
+    "startSeconds": 2223,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Matt MacInnis",
+    "timestamp": "00:37:37",
+    "excerpt": "Matt MacInnis (00:37:37): And the rubric that we use to sort of evaluate performance of that case study is it gives you guidance on what for us, like an entry level PM looks like, what a junior, mid-career, senior executive PM might look like. And everybody comes away from that interview feeling lik",
+    "episodeId": "8f32c932-00a0-42c5-9d9c-10e729089e65",
+    "startSeconds": 2257,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Jeremy Henrickson",
+    "timestamp": "00:53:00",
+    "excerpt": "Jeremy Henrickson (00:53:00): I mean, I don't know that I have any particularly special insight here. I think there's a couple things that I do ask that maybe are more of an emphasis because it's Rippling than not. But the first of those is when people are going through our process, there's a part w",
+    "episodeId": "6205ed62-f779-4aee-8379-33dc38bb7d42",
+    "startSeconds": 3180,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Casey Winters",
+    "timestamp": "00:22:14",
+    "excerpt": "Casey Winters (00:22:14): I feel like the whole thing's gotten so performative. It's like interviewing is handing out Oscars based on who's prepared the best tell me about a time response, versus actually assessing who can do the job we're hiring for. It's like most PMs are better PM interviewers th",
+    "episodeId": "9d69ef45-0f00-42f4-86d0-e91236a7d453",
+    "startSeconds": 1334,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Casey Winters",
+    "timestamp": "00:22:36",
+    "excerpt": "Casey Winters (00:22:36): Benicio del Toro says in it, it's like, \"These days, they want to be criminals more than they want to commit crime.\" I think about that quote a lot when it comes to interviewing. I would say I'm a bit contrarian here in my approach. I don't ask about your work history. I do",
+    "episodeId": "9d69ef45-0f00-42f4-86d0-e91236a7d453",
+    "startSeconds": 1356,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Jules Walter",
+    "timestamp": "00:20:21",
+    "excerpt": "Jules Walter (00:20:21): Yeah. You want to basically practice so much that even at your worst, you're good enough. I've always felt like most interviews, I literally did my worst. It's just that it was good enough to pass. You're so stressed out, you don't relate to the person, et cetera.",
+    "episodeId": "6ac2bdd2-ac44-40b2-ace0-b27bdef74272",
+    "startSeconds": 1221,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Melissa Tan",
+    "timestamp": "00:43:13",
+    "excerpt": "Melissa Tan (00:43:13): In terms of what I look for, I think there's this kind of known list of things that you probably want to look for, for a PM that I probably are not going to ... I'm say anything groundbreaking here, but obviously communication skills, the ability to manage stakeholders and wo",
+    "episodeId": "38a44da1-4791-4923-8604-f444873d4641",
+    "startSeconds": 2593,
+    "timestampVerified": true
+   }
+  ]
+ },
+ "How do you tell a strong IC apart from a strong manager?": {
+  "answer": "Several guests describe distinct signals for identifying strong ICs versus strong managers.\n\n**Nikhyl Singhal** contrasts a candidate with scattered management experience against one who has been an IC the whole time, deepening expertise in a domain and becoming an expert at navigating ambiguity. For a company whose hard problem is cracking a complex market rather than building a team, the deep IC expert is the one he wants [Nikhyl Singhal, 00:41:47]. He also notes that strengths can mask weaknesses—great collaborators may be reticent to offer opinions, and people strong in one mode (growth, storytelling, structure) often struggle in the opposite mode (innovation, detail, blue-sky thinking), which complicates simply labeling someone strong [Nikhyl Singhal, 00:54:42].\n\n**Manik Gupta** focuses on a specific inflection point: watching whether someone can move from managing individual contributors to managing managers, since that requires building structure, deciding how much to delegate, and coaching other managers—a very different skill from managing ICs [Manik Gupta, 00:49:38]. He treats success in both real product output and this management transition as the two filters for knowing someone is ready for more responsibility [Manik Gupta, 00:50:41]. He adds that he's more traditional in valuing this managerial transition as a filter, while acknowledging other schools of thought hold that the best PMs are IC PMs with unbounded energy who don't want to spend time managing, given that PM work is largely about managing by influence rather than headcount [Manik Gupta, 00:51:12].\n\n**Christian Idiodi** illustrates the risk of conflating the two: someone promoted into management who keeps jumping in to solve engineering problems directly hasn't recognized that the manager's job is to build a team that solves problems, not to solve them personally—a pattern he calls the most common origin story of micromanagement [Christian Idiodi, 01:06:10].",
+  "citations": [
+   {
+    "guestName": "Nikhyl Singhal",
+    "timestamp": "00:41:47",
+    "excerpt": "Nikhyl Singhal (00:41:47): The next person walks in, it's like, \"I've been an IC for that whole time. And during that time I went from learning something to demonstrating it to really being able to take it forward. And I got one of these ambiguities master. I'm an expert in domain. I'm an expert in ",
+    "episodeId": "48df09fa-5682-4011-b394-55759b9d583f",
+    "startSeconds": 2507,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Nikhyl Singhal",
+    "timestamp": "00:54:42",
+    "excerpt": "Nikhyl Singhal (00:54:42): And then what you realize is that, \"Well, you're collaborating as long as people agreed with your point of view. Now as a leader, we're asking you to be opinionated, and because you just think you're an amazing collaborator using the exact same tool set. And it turns out t",
+    "episodeId": "48df09fa-5682-4011-b394-55759b9d583f",
+    "startSeconds": 3282,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Manik Gupta",
+    "timestamp": "00:49:38",
+    "excerpt": "Manik Gupta (00:49:38): The second is, oftentimes as people go up in their career, they start managing teams. They become a manager, and then you become a manager of managers, and then you become more senior. I mean, that's the organizational trajectory that happens. One inflection point that I've s",
+    "episodeId": "4acf7992-83b4-4a7a-aaa3-20f863aea459",
+    "startSeconds": 2978,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Manik Gupta",
+    "timestamp": "00:50:41",
+    "excerpt": "Manik Gupta (00:50:41): Both product inflection in terms of real output and this management prowess inflection in terms of being able to effectively lead going from one step to another, a manager to becoming a manager of managers; I think those are the two places where I feel like, if I see somebody",
+    "episodeId": "4acf7992-83b4-4a7a-aaa3-20f863aea459",
+    "startSeconds": 3041,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Manik Gupta",
+    "timestamp": "00:51:12",
+    "excerpt": "Manik Gupta (00:51:12): Yeah, I think so. Maybe I'm a little bit more traditionist on this point. I know there are other schools of thought on this, which I respect. Which is there are a lot of times where people are like, \"Well, oftentimes the best PMs are PMs who are IC PMs. They have this crazy, ",
+    "episodeId": "4acf7992-83b4-4a7a-aaa3-20f863aea459",
+    "startSeconds": 3072,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Christian Idiodi",
+    "timestamp": "01:06:10",
+    "excerpt": "Christian Idiodi (01:06:10): Then in a couple of weeks go by, then they have a big engineering problem. And you know what Lenny does? He jumps in and he solves the problem. Lenny did not recognize that his job has changed. His job is no longer to solve the problem directly, but to get a team of othe",
+    "episodeId": "dfbbb7ab-9533-442d-8749-503a2f47aa31",
+    "startSeconds": 3970,
+    "timestampVerified": true
+   }
+  ]
+ },
+ "How do you find the right positioning for a product?": {
+  "answer": "**April Dunford** frames positioning as starting with differentiated value, then figuring out who cares most about that value, and only then settling on a market category. As she puts it, once you have differentiated value you can ask what characteristics make a target account really care a lot about that value, and that becomes the definition of a best-fit customer [April Dunford, 00:24:00]. She explicitly argues against starting with market category and working backward, since that leaves no way to judge whether the category is a good one [April Dunford, 00:24:22]. The best category, in her view, is simply the context that makes the value obvious to the people who care most about it [April Dunford, 00:24:35]. She illustrates this with Help Scout, where the value is delivering amazing customer service that deepens relationships rather than pushing customers to low-cost channels, and the best-fit customers are companies like direct-to-consumer or e-commerce brands that see service as a growth driver, unlike a phone company focused on cutting call-center costs [April Dunford, 00:27:52]. She also stresses positioning is a team sport — if founders, marketing, sales, and product each describe the offering slightly differently, that misalignment itself produces weak positioning, so fixing it requires a group effort rather than one department handing down a decision [April Dunford, 00:12:24].\n\n**Arielle Jackson** describes a process that starts by asking who the product is for, what problem those people have, and how they currently solve it today, before finally considering what you actually make [Arielle Jackson, 00:56:36]. She also offers a diagnostic for knowing when positioning is broken: if ten customers or employees describe the product in ten wildly different ways, or if you can't explain what you do in a single sentence, you have a positioning problem [Arielle Jackson, 00:51:23].",
+  "citations": [
+   {
+    "guestName": "April Dunford",
+    "timestamp": "00:24:00",
+    "excerpt": "April Dunford (00:24:00): Once I've got differentiated value, then I can start thinking about, well, look, I could sell this product to any company that has this problem, but not everybody cares about this value the same way. And so what are the characteristics of a target account that make them rea",
+    "episodeId": "2831dbd6-ed32-47e8-a698-c7e700b4ac87",
+    "startSeconds": 1440,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "April Dunford",
+    "timestamp": "00:24:22",
+    "excerpt": "April Dunford (00:24:22): And then the last piece of positioning of course, is market category. And so again, a lot of people will just start with market category and then try to back up, which I think is crazy, because then we don't have any way to judge the goodness of a market category.",
+    "episodeId": "2831dbd6-ed32-47e8-a698-c7e700b4ac87",
+    "startSeconds": 1462,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "April Dunford",
+    "timestamp": "00:24:35",
+    "excerpt": "April Dunford (00:24:35): But if I've got, look, this is the value only I can deliver, these are the kind of people that really care a lot about that value, if I start thinking about positioning as the context I position my product in, then the best market category is the context I position my produ",
+    "episodeId": "2831dbd6-ed32-47e8-a698-c7e700b4ac87",
+    "startSeconds": 1475,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "April Dunford",
+    "timestamp": "00:27:52",
+    "excerpt": "April Dunford (00:27:52): So when you map that to value, the value is one, I'm delivering this extra amazing service for customers. I'm not trying to push customers to a low cost channel. I'm treating them like a person. So their value is really around delivering amazing customer service that's goin",
+    "episodeId": "2831dbd6-ed32-47e8-a698-c7e700b4ac87",
+    "startSeconds": 1672,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "April Dunford",
+    "timestamp": "00:12:24",
+    "excerpt": "April Dunford (00:12:24): Well, this is one of the things that where I think people get into weak positioning. One of the things that happens in companies, and I see this a lot where the founder has an idea what the positioning is, but then you go to the marketing department and it's a little bit di",
+    "episodeId": "2831dbd6-ed32-47e8-a698-c7e700b4ac87",
+    "startSeconds": 744,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Arielle Jackson",
+    "timestamp": "00:56:36",
+    "excerpt": "Arielle Jackson (00:56:36): Yeah. Okay. So the way that I like to run positioning exercise is to start with who is this for? And then what is the problem that they have? There's some problem usually that these people have, they may not even be aware it's a problem, or they may not be experiencing th",
+    "episodeId": "5adf344e-bfa7-484f-b3fa-4ccf64ec6ce5",
+    "startSeconds": 3396,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Arielle Jackson",
+    "timestamp": "00:51:23",
+    "excerpt": "Arielle Jackson (00:51:23): Okay. So positioning is the space that you occupy in your target customer's mind and everything you can do to influence how they describe your product. You have a positioning problem if I ask 10 of your customers or 10 of your employees what the company does or what the p",
+    "episodeId": "5adf344e-bfa7-484f-b3fa-4ccf64ec6ce5",
+    "startSeconds": 3083,
+    "timestampVerified": true
+   }
+  ]
+ },
+ "What actually drives early growth versus what looks like it does?": {
+  "answer": "Several guests draw a sharp line between vanity metrics and real growth drivers.\n\n**Grant Lee** describes winning Product Hunt's product of the day, week, and month at his company, yet still concluding it wasn't working. He explains the importance of distinguishing vanity metrics from what's core to the growth engine: does this number going up mean the product is actually working [Grant Lee, 00:16:20]. The real inflection came later, after an AI relaunch, when signups jumped from a few hundred a day into the thousands and then tens of thousands purely through organic word of mouth, with no marketing or advertising spend, which felt distinctly different from the earlier launch buzz [Grant Lee, 00:12:21].\n\n**Sarah Tavel** makes a similar distinction from the investor side, saying she has an allergic reaction to vanity metrics. She recalls meeting consumer founders during the growth-hacking era who all had up-and-to-the-right graphs of sign-ups, downloads, or MAUs, but these metrics didn't get at whether they were building an enduring product, because they were missing the criticality of engagement [Sarah Tavel, 00:04:48].\n\n**Michael Truell** attributes his company's growth to simply building a good product rather than to deliberate growth tactics, noting that sales and marketing fires were left to burn while the team focused on product quality, and growth ended up being consistent exponential month-over-month expansion [Michael Truell, 00:28:42].\n\n**Dalton Caldwell** offers a more structural point: growth hacking, analytics, and A/B testing are a total waste of time for very early startups, arguing that much popular startup advice is actually aimed at later-stage Series A/B companies and confuses seed-stage founders who consume it [Dalton Caldwell, 01:05:45].",
+  "citations": [
+   {
+    "guestName": "Grant Lee",
+    "timestamp": "00:16:20",
+    "excerpt": "Grant Lee (00:16:20): Yeah, I mean part of being a founder is being as self-aware as you can and be your own worst critic. And so oftentimes you want to have these vanity metrics that feel good to celebrate, and you should celebrate. But you should know when it's a vanity metric versus is this core ",
+    "episodeId": "a6583ad2-2d07-4535-9c4f-ecdbcb9104e7",
+    "startSeconds": 980,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Grant Lee",
+    "timestamp": "00:12:21",
+    "excerpt": "Grant Lee (00:12:21): And then it just kept going up. And we weren't doing any sort of marketing, no advertising. It was all sort of organic word of mouth virality of the product, people using the product and sharing it with others, where we for the first time really felt this pull. We didn't have t",
+    "episodeId": "a6583ad2-2d07-4535-9c4f-ecdbcb9104e7",
+    "startSeconds": 741,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Sarah Tavel",
+    "timestamp": "00:04:48",
+    "excerpt": "Sarah Tavel (00:04:48): When I started to meet with all these really talented consumer founders building consumer social products, this was during a time when everybody was getting excited about growth hacking. What you would see is that you would see all these founders coming in, and they all had t",
+    "episodeId": "449b1b12-a756-4161-9519-1fbfc724d60f",
+    "startSeconds": 288,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Michael Truell",
+    "timestamp": "00:28:42",
+    "excerpt": "Michael Truell (00:28:42): It being essentially all just us, the team working on the product, and making the product good in lieu of other things one could spend one's time on. We definitely spent time on tons of other things, for instance, building the team was incredibly important, and doing thing",
+    "episodeId": "e2dad752-ea94-430e-b553-701aa8bc76ae",
+    "startSeconds": 1722,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Dalton Caldwell",
+    "timestamp": "01:05:45",
+    "excerpt": "Dalton Caldwell (01:05:45): Yeah, I think for contrarian corner, I know where I would start and I think it's relevant for your listener. I think this is relevant to this and you could argue this isn't contrary, but here's what I think. I think growth and growth hacking and doing all this analytics, ",
+    "episodeId": "b93cafd7-adcf-45a4-bc77-d6cab0d83313",
+    "startSeconds": 3945,
+    "timestampVerified": true
+   }
+  ]
+ },
+ "How do operators think about retention curves?": {
+  "answer": "**Sarah Tavel** explains looking at weekly cohorts in two ways: tracking whether users keep coming back on an active-user basis, especially completing the core action, and tracking activity level within those cohorts over time [Sarah Tavel, 00:28:00]. She says the ideal pattern is the smile graph, where as the network grows users become more retained over time, as opposed to a leaky bucket that just keeps dwindling, and reaching a plateau means there's more retention work to do [Sarah Tavel, 00:28:00].\n\n**Brian Balfour** describes the smile curve as an early indicator that a platform is on a trajectory to hit escape velocity, usually resulting from some kind of network effect [Brian Balfour, 00:32:22]. He notes that historically it was never the player with the biggest distribution that won, but the one with the best retention and engagement, citing Google's and Facebook's retention advantages over competitors [Brian Balfour, 00:32:00].\n\n**Nick Turley** says his team doesn't care how much time users spend in the product, only whether they come back over a long run like a three month period, and describes being happy to see retention actually improve over time even as cohorts shift from early adopters to average users [Nick Turley, 00:26:39]. He attributes some of this to people still learning how to use the underlying technology, which is why the product itself needs to keep evolving [Nick Turley, 00:27:48].\n\n**Jackson Shuttleworth** focuses on the zero to seven day window, noting his team runs many experiments aimed at getting users from a zero to seven day streak, since loss aversion kicks in around day seven and retention jumps are largest in the one to seven day range before flattening out [Jackson Shuttleworth, 00:19:13].",
+  "citations": [
+   {
+    "guestName": "Sarah Tavel",
+    "timestamp": "00:28:00",
+    "excerpt": "Sarah Tavel (00:28:00): ... like a group of people who signed up in a given week and that's one cohort. You look at it both on an active user basis, like are those people continuing to come back to the product? And I particularly love to look at that on a weekly active user completing the core actio",
+    "episodeId": "449b1b12-a756-4161-9519-1fbfc724d60f",
+    "startSeconds": 1680,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Brian Balfour",
+    "timestamp": "00:32:22",
+    "excerpt": "Brian Balfour (00:32:22): The data that Deedy published clearly show that both the retention curves, which I know you and I have both written about at exhaustion, level off at significant portions higher than all the other platforms, as well as those retention curves have been shifting up dramatical",
+    "episodeId": "1b774f78-d6cc-4193-b1e0-e7348cd69139",
+    "startSeconds": 1942,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Brian Balfour",
+    "timestamp": "00:32:00",
+    "excerpt": "Brian Balfour (00:32:00): I think the second reason I predict ChatGPT is if you look at history once again, it was never the person who had the biggest distribution at the moment of time. It was the one that had the best retention and engagement. Google had the best retention and engagement over the",
+    "episodeId": "1b774f78-d6cc-4193-b1e0-e7348cd69139",
+    "startSeconds": 1920,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Nick Turley",
+    "timestamp": "00:26:39",
+    "excerpt": "Nick Turley (00:26:39): I'm obviously limited on what exactly I can share, but it is true that our retention numbers are really exciting and that is actually the thing we look at. We don't care at all how much time you spend in the product. In fact, our incentive is just to solve your problem and if",
+    "episodeId": "078df27b-b5fb-475b-9459-13ea6f324d08",
+    "startSeconds": 1599,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Nick Turley",
+    "timestamp": "00:27:48",
+    "excerpt": "Nick Turley (00:27:48): Yeah, yeah. Yeah. There's some smiling going on that's just on the team and I feel like have technology, some of it is not the product. I think people are actually just getting used to this technology in a really interesting way, where I find, and this is why the product need",
+    "episodeId": "078df27b-b5fb-475b-9459-13ea6f324d08",
+    "startSeconds": 1668,
+    "timestampVerified": true
+   },
+   {
+    "guestName": "Jackson Shuttleworth",
+    "timestamp": "00:19:13",
+    "excerpt": "Jackson Shuttleworth (00:19:13): Well, maybe I can talk about a few different ways that we structure, a few different themes that I think we lean on. So, the first is focusing on the zero to seven day user experience. And I would say this is, if you look at whatever our breakdown of experiments are,",
+    "episodeId": "dafd93f8-ba10-4d52-9d54-c6b91a71e0ad",
+    "startSeconds": 1153,
+    "timestampVerified": true
+   }
+  ]
+ }
+}

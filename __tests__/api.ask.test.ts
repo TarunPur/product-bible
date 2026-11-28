@@ -23,6 +23,9 @@ vi.mock('@/lib/retrieval', async () => {
   return { ...actual, retrieveChunks: mockRetrieveChunks, retrieveExample: mockRetrieveExample }
 })
 
+const mockGetCachedAnswer = vi.fn()
+vi.mock('@/lib/answer-cache', () => ({ getCachedAnswer: mockGetCachedAnswer }))
+
 const mockCreateSynthesisStream = vi.fn()
 const mockGradeGroundedness = vi.fn()
 vi.mock('@/lib/llm', () => ({
@@ -79,6 +82,7 @@ describe('POST /api/ask', () => {
     mockInsert.mockResolvedValue({ data: null, error: null })
     mockCheckRateLimit.mockResolvedValue(true)
     mockRetrieveExample.mockResolvedValue(null)
+    mockGetCachedAnswer.mockReturnValue(null)
     mockPlanQuery.mockImplementation((q: string) => Promise.resolve({ standaloneQuestion: q, searchQueries: [q] }))
   })
 
@@ -331,6 +335,37 @@ describe('POST /api/ask', () => {
     expect(events.at(-1).type).toBe('done')
     expect(mockPlanQuery).not.toHaveBeenCalled()
     expect(mockRetrieveChunks).not.toHaveBeenCalled()
+  })
+
+  it('serves a stored example answer with no model, planner or search call, and still logs it', async () => {
+    const citation = { guestName: 'Ada Chen Rekhi', timestamp: '00:04:08', excerpt: 'x', episodeId: 'ep-1', startSeconds: 248, timestampVerified: true }
+    mockGetCachedAnswer.mockReturnValue({ answer: 'Stored answer.', citations: [citation] })
+    const { res, events } = await askRoute({ question: 'How do you know if you have product-market fit?', sessionId: 's1' })
+    expect(res.headers.get('X-Answer-Source')).toBe('cache')
+    expect(events).toEqual([
+      { type: 'token', text: 'Stored answer.' },
+      { type: 'done', citations: [citation], confidenceBand: 'high' },
+    ])
+    expect(mockCreateSynthesisStream).not.toHaveBeenCalled()
+    expect(mockGradeGroundedness).not.toHaveBeenCalled()
+    expect(mockPlanQuery).not.toHaveBeenCalled()
+    expect(mockRetrieveExample).not.toHaveBeenCalled()
+    expect(mockRetrieveChunks).not.toHaveBeenCalled()
+    expect(mockInsert).toHaveBeenCalledTimes(1)
+    expect(mockInsert.mock.calls[0][0]).toMatchObject({ answer: 'Stored answer.', confidence_band: 'high' })
+  })
+
+  it('still applies the rate limit before serving a stored answer', async () => {
+    mockCheckRateLimit.mockResolvedValue(false)
+    mockGetCachedAnswer.mockReturnValue({ answer: 'Stored answer.', citations: [] })
+    const { events } = await askRoute({ question: 'How do you know if you have product-market fit?', sessionId: 's1' })
+    expect(events).toEqual([{ type: 'blocked', message: expect.any(String) }])
+  })
+
+  it('marks live answers as live', async () => {
+    mockRetrieveChunks.mockResolvedValue({ chunks: [], topSimilarity: 0, passesConfidenceGate: false })
+    const { res } = await askRoute({ question: 'something new', sessionId: 's1' })
+    expect(res.headers.get('X-Answer-Source')).toBe('live')
   })
 
   it('presents a model refusal that produced no text as "none", not as a retryable cut-off', async () => {
