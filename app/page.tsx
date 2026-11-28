@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { askStream, AskFailure } from '@/lib/ask-client'
 import { citationKey, parseAnswer } from '@/lib/citation-tags'
 import { EXAMPLE_QUESTIONS, QUESTION_THEMES } from '@/lib/example-questions'
@@ -253,7 +254,7 @@ function SourceCard({
       onFocus={() => onHover(number)}
       onBlur={() => onHover(null)}
       onClick={onOpen}
-      className={`block w-full text-left rounded-xl p-3.5 border transition-colors scroll-mt-20 ${
+      className={`group block w-full text-left rounded-xl p-3.5 border transition-colors scroll-mt-20 ${
         isHot ? 'bg-surface border-accent' : 'bg-wash border-transparent'
       }`}
     >
@@ -267,11 +268,26 @@ function SourceCard({
         {citation.guestName}
       </div>
       <p className="text-[12.5px] text-muted leading-relaxed line-clamp-4">{citation.excerpt}</p>
-      <span className="mt-2 inline-block font-mono text-[10px] text-fainter">
-        {citation.timestampVerified ? 'Open transcript →' : 'Timestamp not confirmed'}
-      </span>
+      {citation.timestampVerified ? (
+        <span className="mt-2.5 inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.06em] uppercase text-accent-label group-hover:text-accent-hover group-focus-visible:text-accent-hover transition-colors">
+          Open transcript
+          <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+            →
+          </span>
+        </span>
+      ) : (
+        <span className="mt-2 inline-block font-mono text-[10px] text-fainter">Timestamp not confirmed</span>
+      )}
     </button>
   )
+}
+
+function prefersReducedMotion(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function scrollToTop() {
+  window.scrollTo?.({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
 }
 
 function scrollToLine(element: HTMLElement | null) {
@@ -445,6 +461,7 @@ export default function Home() {
   const [openCitation, setOpenCitation] = useState<Citation | null>(null)
 
   const abortRef = useRef<AbortController | null>(null)
+  const questionInputRef = useRef<HTMLInputElement>(null)
   const closeSource = useCallback(() => setOpenCitation(null), [])
 
   useEffect(() => () => abortRef.current?.abort(), [])
@@ -473,6 +490,18 @@ export default function Home() {
     setActiveIndex(0)
     setQuestion('')
     setOpenCitation(null)
+  }
+
+  function goHome() {
+    clearConversation()
+    scrollToTop()
+  }
+
+  function pickExample(q: string) {
+    setQuestion(q)
+    const input = questionInputRef.current
+    input?.scrollIntoView?.({ block: 'center', behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+    input?.focus({ preventScroll: true })
   }
 
   async function ask(text: string, previous: Turn[]) {
@@ -531,7 +560,7 @@ export default function Home() {
   if (!hasTurns) {
     return (
       <main className="flex-1 flex flex-col bg-page">
-        <Header hasTurns={false} onNewQuestion={() => {}} />
+        <Header hasTurns={false} onNewQuestion={() => {}} onHome={scrollToTop} />
         <section className="flex-1 max-w-[900px] w-full mx-auto px-5 sm:px-8 pt-16 sm:pt-24 pb-20">
           <h1 className="font-display text-ink text-[clamp(40px,7vw,80px)] leading-[0.98] tracking-[-0.01em] uppercase mb-6 text-balance">
             Skip to the part
@@ -554,6 +583,7 @@ export default function Home() {
             </label>
             <input
               id="cue-input"
+              ref={questionInputRef}
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
@@ -589,7 +619,7 @@ export default function Home() {
                       <button
                         key={q}
                         type="button"
-                        onClick={() => setQuestion(q)}
+                        onClick={() => pickExample(q)}
                         className="group flex items-baseline gap-4 text-left py-2.5 border-b border-rule-soft last:border-b-0 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-page"
                       >
                         <span className="font-mono text-[10.5px] tabular-nums px-1.5 py-0.5 rounded border border-edge text-muted group-hover:border-accent group-hover:text-accent transition-colors shrink-0">
@@ -633,10 +663,7 @@ export default function Home() {
 
   return (
     <main className="flex-1 flex flex-col bg-page">
-      <Header
-        hasTurns
-        onNewQuestion={clearConversation}
-      />
+      <Header hasTurns onNewQuestion={clearConversation} onHome={goHome} />
 
       <div className="flex-1 w-full max-w-[1560px] mx-auto flex flex-col xl:flex-row items-start">
         <aside className="hidden xl:flex xl:flex-col shrink-0 w-[260px] sticky top-[60px] px-7 py-8 gap-8">
@@ -792,20 +819,37 @@ export default function Home() {
   )
 }
 
-function Header({ hasTurns, onNewQuestion }: { hasTurns: boolean; onNewQuestion: () => void }) {
+function Header({
+  hasTurns,
+  onNewQuestion,
+  onHome,
+}: {
+  hasTurns: boolean
+  onNewQuestion: () => void
+  onHome: () => void
+}) {
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between gap-6 px-5 sm:px-8 py-4 bg-page/92 backdrop-blur-md border-b border-rule">
-      <div className="flex items-center gap-2.5 min-w-0">
+      <Link
+        href="/"
+        onClick={(e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+          e.preventDefault()
+          onHome()
+        }}
+        aria-label="Playbook home"
+        className="flex items-center gap-2.5 min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-page"
+      >
         <div className="w-[28px] h-[28px] rounded-[7px] bg-accent text-page grid place-items-center font-display text-[15px] leading-none font-bold shrink-0">
           P
         </div>
         <div className="flex items-baseline gap-2.5 min-w-0">
           <span className="text-[15px] font-semibold tracking-[-0.01em] text-ink">Playbook</span>
           <span className="hidden sm:inline font-mono text-[10px] tracking-[0.1em] uppercase text-accent-label truncate">
-            every answer, cited
+            every answer, cited from Lenny&apos;s Podcast
           </span>
         </div>
-      </div>
+      </Link>
       {hasTurns && (
         <button
           type="button"

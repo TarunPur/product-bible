@@ -116,7 +116,7 @@ Near-black ground with one warm accent — restrained, not a full palette. No gr
 ### Primary
 - **Accent** (`#d99a3a`): the sole accent hue. Used where something is live, interactive, or actively focused — the CUE dot, hover/focus states, button fills, inline citation markers and source-card highlighting — plus two named, bounded exceptions below. Never used for static decoration or body copy outside those exceptions.
 - **Accent Hover** (`#eab04f`): lightened accent for filled-button hover states.
-- **Accent Label** (`#c99a4e`): a slightly deeper accent reserved for small mono labels at rest ("CUE", category headers, the header tagline) — distinguishes label-accent from interactive-accent at a glance.
+- **Accent Label** (`#c99a4e`): a slightly deeper accent reserved for small mono labels at rest ("CUE", category headers, the header tagline, the source card's "Open transcript" action, which brightens to Accent Hover on hover/focus; 6.4:1 on Wash) — distinguishes label-accent from interactive-accent at a glance.
 
 ### Neutral
 - **Page** (`#15130f`): the app's background. A near-black warm charcoal, not pure black — a broadcast control-room scene, not a category default.
@@ -126,7 +126,7 @@ Near-black ground with one warm accent — restrained, not a full palette. No gr
 - **Ink Soft** (`#d8d0c2`): secondary-primary text one step down from Ink — the streamed answer body, chapter-entry question text at rest, the "well covered" status dot.
 - **Muted** (`#b3a998`): secondary text — subheads, source-card excerpts, session-rail inactive items. ~8:1 against Page.
 - **Faint** (`#a89882`): small structural text — citation-marker numerals, stat lines, placeholder text. ~5–6.6:1 against Page/Surface.
-- **Fainter** (`#948970`): the quietest tier — footer counts, "open transcript" links. ~5–5.4:1 against Page/Surface. Faint and Fainter sit close in value on purpose: a near-black ground doesn't leave much room for multiple washed-out gray steps that still clear a 4.5:1 floor at small text sizes, so the hierarchy between them is real but subtle.
+- **Fainter** (`#948970`): the quietest tier — footer counts, "timestamp not confirmed" notes. ~5–5.4:1 against Page/Surface. Faint and Fainter sit close in value on purpose: a near-black ground doesn't leave much room for multiple washed-out gray steps that still clear a 4.5:1 floor at small text sizes, so the hierarchy between them is real but subtle.
 - **Rule** (`#33302a`) / **Rule Soft** (`#262319`): dividers, from most to least visible.
 - **Edge** (`#3a362c`): input and card borders at rest.
 
@@ -206,7 +206,7 @@ A small bordered mono-pill numeral, `{typography.label}` scale, 4px radius, Edge
 - **Cited line highlight:** a soft background tint (`color-mix` of Accent at 10% into transparent, with matching horizontal padding/radius) on the specific transcript line a citation resolves to — never a colored border stripe.
 
 ### Navigation (Header)
-One implementation app-wide: a small amber square badge (8px radius, Page-on-Accent "P", Display typography), the "Playbook" wordmark in Ink, the "every answer, cited" tagline in Accent Label mono (hidden below `sm`). Sticky, Rule bottom border, translucent Page background with backdrop blur. A "Clear conversation" control (neutral border, Muted text, hover to Ink/Fainter border) appears only once a conversation exists.
+One implementation app-wide: a small amber square badge (8px radius, Page-on-Accent "P", Display typography), the "Playbook" wordmark in Ink, the "every answer, cited from Lenny's Podcast" tagline in Accent Label mono (hidden below `sm`). Badge and wordmark together are a link home: on the landing it scrolls to the top, in a conversation it clears it. Sticky, Rule bottom border, translucent Page background with backdrop blur. A "Clear conversation" control (neutral border, Muted text, hover to Ink/Fainter border) appears only once a conversation exists.
 
 ### Coverage Note (confidence banner)
 Two confidence states, never a numeric score:

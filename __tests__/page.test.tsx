@@ -68,6 +68,42 @@ describe('Home page', () => {
     expect(screen.getByPlaceholderText(/what you're trying to figure out/i)).toHaveValue('How do you know if you have product-market fit?')
   })
 
+  it('brings the search box into view with a picked example filled in and focused, without asking it', () => {
+    global.fetch = vi.fn() as unknown as typeof fetch
+    const scrollIntoView = vi.fn()
+    Element.prototype.scrollIntoView = scrollIntoView
+    render(<Home />)
+    fireEvent.click(screen.getByText('How do operators think about retention curves?'))
+    const input = screen.getByPlaceholderText(/what you're trying to figure out/i)
+    expect(input).toHaveValue('How do operators think about retention curves?')
+    expect(input).toHaveFocus()
+    expect(scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }))
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  it("shows the tagline naming Lenny's Podcast", () => {
+    render(<Home />)
+    expect(screen.getByText("every answer, cited from Lenny's Podcast")).toBeInTheDocument()
+  })
+
+  it('takes the user back home when the logo is clicked during a conversation', async () => {
+    mockFetchStream([
+      { type: 'token', text: 'Some answer.' },
+      { type: 'done', citations: [], confidenceBand: 'low', disclaimer: 'x' },
+    ])
+    window.scrollTo = vi.fn() as unknown as typeof window.scrollTo
+    render(<Home />)
+    fireEvent.change(screen.getByPlaceholderText(/what you're trying to figure out/i), { target: { value: 'a question' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Ask' }))
+    expect(await screen.findByText('Low confidence')).toBeInTheDocument()
+
+    const home = screen.getByRole('link', { name: 'Playbook home' })
+    expect(home).toHaveAttribute('href', '/')
+    fireEvent.click(home)
+    expect(screen.queryByText('Low confidence')).not.toBeInTheDocument()
+    expect(screen.getByText('How do you know if you have product-market fit?')).toBeInTheDocument()
+  })
+
   it('shows a low-confidence badge and lets the user clear the conversation', async () => {
     mockFetchStream([
       { type: 'token', text: 'Some answer.' },
